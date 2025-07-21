@@ -350,3 +350,21 @@ export const blockUser = async (userId: string) => {
     return { success: false, ...error };
   }
 };
+
+export const unblockUser = async (userId: string) => {
+  const cookieStore = await cookies();
+  const accessToken = cookieStore.get("accessToken")?.value;
+  try {
+    const res = await fetchWithErrorHandling(`/user/unblock/${userId}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+
+    return res;
+  } catch (error: any) {
+    return { success: false, ...error };
+  }
+};

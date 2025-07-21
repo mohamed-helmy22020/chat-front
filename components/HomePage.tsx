@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import BlockedList from "./BlockedList";
 import Chat from "./Chat";
 import FriendsList from "./FriendsList";
 import HomeSideBar from "./HomeSideBar";
@@ -14,7 +15,7 @@ const HomePage = () => {
       {page === "chat" && <Chat />}
       {page === "status" && <Status />}
       {page === "friends" && <FriendsList />}
-      {page === "blocks" && <Status />}
+      {page === "blocks" && <BlockedList />}
       {page === "settings" && <Status />}
       {page === "profile" && <Status />}
     </div>

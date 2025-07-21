@@ -4,7 +4,9 @@ import {
   cancelFriendRequest,
   deleteFriend,
   sendFriendRequest,
+  unblockUser,
 } from "@/lib/actions/user.actions";
+import { CgUnblock } from "react-icons/cg";
 import { FiPlusCircle } from "react-icons/fi";
 import {
   LuBan,
@@ -137,8 +139,51 @@ const FriendsMenu = ({ userId }: { userId: string }) => {
     </DropdownMenu>
   );
 };
+
 const BlocksMenu = ({ userId }: { userId: string }) => {
-  return <LuEllipsisVertical />;
+  const [isUnblocking, setIsUnblocking] = useState(false);
+  const [isUnblocked, setIsUnblocked] = useState(false);
+  const handleUnblockUser = async () => {
+    setIsUnblocking(true);
+    try {
+      const unblockRes = await unblockUser(userId);
+      console.log(unblockRes);
+      setIsUnblocked(true);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setIsUnblocking(false);
+    }
+  };
+  return (
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <Button
+          variant="ghostFull"
+          className="cursor-pointer rounded-full p-1 hover:scale-110"
+          disabled={isUnblocking || isUnblocked}
+          onClick={handleUnblockUser}
+        >
+          {isUnblocking ? (
+            <LuLoader className="animate-spin" />
+          ) : isUnblocked ? (
+            <LuCheck />
+          ) : (
+            <CgUnblock />
+          )}
+        </Button>
+      </TooltipTrigger>
+      <TooltipContent className="rounded-full" sideOffset={-5}>
+        <p>
+          {isUnblocking
+            ? "Unblocking..."
+            : isUnblocked
+              ? "Unblocked"
+              : "Unblock user"}
+        </p>
+      </TooltipContent>
+    </Tooltip>
+  );
 };
 
 const RequestsMenu = ({ userId }: { userId: string }) => {
