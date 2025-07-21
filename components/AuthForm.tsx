@@ -3,7 +3,9 @@
 import { signIn, signUp } from "@/lib/actions/user.actions";
 import { convertErrors } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { AlertCircleIcon, Loader2 } from "lucide-react";
+import { FiLoader } from "react-icons/fi";
+import { IoAlertCircleSharp } from "react-icons/io5";
+
 import { useTranslations } from "next-intl";
 import Image from "next/image";
 import Link from "next/link";
@@ -160,7 +162,7 @@ const AuthForm = ({ type }: { type: "sign-up" | "sign-in" }) => {
 
                 {error && (
                   <Alert variant="destructive">
-                    <AlertCircleIcon />
+                    <IoAlertCircleSharp />
                     <AlertTitle>{tError(error)}</AlertTitle>
                   </Alert>
                 )}
@@ -182,7 +184,7 @@ const AuthForm = ({ type }: { type: "sign-up" | "sign-in" }) => {
                   >
                     {isLoading ? (
                       <>
-                        <Loader2 size={20} className="animate-spin" />
+                        <FiLoader size={20} className="animate-spin" />
                         &nbsp;{t("Loading")}
                       </>
                     ) : type === "sign-in" ? (

@@ -10,31 +10,61 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { findUser } from "@/lib/actions/user.actions";
-import { Loader, PlusCircle } from "lucide-react";
+import { validateEmail } from "@/lib/utils";
+import { IoAlertCircleSharp } from "react-icons/io5";
+import { LuLoader } from "react-icons/lu";
+
 import { useState } from "react";
+import { CiCirclePlus } from "react-icons/ci";
 import RequestUserCard from "./RequestUserCard";
+import { Alert, AlertTitle } from "./ui/alert";
+import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
 
 const SearchUsers = () => {
   const [email, setEmail] = useState<string>("");
   const [isOpen, setIsOpen] = useState(false);
   const [isSearching, setIsSearching] = useState(false);
+  const [searchedUsers, setSearchedUsers] = useState<RequestUserType | null>();
 
+  const resetData = (open: boolean) => {
+    setIsOpen(open);
+    setEmail("");
+    setSearchedUsers(undefined);
+  };
   const handleSearch = async () => {
     setIsSearching(true);
     try {
+      if (!email) throw new Error("Email is required.");
+      if (!validateEmail(email)) throw new Error("Invalid email.");
       const searchUserRes = await findUser(email);
-      console.log(searchUserRes.user);
+      console.log(searchUserRes);
+      if (!searchUserRes.success) throw new Error(searchUserRes.msg);
+      setSearchedUsers(searchUserRes.user);
     } catch (error) {
       console.log(error);
+      setSearchedUsers(null);
     }
     setIsSearching(false);
   };
   return (
-    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+    <Dialog open={isOpen} onOpenChange={resetData}>
       <DialogTrigger asChild>
-        <Button className="" variant="ghost">
-          <PlusCircle />
-        </Button>
+        <div>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button className="" variant="ghostFull">
+                <CiCirclePlus />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent
+              side="bottom"
+              className="rounded-full"
+              sideOffset={0}
+            >
+              <p>Add Friend</p>
+            </TooltipContent>
+          </Tooltip>
+        </div>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
@@ -59,18 +89,29 @@ const SearchUsers = () => {
               disabled={isSearching}
               onClick={handleSearch}
             >
-              {isSearching ? <Loader className="animate-spin" /> : "Search"}
+              {isSearching ? <LuLoader className="animate-spin" /> : "Search"}
             </Button>
           </div>
           <div>
-            <RequestUserCard
-              user={{
-                userProfileImage: "/imgs/user.jpg",
-                name: "John Doe",
-                _id: "12345",
-              }}
-              type="addFriend"
-            />
+            {searchedUsers && !isSearching ? (
+              <RequestUserCard
+                user={searchedUsers}
+                type={
+                  searchedUsers.isFriend
+                    ? "friends"
+                    : searchedUsers.isReceivedRequest
+                      ? "request"
+                      : searchedUsers.isSentRequest
+                        ? "sent"
+                        : "addFriend"
+                }
+              />
+            ) : searchedUsers === null && !isSearching ? (
+              <Alert variant="destructive">
+                <IoAlertCircleSharp />
+                <AlertTitle>Unable to find this user</AlertTitle>
+              </Alert>
+            ) : null}
           </div>
         </div>
       </DialogContent>

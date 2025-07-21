@@ -1,12 +1,13 @@
 import { cn } from "@/lib/utils";
 import {
-  CircleDotDashed,
-  MessageSquareText,
-  Settings,
-  User,
-  UserRoundX,
-  Users,
-} from "lucide-react";
+  LuCircleDotDashed,
+  LuMessageSquareText,
+  LuSettings,
+  LuUser,
+  LuUserRoundX,
+  LuUsers,
+} from "react-icons/lu";
+
 import { Separator } from "./ui/separator";
 import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
 
@@ -21,25 +22,25 @@ const HomeSideBar = ({ page, setPage }: Props) => {
       <div className="flex flex-col items-center justify-center">
         <SideBarButton
           setPage={setPage}
-          Icon={MessageSquareText}
+          Icon={LuMessageSquareText}
           page="chat"
           currentPage={page}
         />
         <SideBarButton
           setPage={setPage}
-          Icon={CircleDotDashed}
+          Icon={LuCircleDotDashed}
           page="status"
           currentPage={page}
         />
         <SideBarButton
           setPage={setPage}
-          Icon={Users}
+          Icon={LuUsers}
           page="friends"
           currentPage={page}
         />
         <SideBarButton
           setPage={setPage}
-          Icon={UserRoundX}
+          Icon={LuUserRoundX}
           page="blocks"
           currentPage={page}
         />
@@ -50,13 +51,13 @@ const HomeSideBar = ({ page, setPage }: Props) => {
       <div className="flex flex-col">
         <SideBarButton
           setPage={setPage}
-          Icon={Settings}
+          Icon={LuSettings}
           page="settings"
           currentPage={page}
         />
         <SideBarButton
           setPage={setPage}
-          Icon={User}
+          Icon={LuUser}
           page="profile"
           currentPage={page}
         />
@@ -93,12 +94,7 @@ const SideBarButton = ({
           <Icon size={24} />
         </button>
       </TooltipTrigger>
-      <TooltipContent
-        className="rounded-full"
-        side="left"
-        onPointerDownOutside={(e) => e.preventDefault()}
-        sideOffset={5}
-      >
+      <TooltipContent className="rounded-full" side="left" sideOffset={5}>
         <p className="capitalize select-none">{page}</p>
       </TooltipContent>
     </Tooltip>

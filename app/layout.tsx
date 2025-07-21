@@ -1,4 +1,5 @@
 import Navbar from "@/components/Navbar";
+import { Toaster } from "@/components/ui/sonner";
 import { getUserData } from "@/lib/actions/user.actions";
 import type { Metadata } from "next";
 import { NextIntlClientProvider } from "next-intl";
@@ -57,6 +58,7 @@ export default async function RootLayout({
             {children}
           </ThemeProvider>
         </NextIntlClientProvider>
+        <Toaster />
       </body>
     </html>
   );

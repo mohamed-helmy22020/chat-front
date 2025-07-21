@@ -1,6 +1,13 @@
-import { File, Paperclip, Phone, Send, Smile, Video } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import {
+  LuFile,
+  LuPaperclip,
+  LuPhone,
+  LuSend,
+  LuSmile,
+  LuVideo,
+} from "react-icons/lu";
 
 const LandingPageHero = () => {
   return (
@@ -83,10 +90,10 @@ const LandingPageHero = () => {
                   </div>
                   <div className="flex items-center space-x-2">
                     <button className="rounded-full p-2 hover:bg-gray-100 dark:hover:bg-slate-700">
-                      <Phone className="h-5 w-5 text-slate-500 dark:text-slate-400" />
+                      <LuPhone className="h-5 w-5 text-slate-500 dark:text-slate-400" />
                     </button>
                     <button className="rounded-full p-2 hover:bg-gray-100 dark:hover:bg-slate-700">
-                      <Video className="h-5 w-5 text-slate-500 dark:text-slate-400" />
+                      <LuVideo className="h-5 w-5 text-slate-500 dark:text-slate-400" />
                     </button>
                   </div>
                 </div>
@@ -147,7 +154,7 @@ const LandingPageHero = () => {
                       <div>
                         <div className="message-bubble self bg-mainColor-100 px-4 py-2 shadow-sm dark:bg-mainColor-900">
                           <div className="flex items-center space-x-2">
-                            <File className="h-5 w-5 text-mainColor-600 dark:text-mainColor-400" />
+                            <LuFile className="h-5 w-5 text-mainColor-600 dark:text-mainColor-400" />
                             <div>
                               <p className="text-sm font-medium">
                                 Project_Final.zip
@@ -168,10 +175,10 @@ const LandingPageHero = () => {
                 <div className="border-t border-slate-200 p-3 dark:border-slate-700">
                   <div className="flex items-center">
                     <button className="rounded-full p-2 hover:bg-gray-100 dark:hover:bg-slate-700">
-                      <Paperclip className="h-5 w-5 text-slate-500 dark:text-slate-400" />
+                      <LuPaperclip className="h-5 w-5 text-slate-500 dark:text-slate-400" />
                     </button>
                     <button className="rounded-full p-2 hover:bg-gray-100 dark:hover:bg-slate-700">
-                      <Smile className="h-5 w-5 text-slate-500 dark:text-slate-400" />
+                      <LuSmile className="h-5 w-5 text-slate-500 dark:text-slate-400" />
                     </button>
                     <input
                       type="text"
@@ -179,7 +186,7 @@ const LandingPageHero = () => {
                       className="mx-2 flex-1 rounded-full bg-gray-100 px-4 py-2 focus:ring-2 focus:ring-mainColor-500 focus:outline-none dark:bg-slate-700"
                     />
                     <button className="rounded-full bg-mainColor-600 p-2 text-white hover:bg-mainColor-700">
-                      <Send className="h-5 w-5" />
+                      <LuSend className="h-5 w-5" />
                     </button>
                   </div>
                 </div>

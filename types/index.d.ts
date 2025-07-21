@@ -29,6 +29,7 @@ type RequestUserType = {
   email?: string;
   isFriend?: boolean;
   isSentRequest?: boolean;
+  isReceivedRequest?: boolean;
 };
 
 type InstructorDetailsType = {

@@ -1,11 +1,11 @@
 import {
-  Calendar,
-  Cpu,
-  Image as ImageIcon,
-  Lock,
-  MessageSquare,
-  Phone,
-} from "lucide-react";
+  LuImage as ImageIcon,
+  LuCalendar,
+  LuCpu,
+  LuLock,
+  LuMessageSquare,
+  LuPhone,
+} from "react-icons/lu";
 
 const LandingPageFeatures = () => {
   return (
@@ -24,7 +24,7 @@ const LandingPageFeatures = () => {
         <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
           <div className="rounded-xl bg-site-background p-6">
             <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-mainColor-100 dark:bg-mainColor-900/50">
-              <Lock className="h-6 w-6 text-mainColor-600 dark:text-mainColor-400" />
+              <LuLock className="h-6 w-6 text-mainColor-600 dark:text-mainColor-400" />
             </div>
             <h3 className="mb-2 text-xl font-semibold">
               End-to-End Encryption
@@ -36,7 +36,7 @@ const LandingPageFeatures = () => {
           </div>
           <div className="rounded-xl bg-site-background p-6">
             <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-mainColor-100 dark:bg-mainColor-900/50">
-              <Cpu className="h-6 w-6 text-mainColor-600 dark:text-mainColor-400" />
+              <LuCpu className="h-6 w-6 text-mainColor-600 dark:text-mainColor-400" />
             </div>
             <h3 className="mb-2 text-xl font-semibold">Cross-Platform</h3>
             <p className="text-slate-600 dark:text-slate-300">
@@ -46,7 +46,7 @@ const LandingPageFeatures = () => {
           </div>
           <div className="rounded-xl bg-site-background p-6">
             <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-mainColor-100 dark:bg-mainColor-900/50">
-              <Calendar className="h-6 w-6 text-mainColor-600 dark:text-mainColor-400" />
+              <LuCalendar className="h-6 w-6 text-mainColor-600 dark:text-mainColor-400" />
             </div>
             <h3 className="mb-2 text-xl font-semibold">Message Scheduling</h3>
             <p className="text-slate-600 dark:text-slate-300">
@@ -66,7 +66,7 @@ const LandingPageFeatures = () => {
           </div>
           <div className="rounded-xl bg-site-background p-6">
             <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-mainColor-100 dark:bg-mainColor-900/50">
-              <MessageSquare className="h-6 w-6 text-mainColor-600 dark:text-mainColor-400" />
+              <LuMessageSquare className="h-6 w-6 text-mainColor-600 dark:text-mainColor-400" />
             </div>
             <h3 className="mb-2 text-xl font-semibold">Group Chats</h3>
             <p className="text-slate-600 dark:text-slate-300">
@@ -76,7 +76,7 @@ const LandingPageFeatures = () => {
           </div>
           <div className="rounded-xl bg-site-background p-6">
             <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-mainColor-100 dark:bg-mainColor-900/50">
-              <Phone className="h-6 w-6 text-mainColor-600 dark:text-mainColor-400" />
+              <LuPhone className="h-6 w-6 text-mainColor-600 dark:text-mainColor-400" />
             </div>
             <h3 className="mb-2 text-xl font-semibold">Voice & Video Calls</h3>
             <p className="text-slate-600 dark:text-slate-300">

@@ -186,12 +186,159 @@ export const getFriendsList = async () => {
   }
 };
 
+export const getSentRequests = async () => {
+  const cookieStore = await cookies();
+  const accessToken = cookieStore.get("accessToken")?.value;
+  try {
+    const res = await fetchWithErrorHandling("/user/sent-requests", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+
+    return res;
+  } catch (error: any) {
+    return { success: false, ...error };
+  }
+};
+
+export const getFriendsRequests = async () => {
+  const cookieStore = await cookies();
+  const accessToken = cookieStore.get("accessToken")?.value;
+  try {
+    const res = await fetchWithErrorHandling("/user/friend-requests", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+
+    return res;
+  } catch (error: any) {
+    return { success: false, ...error };
+  }
+};
+
+export const getBlockedList = async () => {
+  const cookieStore = await cookies();
+  const accessToken = cookieStore.get("accessToken")?.value;
+  try {
+    const res = await fetchWithErrorHandling("/user/blocked", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+
+    return res;
+  } catch (error: any) {
+    return { success: false, ...error };
+  }
+};
+
 export const findUser = async (email: string) => {
   const cookieStore = await cookies();
   const accessToken = cookieStore.get("accessToken")?.value;
   try {
     const res = await fetchWithErrorHandling(`/user/find/${email}`, {
       method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+
+    return res;
+  } catch (error: any) {
+    return { success: false, ...error };
+  }
+};
+
+export const sendFriendRequest = async (userId: string) => {
+  const cookieStore = await cookies();
+  const accessToken = cookieStore.get("accessToken")?.value;
+  try {
+    const res = await fetchWithErrorHandling(`/user/friend/${userId}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+
+    return res;
+  } catch (error: any) {
+    return { success: false, ...error };
+  }
+};
+
+export const acceptFriendRequest = async (userId: string) => {
+  const cookieStore = await cookies();
+  const accessToken = cookieStore.get("accessToken")?.value;
+  try {
+    const res = await fetchWithErrorHandling(`/user/accept-friend/${userId}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+
+    return res;
+  } catch (error: any) {
+    return { success: false, ...error };
+  }
+};
+
+export const cancelFriendRequest = async (userId: string) => {
+  const cookieStore = await cookies();
+  const accessToken = cookieStore.get("accessToken")?.value;
+  try {
+    const res = await fetchWithErrorHandling(
+      `/user/cancel-friend-request/${userId}`,
+      {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${accessToken}`,
+        },
+      },
+    );
+
+    return res;
+  } catch (error: any) {
+    return { success: false, ...error };
+  }
+};
+
+export const deleteFriend = async (userId: string) => {
+  const cookieStore = await cookies();
+  const accessToken = cookieStore.get("accessToken")?.value;
+  try {
+    const res = await fetchWithErrorHandling(`/user/friend/${userId}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+
+    return res;
+  } catch (error: any) {
+    return { success: false, ...error };
+  }
+};
+
+export const blockUser = async (userId: string) => {
+  const cookieStore = await cookies();
+  const accessToken = cookieStore.get("accessToken")?.value;
+  try {
+    const res = await fetchWithErrorHandling(`/user/block/${userId}`, {
+      method: "POST",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${accessToken}`,
