@@ -12,7 +12,9 @@ type SignInDataType = {
 };
 
 type UserType = {
+  _id: string;
   email: string;
+  bio: string;
   isEmailVerified: string;
   isPhoneVerified: string;
   name: string;
@@ -26,6 +28,7 @@ type RequestUserType = {
   _id: string;
   name: string;
   userProfileImage?: string;
+  bio?: string;
   email?: string;
   isFriend?: boolean;
   isSentRequest?: boolean;

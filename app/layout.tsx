@@ -1,4 +1,3 @@
-import Navbar from "@/components/Navbar";
 import { Toaster } from "@/components/ui/sonner";
 import { getUserData } from "@/lib/actions/user.actions";
 import type { Metadata } from "next";
@@ -36,6 +35,7 @@ export default async function RootLayout({
   const messages = await getMessages();
   const direction = getLangDir(locale);
   const getUserRes = await getUserData();
+  console.log(getUserRes?.userData);
   return (
     <html
       lang={locale}
@@ -54,7 +54,6 @@ export default async function RootLayout({
             enableSystem
             disableTransitionOnChange
           >
-            {!getUserRes.success && <Navbar />}
             {children}
           </ThemeProvider>
         </NextIntlClientProvider>

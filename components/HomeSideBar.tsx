@@ -1,3 +1,4 @@
+"use client";
 import { cn } from "@/lib/utils";
 import {
   LuCircleDotDashed,
@@ -8,75 +9,54 @@ import {
   LuUsers,
 } from "react-icons/lu";
 
+import { PageType, usePageStore } from "@/store/pageStore";
+import { useUserStore } from "@/store/userStore";
+import { useEffect } from "react";
+import { useShallow } from "zustand/react/shallow";
 import { Separator } from "./ui/separator";
 import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
-
 type Props = {
-  page: string;
-  setPage: React.Dispatch<React.SetStateAction<string>>;
+  userProp?: UserType;
 };
-
-const HomeSideBar = ({ page, setPage }: Props) => {
+const HomeSideBar = ({ userProp }: Props) => {
+  const changeUserData = useUserStore((state) => state.changeUserData);
+  useEffect(() => {
+    if (userProp) {
+      changeUserData(userProp);
+    }
+  }, [userProp, changeUserData]);
   return (
     <div className="flex flex-col overflow-hidden bg-site-foreground px-2 py-3.5">
       <div className="flex flex-col items-center justify-center">
-        <SideBarButton
-          setPage={setPage}
-          Icon={LuMessageSquareText}
-          page="chat"
-          currentPage={page}
-        />
-        <SideBarButton
-          setPage={setPage}
-          Icon={LuCircleDotDashed}
-          page="status"
-          currentPage={page}
-        />
-        <SideBarButton
-          setPage={setPage}
-          Icon={LuUsers}
-          page="friends"
-          currentPage={page}
-        />
-        <SideBarButton
-          setPage={setPage}
-          Icon={LuUserRoundX}
-          page="blocks"
-          currentPage={page}
-        />
+        <SideBarButton Icon={LuMessageSquareText} page="chat" />
+        <SideBarButton Icon={LuCircleDotDashed} page="status" />
+        <SideBarButton Icon={LuUsers} page="friends" />
+        <SideBarButton Icon={LuUserRoundX} page="blocks" />
       </div>
       <div className="flex-1">
         <Separator />
       </div>
       <div className="flex flex-col">
-        <SideBarButton
-          setPage={setPage}
-          Icon={LuSettings}
-          page="settings"
-          currentPage={page}
-        />
-        <SideBarButton
-          setPage={setPage}
-          Icon={LuUser}
-          page="profile"
-          currentPage={page}
-        />
+        <SideBarButton Icon={LuSettings} page="settings" />
+        <SideBarButton Icon={LuUser} page="profile" />
       </div>
     </div>
   );
 };
 
 const SideBarButton = ({
-  setPage,
   Icon,
   page,
-  currentPage,
 }: {
-  setPage: React.Dispatch<React.SetStateAction<string>>;
   Icon: React.ComponentType<{ size?: number }>;
-  page: string;
-  currentPage: string;
+  page: PageType;
 }) => {
+  const { currentPage, setPage } = usePageStore(
+    useShallow((state) => ({
+      currentPage: state.page,
+      setPage: state.setPage,
+    })),
+  );
   const isActive = page === currentPage;
   return (
     <Tooltip>

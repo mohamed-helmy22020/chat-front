@@ -37,11 +37,11 @@ type Props = {
 };
 
 const RequestUserCard = ({
-  user: { _id, userProfileImage, name },
+  user: { _id, userProfileImage, name, bio },
   type = "friends",
 }: Props) => {
   return (
-    <div className="flex w-full cursor-pointer rounded-md px-3 py-1.5 hover:bg-site-foreground">
+    <div className="flex min-h-15 w-full cursor-pointer rounded-md px-3 py-1.5 hover:bg-site-foreground">
       <div className="me-2 flex items-center">
         <Image
           className="rounded-full object-cover"
@@ -51,11 +51,9 @@ const RequestUserCard = ({
           height={25}
         />
       </div>
-      <div className="flex flex-1 flex-col items-start">
+      <div className="flex flex-1 flex-col items-start justify-center">
         <h1 className="text-md font-bold capitalize">{name}</h1>
-        <p className="line-clamp-1 text-sm text-gray-500">
-          wefwefwe ewfwef fwefwef wefwef
-        </p>
+        {bio && <p className="line-clamp-1 text-sm text-gray-500">{bio}</p>}
       </div>
       <div className="flex items-center text-gray-300">
         {(type === "friends" && <FriendsMenu userId={_id} />) ||

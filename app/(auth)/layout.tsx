@@ -1,3 +1,4 @@
+import Navbar from "@/components/Navbar";
 import { getUserData } from "@/lib/actions/user.actions";
 import { redirect } from "next/navigation";
 
@@ -11,5 +12,10 @@ export default async function RootLayout({
   if (getUserRes.success) {
     redirect("/");
   }
-  return <>{children}</>;
+  return (
+    <>
+      <Navbar />
+      {children}
+    </>
+  );
 }

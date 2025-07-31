@@ -1,23 +1,13 @@
-"use client";
-import { useState } from "react";
-import BlockedList from "./BlockedList";
-import Chat from "./Chat";
-import FriendsList from "./FriendsList";
 import HomeSideBar from "./HomeSideBar";
-import Status from "./Status";
-
-const HomePage = () => {
-  const [page, setPage] = useState("chat");
-
+import RenderPage from "./RenderPage";
+type Props = {
+  userProp?: UserType;
+};
+const HomePage = ({ userProp }: Props) => {
   return (
     <div className="flex min-h-screen overflow-hidden">
-      <HomeSideBar setPage={setPage} page={page} />
-      {page === "chat" && <Chat />}
-      {page === "status" && <Status />}
-      {page === "friends" && <FriendsList />}
-      {page === "blocks" && <BlockedList />}
-      {page === "settings" && <Status />}
-      {page === "profile" && <Status />}
+      <HomeSideBar userProp={userProp} />
+      <RenderPage />
     </div>
   );
 };
