@@ -1,6 +1,4 @@
-type Props = {};
-
-const Status = (props: Props) => {
+const Status = () => {
   return <div>Status</div>;
 };
 

@@ -69,9 +69,7 @@ const RequestUserCard = ({
 const FriendsMenu = ({ userId }: { userId: string }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
-  const handleUnFriendUser = async (
-    e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
-  ) => {
+  const handleUnFriendUser = async () => {
     const unfriendUserRes = deleteFriend(userId);
 
     toast.promise(unfriendUserRes, {
@@ -87,9 +85,7 @@ const FriendsMenu = ({ userId }: { userId: string }) => {
       error: "Error",
     });
   };
-  const handleBlockUser = async (
-    e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
-  ) => {
+  const handleBlockUser = async () => {
     const blockUserRes = blockUser(userId);
 
     toast.promise(blockUserRes, {

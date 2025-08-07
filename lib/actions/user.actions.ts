@@ -137,6 +137,7 @@ export const resetPassword = async (
 export const getUserData = async () => {
   const cookieStore = await cookies();
   const accessToken = cookieStore.get("accessToken")?.value;
+  console.log({ accessToken });
   try {
     const userData = await fetchWithErrorHandling("/user/data", {
       method: "GET",

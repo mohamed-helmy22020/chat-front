@@ -9,6 +9,7 @@ import { IoAlertCircleSharp } from "react-icons/io5";
 import { useTranslations } from "next-intl";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import z from "zod";
@@ -18,6 +19,7 @@ import { Button } from "./ui/button";
 import { Form } from "./ui/form";
 
 const AuthForm = ({ type }: { type: "sign-up" | "sign-in" }) => {
+  const router = useRouter();
   const tError = useTranslations("Errors");
   const t = useTranslations("Auth");
   const [isLoading, setIsLoading] = useState(false);
@@ -81,6 +83,7 @@ const AuthForm = ({ type }: { type: "sign-up" | "sign-in" }) => {
         if (!response.success) {
           throw new Error(response.error.msg);
         }
+        router.replace("/");
       }
       if (type === "sign-in") {
         const userData: SignInDataType = {
@@ -91,6 +94,7 @@ const AuthForm = ({ type }: { type: "sign-up" | "sign-in" }) => {
         if (!response.success) {
           throw new Error(response.error.msg);
         }
+        router.replace("/");
       }
     } catch (error: any) {
       setError(convertErrors(error.message));

@@ -1,6 +1,4 @@
-type Props = {};
-
-const ConversationsList = (props: Props) => {
+const ConversationsList = () => {
   return <div className="w-4/12 overflow-hidden">ConversationsList</div>;
 };
 

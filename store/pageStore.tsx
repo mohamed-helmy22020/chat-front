@@ -1,6 +1,6 @@
 import { produce } from "immer";
 import { create } from "zustand";
-import { devtools, persist } from "zustand/middleware";
+import { devtools } from "zustand/middleware";
 export type PageType =
   | "chat"
   | "status"
@@ -14,21 +14,18 @@ export interface pageStateType {
 }
 export const usePageStore = create<pageStateType>()(
   devtools(
-    persist(
-      (set) => ({
-        page: "chat",
-        setPage: (page: PageType) =>
-          set(
-            produce((state: pageStateType) => {
-              state.page = page;
-            }),
-          ),
-      }),
-      //options
-      {
-        name: "pageStore",
-      },
-    ),
-    { name: "pageStore" },
+    (set) => ({
+      page: "chat",
+      setPage: (page: PageType) =>
+        set(
+          produce((state: pageStateType) => {
+            state.page = page;
+          }),
+        ),
+    }),
+    //options
+    {
+      name: "pageStore",
+    },
   ),
 );

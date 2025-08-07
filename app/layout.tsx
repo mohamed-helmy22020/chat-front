@@ -1,5 +1,4 @@
 import { Toaster } from "@/components/ui/sonner";
-import { getUserData } from "@/lib/actions/user.actions";
 import type { Metadata } from "next";
 import { NextIntlClientProvider } from "next-intl";
 import { getLocale, getMessages } from "next-intl/server";
@@ -34,8 +33,6 @@ export default async function RootLayout({
   const locale = await getLocale();
   const messages = await getMessages();
   const direction = getLangDir(locale);
-  const getUserRes = await getUserData();
-  console.log(getUserRes?.userData);
   return (
     <html
       lang={locale}
