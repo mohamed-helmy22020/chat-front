@@ -19,7 +19,7 @@ const StatusCard = ({
   );
 
   return (
-    <div className="rounded-smselect-none rounded-sm hover:bg-gray-800">
+    <div className="rounded-sm select-none hover:bg-gray-800">
       <Button
         className="flex h-full w-full cursor-pointer gap-3 rounded-sm px-2 py-3"
         variant="ghostFull"
@@ -40,7 +40,7 @@ const StatusCard = ({
           />
         </div>
         <div className="flex flex-1 flex-col items-start justify-center">
-          <h1 className="text-sm capitalize">{name}</h1>
+          <h2 className="text-sm capitalize">{name}</h2>
           <p className="line-clamp-1 text-xs text-gray-500">
             {formatDateToStatus(date)}
           </p>
