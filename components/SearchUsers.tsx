@@ -52,7 +52,7 @@ const SearchUsers = () => {
         <div>
           <Tooltip>
             <TooltipTrigger asChild>
-              <Button className="" variant="ghostFull">
+              <Button className="cursor-pointer" variant="ghostFull">
                 <CiCirclePlus />
               </Button>
             </TooltipTrigger>
@@ -109,7 +109,7 @@ const SearchUsers = () => {
             ) : searchedUsers === null && !isSearching ? (
               <Alert variant="destructive">
                 <IoAlertCircleSharp />
-                <AlertTitle>Unable to find this user</AlertTitle>
+                <AlertTitle>User with this email doesn&apos;t exist</AlertTitle>
               </Alert>
             ) : null}
           </div>

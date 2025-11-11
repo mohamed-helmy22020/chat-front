@@ -5,9 +5,8 @@ import { getUserData } from "@/lib/actions/user.actions";
 
 export default async function Home() {
   const getUserRes = await getUserData();
-  console.log({ getUserRes });
   if (getUserRes.success) {
-    return <HomePage userProp={getUserRes?.userData} />;
+    return <HomePage />;
   }
   return (
     <>

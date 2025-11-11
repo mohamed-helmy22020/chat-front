@@ -54,7 +54,7 @@ export default async function RootLayout({
             {children}
           </ThemeProvider>
         </NextIntlClientProvider>
-        <Toaster />
+        <Toaster richColors visibleToasts={1} closeButton />
       </body>
     </html>
   );

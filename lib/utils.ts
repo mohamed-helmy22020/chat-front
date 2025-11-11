@@ -62,13 +62,13 @@ export const fetchWithErrorHandling = async (
 ) => {
   try {
     const response = await fetchAbsolute(url, init);
+
     if (!response.ok) {
       const error = await response.json();
       throw error;
     }
     return await response.json();
   } catch (error: any) {
-    console.log({ error });
     if (error.name === "TypeError") {
       error.msg = "Network error or server is unreachable.";
     } else {
@@ -85,3 +85,100 @@ export const validateEmail = (email: string) => {
       /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
     );
 };
+export function formatDateToStatus(dateString: string) {
+  const inputDate = new Date(dateString);
+  const today = new Date();
+  const yesterday = new Date();
+  yesterday.setDate(yesterday.getDate() - 1);
+
+  // Reset time to 00:00:00 to compare dates only
+  const inputDateOnly = new Date(
+    inputDate.getFullYear(),
+    inputDate.getMonth(),
+    inputDate.getDate(),
+  );
+  const todayOnly = new Date(
+    today.getFullYear(),
+    today.getMonth(),
+    today.getDate(),
+  );
+  const yesterdayOnly = new Date(
+    yesterday.getFullYear(),
+    yesterday.getMonth(),
+    yesterday.getDate(),
+  );
+
+  let label;
+  if (inputDateOnly.getTime() === todayOnly.getTime()) {
+    label = "Today";
+  } else if (inputDateOnly.getTime() === yesterdayOnly.getTime()) {
+    label = "Yesterday";
+  } else {
+    return inputDate.toLocaleDateString();
+  }
+
+  // Format time: 6:06 AM (no seconds, with AM/PM)
+  const timeStr = inputDate.toLocaleTimeString("en-US", {
+    hour: "numeric",
+    minute: "2-digit",
+    hour12: true,
+  });
+
+  return `${label}, ${timeStr}`;
+}
+
+export function sortStatuses(statuses: FriendsStatusType[]) {
+  const sorted = [...statuses].sort(
+    (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+  );
+  const object: Record<string, FriendsStatusType[]> = {};
+  for (const item of sorted) {
+    if (item.userId._id in object) {
+      object[item.userId._id].push(item);
+    } else {
+      object[item.userId._id] = [item];
+    }
+  }
+  return Object.values(object);
+}
+
+export function isTextExceeded(
+  text: string,
+  maxChar: number = 700,
+  maxLine: number = 5,
+) {
+  if (!text || typeof text !== "string") {
+    return false;
+  }
+
+  const charCount = text.length;
+  const lineCount = text.split("\n").length;
+
+  return charCount > maxChar || lineCount > maxLine;
+}
+
+export function getFontSizeForText(textLength: number, options: any = {}) {
+  // Default options
+  const {
+    minFontSize = 25, // Minimum font size (px)
+    maxFontSize = 64, // Maximum font size (px)
+    minLength = 1, // Text length at which to use maxFontSize
+    maxLength = 200, // Text length at which to use minFontSize
+  } = options;
+
+  if (!textLength || typeof textLength !== "number") {
+    return `${maxFontSize}px`;
+  }
+
+  // If length is outside the range, clamp the font size
+  if (textLength <= minLength) return maxFontSize;
+  if (textLength >= maxLength) return minFontSize;
+
+  // Linear interpolation between max and min font size
+  const fontSize =
+    maxFontSize -
+    ((textLength - minLength) / (maxLength - minLength)) *
+      (maxFontSize - minFontSize);
+
+  return `${Math.ceil(fontSize)}px`;
+}

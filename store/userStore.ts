@@ -3,7 +3,7 @@ import { create } from "zustand";
 import { devtools, persist } from "zustand/middleware";
 export interface userStateType {
   user: UserType | null;
-  changeUserData: (user: any) => void;
+  changeUserData: (user: Partial<UserType>) => void;
   logout: () => void;
 }
 export const useUserStore = create<userStateType>()(

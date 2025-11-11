@@ -19,6 +19,7 @@ export const signUp = async (userData: SignUpDataType) => {
       httpOnly: true,
       secure: true,
       sameSite: "strict",
+      expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 30), // 30 days
     });
 
     return {
@@ -56,6 +57,7 @@ export const signIn = async (userData: SignInDataType) => {
       httpOnly: true,
       secure: true,
       sameSite: "strict",
+      expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 30),
     });
 
     return {
@@ -63,7 +65,6 @@ export const signIn = async (userData: SignInDataType) => {
       data: response.user,
     };
   } catch (error: any) {
-    console.log(error);
     cookieStore.set("accessToken", "", {
       httpOnly: true,
       secure: true,
@@ -73,7 +74,7 @@ export const signIn = async (userData: SignInDataType) => {
     return {
       success: false,
       error: {
-        msg: error.message || error.msg,
+        msg: error.msg || error.message,
       },
     };
   }
@@ -362,6 +363,62 @@ export const unblockUser = async (userId: string) => {
         "Content-Type": "application/json",
         Authorization: `Bearer ${accessToken}`,
       },
+    });
+
+    return res;
+  } catch (error: any) {
+    return { success: false, ...error };
+  }
+};
+
+export const getUserStatuses = async () => {
+  const cookieStore = await cookies();
+  const accessToken = cookieStore.get("accessToken")?.value;
+  try {
+    const res = await fetchWithErrorHandling(`/status`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+
+    return res;
+  } catch (error: any) {
+    return { success: false, ...error };
+  }
+};
+
+export const getFriendsStatuses = async () => {
+  const cookieStore = await cookies();
+  const accessToken = cookieStore.get("accessToken")?.value;
+  try {
+    const res = await fetchWithErrorHandling(`/status/friends`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+
+    return res;
+  } catch (error: any) {
+    return { success: false, ...error };
+  }
+};
+
+export const addTextStatus = async (text: string) => {
+  const cookieStore = await cookies();
+  const accessToken = cookieStore.get("accessToken")?.value;
+  const formData = new FormData();
+  formData.append("content", text);
+  try {
+    const res = await fetchWithErrorHandling(`/status`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+      body: formData,
     });
 
     return res;

@@ -51,7 +51,7 @@ const SentRequestsList = () => {
         <div>
           <Tooltip>
             <TooltipTrigger asChild>
-              <Button className="" variant="ghostFull">
+              <Button className="cursor-pointer" variant="ghostFull">
                 <RiUserShared2Line />
               </Button>
             </TooltipTrigger>

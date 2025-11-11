@@ -50,7 +50,7 @@ const ReceivedRequestsList = () => {
         <div>
           <Tooltip>
             <TooltipTrigger asChild>
-              <Button className="" variant="ghostFull">
+              <Button className="cursor-pointer" variant="ghostFull">
                 <RiUserReceived2Line />
               </Button>
             </TooltipTrigger>

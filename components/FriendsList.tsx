@@ -51,7 +51,7 @@ const FriendsList = () => {
           </div>
         ) : !isLoading && friendsListElements.length <= 0 ? (
           <div className="p-5">
-            <Alert variant="destructive" className="bg-site-foreground">
+            <Alert variant="warning" className="bg-site-foreground">
               <IoAlertCircleSharp />
               <AlertTitle>You dont have any friends</AlertTitle>
             </Alert>

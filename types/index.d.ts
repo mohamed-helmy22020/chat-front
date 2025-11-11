@@ -1,4 +1,3 @@
-declare module "react-range-slider-input";
 type SignUpDataType = {
   name: string;
   phone: string;
@@ -23,6 +22,7 @@ type UserType = {
   userProfileImage: string;
   accessToken?: string;
 };
+type MiniUserType = Pick<UserType, "_id" | "name" | "userProfileImage">;
 
 type RequestUserType = {
   _id: string;
@@ -35,104 +35,6 @@ type RequestUserType = {
   isReceivedRequest?: boolean;
 };
 
-type InstructorDetailsType = {
-  id: string;
-  name: string;
-  userProfileImage: string;
-};
-
-type CoursesType = {
-  courses: CourseType[];
-  nbHits: number;
-};
-
-type CourseType = {
-  id: string;
-  instructorDetails: InstructorDetailsType;
-  title: string;
-  description: string;
-  price: string;
-  picture: string;
-  overview: string;
-  overviewPlaybackUrl?: string;
-  category: string;
-  rates: number[];
-  rating: number;
-  lecturesCount: number;
-  createdAt: string;
-  isFav: boolean;
-  lectures: [
-    {
-      id: string;
-      title: string;
-    },
-  ];
-  students: number;
-  userRate?: number;
-  lecturesFinished?: number;
-};
-
-type LectureType = {
-  lectureId: string;
-  title: string;
-  description: string;
-  videoUrl: string;
-  playbackUrl: string;
-  thumbnailUrl: string;
-  courseId: string;
-  lectureNumber: number;
-  instructorId: string;
-  rates: number[];
-  rating: number;
-  createdAt: string;
-  duration: number;
-  progress: {
-    duration: number;
-    isDone: boolean;
-  };
-};
-
-type CouponType = {
-  id: string;
-  coupon: string;
-  courseId: string;
-  discountPercentage: number;
-  numberOfUses: number;
-  userLimit: number;
-  expiryDate: string;
-};
-
-type FiltersType = {
-  search?: string;
-  title?: string;
-  description?: string;
-  category?: string;
-  numericFilters?: string;
-  sort?: string;
-  fields?: string;
-  page?: string;
-  limit?: string;
-};
-
-type getAllCoursesType = "all" | "enrolled" | "uploaded" | "fav";
-
-type NoteType = {
-  id: string;
-  note: string;
-  videoSeconds: number;
-  lecture: {
-    _id: string;
-    title: string;
-    lectureNumber: number;
-  };
-};
-
-type InstructorType = {
-  userProfileImage: string;
-  _id: string;
-  name: string;
-  email: string;
-};
 type ConversationType = {
   id: string;
   participants: participant[];
@@ -158,23 +60,25 @@ type MessageType = {
   updatedAt: string;
 };
 
-type NotificationType = {
-  id: string;
-  recipient: string;
-  type: "new_lecture" | "course_purchased";
-  course: {
-    _id: string;
-    title: string;
-    picture: string;
-    students: number;
-  };
-  lecture?: {
-    _id: string;
-    title: string;
-    thumbnailUrl: string;
-  };
-  count: number;
-  seen: boolean;
+type FriendsStatusType = {
+  _id: string;
+  userId: MiniUserType;
+  content: string;
+  expiresAt: string;
+  mediaUrl: string;
+  mediaType: string;
   createdAt: string;
-  updatedAt: string;
+  isSeen: boolean;
+};
+
+type UserStatusType = Omit<FriendsStatusType, "isSeen"> & {
+  viewers: MiniUserType;
+};
+
+type CurrentStatusType = {
+  isMe: boolean;
+  statuses: FriendsStatusType[] | UserStatusType[];
+  userId: string;
+  count: number;
+  currentIndex: number;
 };
