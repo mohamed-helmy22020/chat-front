@@ -53,7 +53,7 @@ const ConversationMessages = () => {
       key={message.id}
       isFirstMessage={
         index === 0 ||
-        currentConversationMessages[index - 1].from === message.from
+        currentConversationMessages[index - 1].from !== message.from
       }
       isMine={message.from === user?._id}
       message={message}

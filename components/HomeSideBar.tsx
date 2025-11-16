@@ -40,6 +40,7 @@ const HomeSideBar = ({ userProp }: Props) => {
     isConnected,
     changeLastMessage,
     addMessage,
+    changeIsTyping,
   } = useChatStore(
     useShallow((state) => ({
       changeIsConnected: state.changeIsConnected,
@@ -49,6 +50,7 @@ const HomeSideBar = ({ userProp }: Props) => {
       changeSearch: state.changeSearch,
       changeLastMessage: state.changeLastMessage,
       addMessage: state.addMessage,
+      changeIsTyping: state.changeIsTyping,
     })),
   );
 
@@ -74,16 +76,30 @@ const HomeSideBar = ({ userProp }: Props) => {
       }
     };
 
+    const onTyping = (res: OnTypingRes) => {
+      console.log({ res });
+      changeIsTyping(res.conversationId, res.isTyping);
+    };
+
     chatSocket.on("receiveMessage", onReceiveMessage);
+    chatSocket.on("typing", onTyping);
     chatSocket.on("connect", onConnect);
     chatSocket.on("disconnect", onDisconnect);
 
     return () => {
       chatSocket.off("receiveMessage", onReceiveMessage);
+      chatSocket.off("typing", onTyping);
       chatSocket.off("connect", onConnect);
       chatSocket.off("disconnect", onDisconnect);
     };
-  }, [changeIsConnected, changeConversations, user, changeLastMessage]);
+  }, [
+    changeIsConnected,
+    changeConversations,
+    user,
+    changeLastMessage,
+    addMessage,
+    changeIsTyping,
+  ]);
 
   useEffect(() => {
     const getData = async () => {

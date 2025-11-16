@@ -8,7 +8,6 @@ type State = {
   currentConversation: ConversationType | null;
   currentConversationMessages: MessageType[];
   isConnected: boolean;
-  isSending: boolean;
 };
 
 type Actions = {
@@ -19,7 +18,7 @@ type Actions = {
   changeCurrentConversationMessages: (messages: MessageType[]) => void;
   addMessage: (message: MessageType, conversation: ConversationType) => void;
   changeIsConnected: (isConnected: boolean) => void;
-  changeIsSending: (isSending: boolean) => void;
+  changeIsTyping: (conversationId: string, isTyping: boolean) => void;
   changeLastMessage: (
     conversation: ConversationType,
     lastMessage: MessageType,
@@ -33,7 +32,6 @@ const initialState: State = {
   currentConversation: null,
   currentConversationMessages: [],
   isConnected: false,
-  isSending: false,
 };
 export const useChatStore = create<State & Actions>()(
   devtools(
@@ -96,11 +94,18 @@ export const useChatStore = create<State & Actions>()(
               state.isConnected = isConnected;
             }),
           ),
-
-        changeIsSending: (isSending: boolean) =>
+        changeIsTyping: (conversationId: string, isTyping: boolean) =>
           set(
             produce((state: State & Actions) => {
-              state.isSending = isSending;
+              const conversationIndex = state.conversations.findIndex(
+                (c) => c.id === conversationId,
+              );
+              if (state.currentConversation?.id === conversationId) {
+                state.currentConversation.isTyping = isTyping;
+              }
+              if (conversationIndex > -1) {
+                state.conversations[conversationIndex].isTyping = isTyping;
+              }
             }),
           ),
         changeLastMessage: (
@@ -137,6 +142,9 @@ export const useChatStore = create<State & Actions>()(
               console.log("an error happened during hydration", error);
             } else {
               console.log("hydration finished");
+              if (state?.currentConversation) {
+                state.currentConversation = null;
+              }
             }
           };
         },

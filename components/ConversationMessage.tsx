@@ -54,7 +54,7 @@ const ConversationMessage = ({
           alt="user-1"
         />
       ) : (
-        <div className="h-10 w-10"></div>
+        <div className="h-10 w-10 flex-shrink-0"></div>
       )}
       <div className="ms-2">
         <div className="message-bubble rounded-xs bg-white px-2 py-2 shadow-sm dark:bg-slate-600">

@@ -8,6 +8,7 @@ import { Textarea } from "./ui/textarea";
 
 const ConversationFooter = () => {
   const [message, setMessage] = useState<string>("");
+  const [isTyping, setIsTyping] = useState<boolean>(false);
   const user = useUserStore((state) => state.user);
   const currentConversation = useChatStore(
     (state) => state.currentConversation,
@@ -43,7 +44,16 @@ const ConversationFooter = () => {
           className="no-scrollbar mx-2 max-h-[80px] min-h-6 flex-1 resize-none bg-site-background px-4 py-2 focus:outline-none focus-visible:ring-0"
           placeholder="Type a message..."
           name="message"
-          onChange={(e) => setMessage(e.target.value)}
+          onChange={(e) => {
+            setMessage(e.target.value);
+            if (e.target.value.trim() === "") {
+              chatSocket.emit("typing", to, false);
+              setIsTyping(false);
+            } else if (!isTyping) {
+              chatSocket.emit("typing", to, true);
+              setIsTyping(true);
+            }
+          }}
           onKeyDown={handleKeyDown}
           value={message}
         />

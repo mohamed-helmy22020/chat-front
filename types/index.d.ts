@@ -41,10 +41,16 @@ type ReceiveMessageType = {
   conversation: ConversationType;
 };
 
+type OnTypingRes = {
+  conversationId: string;
+  isTyping: boolean;
+};
+
 type ConversationType = {
   id: string;
   participants: participant[];
   lastMessage: Omit<MessageType, "conversationId">;
+  isTyping?: boolean;
   createdAt: string;
   updatedAt: string;
 };

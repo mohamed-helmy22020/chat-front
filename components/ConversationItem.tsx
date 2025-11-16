@@ -1,7 +1,9 @@
 import { formatDateToStatus } from "@/lib/utils";
 import { useChatStore } from "@/store/chatStore";
 import { useUserStore } from "@/store/userStore";
+import clsx from "clsx";
 import Image from "next/image";
+import { useShallow } from "zustand/react/shallow";
 import { Button } from "./ui/button";
 type Props = {
   conversation: ConversationType;
@@ -10,15 +12,29 @@ const ConversationItem = ({ conversation }: Props) => {
   const { lastMessage, participants } = conversation;
   const userId = useUserStore((state) => state.user?._id);
   const otherSide = participants.find((p) => p._id !== userId);
-  const changeCurrentConversation = useChatStore(
-    (state) => state.changeCurrentConversation,
-  );
+  const { changeCurrentConversation, changeLastMessage, currentCOnversation } =
+    useChatStore(
+      useShallow((state) => ({
+        changeCurrentConversation: state.changeCurrentConversation,
+        changeLastMessage: state.changeLastMessage,
+        currentCOnversation: state.currentConversation,
+      })),
+    );
   const chooseChat = () => {
-    console.log("choose chat with", otherSide?._id);
     changeCurrentConversation(conversation);
+    changeLastMessage(conversation, {
+      ...conversation.lastMessage,
+      conversationId: conversation.id,
+      seen: true,
+    });
   };
   return (
-    <div className="rounded-sm select-none hover:bg-gray-800">
+    <div
+      className={clsx(
+        "rounded-sm select-none hover:bg-gray-800",
+        currentCOnversation?.id === conversation.id && "bg-gray-800",
+      )}
+    >
       <Button
         className="flex h-full w-full cursor-pointer justify-start gap-3 rounded-sm px-2 py-3"
         variant="ghostFull"
@@ -39,8 +55,14 @@ const ConversationItem = ({ conversation }: Props) => {
               {formatDateToStatus(lastMessage.createdAt)}
             </p>
           </div>
-          <div className="max-w-full truncate font-light">
-            {lastMessage.text}
+          <div
+            className={clsx(
+              "max-w-full truncate font-light text-slate-400",
+              lastMessage.from !== userId && !lastMessage.seen && "text-white",
+              conversation.isTyping && "animate-pulse",
+            )}
+          >
+            {conversation.isTyping ? "Typing..." : lastMessage.text}
           </div>
         </div>
       </Button>
