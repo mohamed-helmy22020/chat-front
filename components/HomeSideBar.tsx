@@ -9,6 +9,9 @@ import {
   LuUsers,
 } from "react-icons/lu";
 
+import { getAllConversations } from "@/lib/actions/user.actions";
+import { chatSocket } from "@/src/socket";
+import { useChatStore } from "@/store/chatStore";
 import { PageType, usePageStore } from "@/store/pageStore";
 import { useUserStore } from "@/store/userStore";
 import { useEffect } from "react";
@@ -19,12 +22,95 @@ type Props = {
   userProp?: UserType;
 };
 const HomeSideBar = ({ userProp }: Props) => {
-  const changeUserData = useUserStore((state) => state.changeUserData);
+  const { user, changeUserData } = useUserStore(
+    useShallow((state) => ({
+      changeUserData: state.changeUserData,
+      user: state.user,
+    })),
+  );
   useEffect(() => {
     if (userProp) {
       changeUserData(userProp);
     }
   }, [userProp, changeUserData]);
+
+  const {
+    changeIsConnected,
+    changeConversations,
+    isConnected,
+    changeLastMessage,
+    addMessage,
+  } = useChatStore(
+    useShallow((state) => ({
+      changeIsConnected: state.changeIsConnected,
+      isConnected: state.isConnected,
+      changeConversations: state.changeConversations,
+      changeCurrentConversation: state.changeCurrentConversation,
+      changeSearch: state.changeSearch,
+      changeLastMessage: state.changeLastMessage,
+      addMessage: state.addMessage,
+    })),
+  );
+
+  useEffect(() => {
+    if (chatSocket.connected) {
+      changeIsConnected(true);
+    }
+    const onConnect = () => {
+      console.log("chat connected");
+      changeIsConnected(true);
+    };
+    const onDisconnect = () => {
+      console.log("chat disconnect");
+      changeIsConnected(false);
+    };
+    const onReceiveMessage = (res: ReceiveMessageType) => {
+      console.log("message received", res);
+      if (res.success) {
+        changeLastMessage(res.conversation, res.message);
+        addMessage(res.message, res.conversation);
+      } else {
+        console.log("Error receiving message");
+      }
+    };
+
+    chatSocket.on("receiveMessage", onReceiveMessage);
+    chatSocket.on("connect", onConnect);
+    chatSocket.on("disconnect", onDisconnect);
+
+    return () => {
+      chatSocket.off("receiveMessage", onReceiveMessage);
+      chatSocket.off("connect", onConnect);
+      chatSocket.off("disconnect", onDisconnect);
+    };
+  }, [changeIsConnected, changeConversations, user, changeLastMessage]);
+
+  useEffect(() => {
+    const getData = async () => {
+      try {
+        const getConversationsRes = await getAllConversations();
+        console.log(getConversationsRes.conversations);
+        changeConversations(getConversationsRes.conversations);
+      } catch (e: any) {
+        console.log("Error getting conversations", e);
+      }
+    };
+
+    if (isConnected) {
+      console.log({ isConnected }, "getting Data");
+      getData();
+    }
+  }, [isConnected, changeConversations]);
+
+  useEffect(() => {
+    if (user?.accessToken) {
+      chatSocket.io.opts.extraHeaders = {
+        Authorization: `Bearer ${user?.accessToken}`,
+      };
+      chatSocket.connect();
+    }
+  }, [user]);
+
   return (
     <div className="flex flex-col overflow-hidden bg-site-foreground px-2 py-3.5">
       <div className="flex flex-col items-center justify-center">

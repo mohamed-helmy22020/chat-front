@@ -35,12 +35,18 @@ type RequestUserType = {
   isReceivedRequest?: boolean;
 };
 
+type ReceiveMessageType = {
+  success: boolean;
+  message: MessageType;
+  conversation: ConversationType;
+};
+
 type ConversationType = {
   id: string;
   participants: participant[];
-  lastMessage: MessageType;
-  createdAt: "2025-04-30T02:40:34.873Z";
-  updatedAt: "2025-04-30T22:40:08.395Z";
+  lastMessage: Omit<MessageType, "conversationId">;
+  createdAt: string;
+  updatedAt: string;
 };
 
 type participant = {
@@ -50,12 +56,12 @@ type participant = {
 };
 
 type MessageType = {
-  conversationId;
-  seen: boolean;
   id: string;
+  conversationId: string;
   from: string;
   to: string;
   text: string;
+  seen: boolean;
   createdAt: string;
   updatedAt: string;
 };

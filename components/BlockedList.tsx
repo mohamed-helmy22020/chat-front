@@ -13,7 +13,6 @@ const BlockedList = () => {
       setIsLoading(true);
       try {
         const getBlockedListRes = await getBlockedList();
-        console.log(getBlockedListRes);
         setBlockedList(getBlockedListRes.blockedUsers);
       } catch (error) {
         console.log(error);

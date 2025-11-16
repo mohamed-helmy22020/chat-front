@@ -24,7 +24,6 @@ const SentRequestsList = () => {
   ));
 
   useEffect(() => {
-    console.log("ewfwef");
     const fetchSentRequests = async () => {
       setIsLoading(true);
       try {

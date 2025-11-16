@@ -184,6 +184,19 @@
       border: 1px solid rgba(30, 41, 59, 0.3);
     }
   }
+  .no-scrollbar {
+    scrollbar-width: none;
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    width: 0px;
+  }
+  pre {
+    white-space: pre-wrap;
+    white-space: -moz-pre-wrap;
+    white-space: -pre-wrap;
+    white-space: -o-pre-wrap;
+    word-wrap: break-word;
+  }
   .loader {
     position: relative;
     border-radius: 50%;

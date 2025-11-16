@@ -426,3 +426,39 @@ export const addTextStatus = async (text: string) => {
     return { success: false, ...error };
   }
 };
+
+export const getAllConversations = async () => {
+  const cookieStore = await cookies();
+  const accessToken = cookieStore.get("accessToken")?.value;
+
+  try {
+    const res = await fetchWithErrorHandling(`/chat/conversations`, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+
+    return { success: true, conversations: res.conversations };
+  } catch (error: any) {
+    return { success: false, ...error };
+  }
+};
+
+export const getConversationMessages = async (userId: string) => {
+  const cookieStore = await cookies();
+  const accessToken = cookieStore.get("accessToken")?.value;
+
+  try {
+    const res = await fetchWithErrorHandling(`/chat/conversations/${userId}`, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+
+    return { success: true, messages: res.messages };
+  } catch (error: any) {
+    return { success: false, ...error };
+  }
+};

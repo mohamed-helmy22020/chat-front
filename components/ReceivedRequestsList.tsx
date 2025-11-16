@@ -24,7 +24,6 @@ const ReceivedRequestsList = () => {
   ));
 
   useEffect(() => {
-    console.log("ewfwsqsq3143124ef");
     const fetchFriendsRequests = async () => {
       setIsLoading(true);
       try {

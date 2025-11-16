@@ -1,59 +1,81 @@
-import React from "react";
-import { LuFile } from "react-icons/lu";
+import { getConversationMessages } from "@/lib/actions/user.actions";
+import { useChatStore } from "@/store/chatStore";
+import { useUserStore } from "@/store/userStore";
+import { Loader2 } from "lucide-react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useShallow } from "zustand/react/shallow";
 import ConversationMessage from "./ConversationMessage";
 
 const ConversationMessages = () => {
-  return (
-    <div className="flex flex-1 flex-col overflow-y-auto bg-site-background p-4">
-      <div className="mt-5 space-y-3">
-        <ConversationMessage />
-        <ConversationMessage />
-        <ConversationMessage />
-        <ConversationMessage />
-        <ConversationMessage />
-        <div className="flex items-start">
-          <div className="w-10"></div>
-          <div className="ms-2">
-            <div className="message-bubble bg-white px-4 py-2 shadow-sm dark:bg-slate-600">
-              <p className="text-sm">Hey there! How are you doing?</p>
-            </div>
-            <p className="mt-1 ml-1 text-xs text-slate-500 dark:text-slate-400">
-              10:30 AM
-            </p>
-          </div>
-        </div>
-        <div className="flex items-start justify-end">
-          <div>
-            <div className="message-bubble self bg-mainColor-100 px-4 py-2 shadow-sm dark:bg-mainColor-900">
-              <p className="text-sm">
-                I am doing great! Just finished that project we were working on.
-              </p>
-            </div>
-            <p className="mt-1 mr-1 text-right text-xs text-slate-500 dark:text-slate-400">
-              10:32 AM
-            </p>
-          </div>
-        </div>
-        <ConversationMessage />
-        <div className="flex items-start justify-end">
-          <div>
-            <div className="message-bubble self bg-mainColor-100 px-4 py-2 shadow-sm dark:bg-mainColor-900">
-              <div className="flex items-center space-x-2">
-                <LuFile className="h-5 w-5 text-mainColor-600 dark:text-mainColor-400" />
-                <div>
-                  <p className="text-sm font-medium">Project_Final.zip</p>
-                  <p className="text-xs text-slate-500 dark:text-slate-400">
-                    24.5 MB
-                  </p>
-                </div>
-              </div>
-            </div>
-            <p className="mt-1 mr-1 text-right text-xs text-slate-500 dark:text-slate-400">
-              10:35 AM
-            </p>
-          </div>
-        </div>
+  const user = useUserStore((state) => state.user);
+  const scrollableDiv = useRef<HTMLDivElement>(null);
+  const [isGettingMessages, setIsGettingMessages] = useState(false);
+
+  const {
+    currentConversationMessages,
+    changeCurrentConversationMessages,
+    currentConversation,
+  } = useChatStore(
+    useShallow((state) => ({
+      currentConversationMessages: state.currentConversationMessages,
+      changeCurrentConversationMessages:
+        state.changeCurrentConversationMessages,
+      currentConversation: state.currentConversation,
+    })),
+  );
+  const otherSide = currentConversation?.participants.find(
+    (p) => p._id !== user?._id,
+  );
+  console.log({ currentConversationMessages, otherSide });
+
+  useEffect(() => {
+    const getMessages = async () => {
+      setIsGettingMessages(true);
+      try {
+        console.log("tring");
+        const getMessagesRes = await getConversationMessages(otherSide!._id);
+        if (getMessagesRes.success) {
+          changeCurrentConversationMessages(getMessagesRes.messages);
+        } else {
+          throw new Error("Error getting messages");
+        }
+      } catch (e: any) {
+        console.log("Error getting messages", e);
+      } finally {
+        setIsGettingMessages(false);
+      }
+    };
+    getMessages();
+  }, [otherSide, changeCurrentConversationMessages]);
+
+  const messagesElements = currentConversationMessages.map((message, index) => (
+    <ConversationMessage
+      key={message.id}
+      isFirstMessage={
+        index === 0 ||
+        currentConversationMessages[index - 1].from === message.from
+      }
+      isMine={message.from === user?._id}
+      message={message}
+      otherSide={otherSide!}
+    />
+  ));
+  useLayoutEffect(() => {
+    scrollableDiv.current?.scrollTo(0, scrollableDiv.current?.scrollHeight);
+  }, [currentConversationMessages]);
+  if (isGettingMessages) {
+    return (
+      <div className="flex flex-1 items-center justify-center">
+        <Loader2 className="animate-spin" />
       </div>
+    );
+  }
+  return (
+    <div
+      className="flex flex-1 flex-col overflow-y-auto bg-site-background p-4"
+      ref={scrollableDiv}
+    >
+      <div className="mt-auto space-y-3">{messagesElements}</div>
     </div>
   );
 };

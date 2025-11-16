@@ -16,7 +16,6 @@ const FriendsList = () => {
       setIsLoading(true);
       try {
         const getFriendsListRes = await getFriendsList();
-        console.log(getFriendsListRes);
         setFriendsList(getFriendsListRes.friends);
       } catch (error) {
         console.log(error);
