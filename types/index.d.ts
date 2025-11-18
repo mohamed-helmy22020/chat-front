@@ -68,8 +68,20 @@ type MessageType = {
   to: string;
   text: string;
   seen: boolean;
+  reacts: ReactType[];
   createdAt: string;
   updatedAt: string;
+};
+type ReactsType = Record<
+  string,
+  {
+    id: number;
+    name: "Like" | "Dislike" | "Love" | "Laugh" | "Wow" | "Sad" | "Angry";
+  }
+>;
+type ReactType = {
+  react: "Like" | "Dislike" | "Love" | "Laugh" | "Wow" | "Sad" | "Angry";
+  user: participant;
 };
 
 type FriendsStatusType = {

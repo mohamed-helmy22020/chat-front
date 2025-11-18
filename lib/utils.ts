@@ -182,3 +182,35 @@ export function getFontSizeForText(textLength: number, options: any = {}) {
 
   return `${Math.ceil(fontSize)}px`;
 }
+
+export const REACTS: ReactsType = {
+  like: {
+    id: 0,
+    name: "Like",
+  },
+  dislike: {
+    id: 1,
+    name: "Dislike",
+  },
+  love: {
+    id: 2,
+    name: "Love",
+  },
+
+  laugh: {
+    id: 3,
+    name: "Laugh",
+  },
+  wow: {
+    id: 4,
+    name: "Wow",
+  },
+  sad: {
+    id: 5,
+    name: "Sad",
+  },
+  angry: {
+    id: 6,
+    name: "Angry",
+  },
+};

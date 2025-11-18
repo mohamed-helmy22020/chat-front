@@ -462,3 +462,28 @@ export const getConversationMessages = async (userId: string) => {
     return { success: false, ...error };
   }
 };
+
+export const addReaction = async (messageId: string, react: string) => {
+  const cookieStore = await cookies();
+  const accessToken = cookieStore.get("accessToken")?.value;
+
+  try {
+    const res = await fetchWithErrorHandling(
+      `/chat/message/${messageId}/react`,
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          react,
+        }),
+      },
+    );
+
+    return res;
+  } catch (error: any) {
+    return { success: false, ...error };
+  }
+};

@@ -26,7 +26,6 @@ const ConversationMessages = () => {
   const otherSide = currentConversation?.participants.find(
     (p) => p._id !== user?._id,
   );
-  console.log({ currentConversationMessages, otherSide });
 
   useEffect(() => {
     const getMessages = async () => {
@@ -35,6 +34,7 @@ const ConversationMessages = () => {
         console.log("tring");
         const getMessagesRes = await getConversationMessages(otherSide!._id);
         if (getMessagesRes.success) {
+          console.log("got messages", getMessagesRes.messages);
           changeCurrentConversationMessages(getMessagesRes.messages);
         } else {
           throw new Error("Error getting messages");
@@ -62,7 +62,7 @@ const ConversationMessages = () => {
   ));
   useLayoutEffect(() => {
     scrollableDiv.current?.scrollTo(0, scrollableDiv.current?.scrollHeight);
-  }, [currentConversationMessages]);
+  }, [isGettingMessages]);
   if (isGettingMessages) {
     return (
       <div className="flex flex-1 items-center justify-center">
