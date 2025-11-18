@@ -487,3 +487,21 @@ export const addReaction = async (messageId: string, react: string) => {
     return { success: false, ...error };
   }
 };
+
+export const deleteMessage = async (messageId: string) => {
+  const cookieStore = await cookies();
+  const accessToken = cookieStore.get("accessToken")?.value;
+
+  try {
+    const res = await fetchWithErrorHandling(`/chat/message/${messageId}`, {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+
+    return res;
+  } catch (error: any) {
+    return { success: false, ...error };
+  }
+};

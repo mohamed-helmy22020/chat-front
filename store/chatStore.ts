@@ -17,6 +17,7 @@ type Actions = {
   addConversation: (conversation: ConversationType) => void;
   changeCurrentConversationMessages: (messages: MessageType[]) => void;
   addMessage: (message: MessageType, conversation: ConversationType) => void;
+  deleteMessage: (messageId: string) => void;
   changeIsConnected: (isConnected: boolean) => void;
   changeIsTyping: (conversationId: string, isTyping: boolean) => void;
   addReaction: (messageId: string, userId: string, react: ReactType) => void;
@@ -88,6 +89,17 @@ export const useChatStore = create<State & Actions>()(
           }),
         ),
 
+      deleteMessage: (messageId: string) =>
+        set(
+          produce((state: State & Actions) => {
+            const messageIndex = state.currentConversationMessages.findIndex(
+              (m) => m.id === messageId,
+            );
+            if (messageIndex > -1) {
+              state.currentConversationMessages.splice(messageIndex, 1);
+            }
+          }),
+        ),
       changeIsConnected: (isConnected: boolean) =>
         set(
           produce((state: State & Actions) => {

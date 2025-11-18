@@ -1,4 +1,7 @@
-import { addReaction as addReactionAction } from "@/lib/actions/user.actions";
+import {
+  addReaction as addReactionAction,
+  deleteMessage as deleteMessageAction,
+} from "@/lib/actions/user.actions";
 import { REACTS } from "@/lib/utils";
 import { useChatStore } from "@/store/chatStore";
 import { useUserStore } from "@/store/userStore";
@@ -33,6 +36,7 @@ type Props = {
 const MessageMenu = ({ message }: Props) => {
   const user = useUserStore((state) => state.user);
   const addReaction = useChatStore((state) => state.addReaction);
+  const deleteMessage = useChatStore((state) => state.deleteMessage);
   const [isOpen, setIsOpen] = useState(false);
   const userReact = message.reacts.find(
     (react) => react.user._id === user?._id,
@@ -76,6 +80,28 @@ const MessageMenu = ({ message }: Props) => {
       console.log(error);
     }
   };
+
+  const handleDeleteMessage = async () => {
+    try {
+      const deleteMessageRes = await deleteMessageAction(message.id);
+      console.log({ deleteMessageRes });
+      if (deleteMessageRes.success) {
+        deleteMessage(message.id);
+        return;
+      }
+      throw new Error("Failed to delete message");
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleCopyMessage = async () => {
+    try {
+      await navigator.clipboard.writeText(message.text);
+    } catch (error) {
+      console.log("Failed to copy message text", error);
+    }
+  };
   return (
     <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
       <DropdownMenuTrigger asChild>
@@ -91,7 +117,7 @@ const MessageMenu = ({ message }: Props) => {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent>
-        <DropdownMenuItem>
+        <DropdownMenuItem onClick={handleCopyMessage}>
           <IoCopy /> Copy
         </DropdownMenuItem>
         <DropdownMenuSeparator />
@@ -99,7 +125,7 @@ const MessageMenu = ({ message }: Props) => {
           <CiStar /> Star
         </DropdownMenuItem>
         {message.from === user?._id && (
-          <DropdownMenuItem>
+          <DropdownMenuItem onClick={handleDeleteMessage}>
             <MdDeleteForever /> Delete
           </DropdownMenuItem>
         )}
