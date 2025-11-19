@@ -62,7 +62,6 @@ const AddStatusText = ({ setShowAddText }: Props) => {
     }
     const addTextStatusRes = await addTextStatus(text);
 
-    console.log({ addTextStatusRes });
     if (!addTextStatusRes.success) {
       toast.error(addTextStatusRes.msg);
       return;

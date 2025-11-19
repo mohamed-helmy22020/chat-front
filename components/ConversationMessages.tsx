@@ -30,11 +30,10 @@ const ConversationMessages = () => {
   useEffect(() => {
     const getMessages = async () => {
       setIsGettingMessages(true);
+
       try {
-        console.log("tring");
         const getMessagesRes = await getConversationMessages(otherSide!._id);
         if (getMessagesRes.success) {
-          console.log("got messages", getMessagesRes.messages);
           changeCurrentConversationMessages(getMessagesRes.messages);
         } else {
           throw new Error("Error getting messages");

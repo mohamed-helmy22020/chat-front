@@ -37,7 +37,6 @@ const SearchUsers = () => {
       if (!email) throw new Error("Email is required.");
       if (!validateEmail(email)) throw new Error("Invalid email.");
       const searchUserRes = await findUser(email);
-      console.log(searchUserRes);
       if (!searchUserRes.success) throw new Error(searchUserRes.msg);
       setSearchedUsers(searchUserRes.user);
     } catch (error) {

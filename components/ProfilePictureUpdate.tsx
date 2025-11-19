@@ -69,7 +69,6 @@ const ProfilePictureUpdate = () => {
           Authorization: `Bearer ${user?.accessToken}`,
         },
       });
-      console.log({ response });
       if (!response.success) {
         throw new Error(response.msg);
       }

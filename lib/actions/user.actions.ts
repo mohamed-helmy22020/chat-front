@@ -138,7 +138,6 @@ export const resetPassword = async (
 export const getUserData = async () => {
   const cookieStore = await cookies();
   const accessToken = cookieStore.get("accessToken")?.value;
-  console.log({ accessToken });
   try {
     const userData = await fetchWithErrorHandling("/user/data", {
       method: "GET",
@@ -499,6 +498,27 @@ export const deleteMessage = async (messageId: string) => {
         Authorization: `Bearer ${accessToken}`,
       },
     });
+
+    return res;
+  } catch (error: any) {
+    return { success: false, ...error };
+  }
+};
+
+export const getUserConversation = async (userId: string) => {
+  const cookieStore = await cookies();
+  const accessToken = cookieStore.get("accessToken")?.value;
+
+  try {
+    const res = await fetchWithErrorHandling(
+      `/chat/conversations/user/${userId}`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      },
+    );
 
     return res;
   } catch (error: any) {

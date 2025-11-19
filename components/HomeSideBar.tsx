@@ -67,7 +67,6 @@ const HomeSideBar = ({ userProp }: Props) => {
       changeIsConnected(false);
     };
     const onReceiveMessage = (res: ReceiveMessageType) => {
-      console.log("message received", res);
       if (res.success) {
         changeLastMessage(res.conversation, res.message);
         addMessage(res.message, res.conversation);
@@ -77,7 +76,6 @@ const HomeSideBar = ({ userProp }: Props) => {
     };
 
     const onTyping = (res: OnTypingRes) => {
-      console.log({ res });
       changeIsTyping(res.conversationId, res.isTyping);
     };
 
@@ -105,7 +103,6 @@ const HomeSideBar = ({ userProp }: Props) => {
     const getData = async () => {
       try {
         const getConversationsRes = await getAllConversations();
-        console.log(getConversationsRes.conversations);
         changeConversations(getConversationsRes.conversations);
       } catch (e: any) {
         console.log("Error getting conversations", e);
@@ -113,7 +110,6 @@ const HomeSideBar = ({ userProp }: Props) => {
     };
 
     if (isConnected) {
-      console.log({ isConnected }, "getting Data");
       getData();
     }
   }, [isConnected, changeConversations]);

@@ -40,7 +40,6 @@ const ProfileBio = () => {
           Authorization: `Bearer ${accessToken}`,
         },
       });
-      console.log({ response });
       if (!response.success) {
         throw new Error(response.msg);
       }

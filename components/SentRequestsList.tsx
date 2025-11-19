@@ -31,7 +31,6 @@ const SentRequestsList = () => {
         if (!sentRequestsRes.success) {
           throw new Error(sentRequestsRes.msg);
         }
-        console.log({ sentRequestsRes });
         setFetchedUsers(sentRequestsRes.sentRequests);
       } catch (error) {
         console.log(error);

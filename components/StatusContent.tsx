@@ -64,7 +64,6 @@ const StatusWithVideo = ({ status }: Props) => {
     if (!video) return;
 
     const handleLoad = () => {
-      console.log("Video is loaded and ready to play!");
       setIsLoaded(true);
     };
 

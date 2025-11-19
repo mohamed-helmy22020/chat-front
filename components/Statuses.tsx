@@ -13,7 +13,6 @@ const Statuses = () => {
       (acc: boolean, curr: FriendsStatusType) => acc && curr.isSeen,
       false,
     );
-    console.log(isSeen);
     if (isSeen) {
       ViewedStatusesElements.push(
         <StatusCard

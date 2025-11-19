@@ -9,12 +9,10 @@ const ConversationHeader = () => {
   const { participants, isTyping } = useChatStore(
     (state) => state.currentConversation!,
   );
-  console.log({ isTyping });
   const userId = useUserStore((state) => state.user?._id);
   const { name, userProfileImage } = participants.find(
     (p) => p._id !== userId,
   )!;
-  console.log({ participants });
   return (
     <div className="flex items-center justify-between border-b border-slate-200 bg-site-foreground p-4 dark:border-slate-700">
       <div className="flex items-center">

@@ -84,7 +84,6 @@ const MessageMenu = ({ message }: Props) => {
   const handleDeleteMessage = async () => {
     try {
       const deleteMessageRes = await deleteMessageAction(message.id);
-      console.log({ deleteMessageRes });
       if (deleteMessageRes.success) {
         deleteMessage(message.id);
         return;

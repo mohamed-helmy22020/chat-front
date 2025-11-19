@@ -98,6 +98,19 @@ export const useChatStore = create<State & Actions>()(
             if (messageIndex > -1) {
               state.currentConversationMessages.splice(messageIndex, 1);
             }
+            const conversationIndex = state.conversations.findIndex(
+              (c) => c.lastMessage.id === messageId,
+            );
+            if (conversationIndex > -1) {
+              if (state.currentConversationMessages.length > 0) {
+                state.conversations[conversationIndex].lastMessage =
+                  state.currentConversationMessages[
+                    state.currentConversationMessages.length - 1
+                  ];
+              } else {
+                state.conversations[conversationIndex].lastMessage.text = "";
+              }
+            }
           }),
         ),
       changeIsConnected: (isConnected: boolean) =>
@@ -126,12 +139,10 @@ export const useChatStore = create<State & Actions>()(
             const messageIndex = state.currentConversationMessages.findIndex(
               (m) => m.id === messageId,
             );
-            console.log({ messageIndex });
             if (messageIndex <= -1) return;
             const reactIndex = state.currentConversationMessages[
               messageIndex
             ].reacts.findIndex((r) => r.user._id === userId);
-            console.log({ reactIndex });
             if (reactIndex <= -1) {
               state.currentConversationMessages[messageIndex].reacts.push(
                 react,
@@ -163,7 +174,6 @@ export const useChatStore = create<State & Actions>()(
             const conversationIndex = state.conversations.findIndex(
               (c) => c.id === conversation.id,
             );
-            console.log({ conversationIndex });
             if (conversationIndex > -1) {
               state.conversations[conversationIndex].lastMessage = lastMessage;
             } else {
@@ -173,6 +183,7 @@ export const useChatStore = create<State & Actions>()(
             }
           }),
         ),
+
       reset: () => set(initialState),
     }),
     //options

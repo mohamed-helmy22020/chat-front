@@ -3,6 +3,7 @@ import {
   blockUser,
   cancelFriendRequest,
   deleteFriend,
+  getUserConversation,
   sendFriendRequest,
   unblockUser,
 } from "@/lib/actions/user.actions";
@@ -19,9 +20,12 @@ import {
   LuX,
 } from "react-icons/lu";
 
+import { useChatStore } from "@/store/chatStore";
+import { usePageStore } from "@/store/pageStore";
 import Image from "next/image";
 import { useState } from "react";
 import { toast } from "sonner";
+import { useShallow } from "zustand/react/shallow";
 import { Button } from "./ui/button";
 import {
   DropdownMenu,
@@ -68,15 +72,45 @@ const RequestUserCard = ({
 
 const FriendsMenu = ({ userId }: { userId: string }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const { changeCurrentConversation, conversations } = useChatStore(
+    useShallow((state) => ({
+      changeCurrentConversation: state.changeCurrentConversation,
+      conversations: state.conversations,
+    })),
+  );
+  const setPage = usePageStore((state) => state.setPage);
+
+  const handleChatWith = async () => {
+    const existConversation = conversations.find(
+      (c) => c.participants.findIndex((p) => p._id === userId) > -1,
+    );
+    if (existConversation) {
+      changeCurrentConversation(existConversation);
+      setPage("chat");
+      return;
+    }
+    try {
+      const toastId = toast.loading("Loading conversation...");
+      const getUserConversationRes = await getUserConversation(userId);
+      toast.dismiss(toastId);
+      if (getUserConversationRes.success) {
+        changeCurrentConversation(getUserConversationRes.conversation);
+        setPage("chat");
+      } else {
+        throw new Error("Error getting conversation");
+      }
+    } catch (error) {
+      console.log(error);
+      toast.error("Error getting conversation");
+    }
+  };
 
   const handleUnFriendUser = async () => {
     const unfriendUserRes = deleteFriend(userId);
 
     toast.promise(unfriendUserRes, {
       loading: "Deleting...",
-      success: (data: any) => {
-        console.log({ data });
-
+      success: () => {
         return {
           message: `User is no longer a friend`,
           closeButton: true,
@@ -90,8 +124,7 @@ const FriendsMenu = ({ userId }: { userId: string }) => {
 
     toast.promise(blockUserRes, {
       loading: "Blocking...",
-      success: (data: any) => {
-        console.log({ data });
+      success: () => {
         return {
           message: `User is no longer a friend`,
           closeButton: true,
@@ -107,8 +140,12 @@ const FriendsMenu = ({ userId }: { userId: string }) => {
       </DropdownMenuTrigger>
       <DropdownMenuContent>
         <DropdownMenuItem asChild>
-          <Button className="w-full justify-start" variant="ghostFull">
-            <LuMessageSquareMore /> Chat with
+          <Button
+            className="w-full justify-start"
+            variant="ghostFull"
+            onClick={handleChatWith}
+          >
+            <LuMessageSquareMore /> Chat withs
           </Button>
         </DropdownMenuItem>
         <DropdownMenuItem asChild>
@@ -140,8 +177,7 @@ const BlocksMenu = ({ userId }: { userId: string }) => {
   const handleUnblockUser = async () => {
     setIsUnblocking(true);
     try {
-      const unblockRes = await unblockUser(userId);
-      console.log(unblockRes);
+      await unblockUser(userId);
       setIsUnblocked(true);
     } catch (error) {
       console.log(error);
@@ -190,13 +226,11 @@ const RequestsMenu = ({ userId }: { userId: string }) => {
     setIsSending(true);
     const id = e.currentTarget.id;
     try {
-      let friendRequestRes;
       if (id === "accept-request") {
-        friendRequestRes = await acceptFriendRequest(userId);
+        await acceptFriendRequest(userId);
       } else {
-        friendRequestRes = await cancelFriendRequest(userId);
+        await cancelFriendRequest(userId);
       }
-      console.log(friendRequestRes);
       setIsSent(true);
     } catch (error) {
       console.log(error);
@@ -262,8 +296,7 @@ const SentMenu = ({ userId }: { userId: string }) => {
   const handleAddingFriend = async () => {
     setIsCancelling(true);
     try {
-      const sendReqRes = await cancelFriendRequest(userId);
-      console.log(sendReqRes);
+      await cancelFriendRequest(userId);
       setIsCancelled(true);
     } catch (error) {
       console.log(error);
@@ -308,8 +341,7 @@ const AddFriendMenu = ({ userId }: { userId: string }) => {
   const handleAddingFriend = async () => {
     setIsSending(true);
     try {
-      const sendReqRes = await sendFriendRequest(userId);
-      console.log(sendReqRes);
+      await sendFriendRequest(userId);
       setIsSent(true);
     } catch (error) {
       console.log(error);

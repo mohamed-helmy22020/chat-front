@@ -31,7 +31,6 @@ const ReceivedRequestsList = () => {
         if (!friendsRequestsRes.success) {
           throw new Error(friendsRequestsRes.msg);
         }
-        console.log({ friendsRequestsRes });
         setFetchedUsers(friendsRequestsRes.friendRequests);
       } catch (error) {
         console.log(error);
