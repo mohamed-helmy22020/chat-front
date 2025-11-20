@@ -22,6 +22,7 @@ import {
 
 import { useChatStore } from "@/store/chatStore";
 import { usePageStore } from "@/store/pageStore";
+import { useUserStore } from "@/store/userStore";
 import Image from "next/image";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -40,10 +41,8 @@ type Props = {
   type?: "friends" | "blocks" | "request" | "sent" | "addFriend";
 };
 
-const RequestUserCard = ({
-  user: { _id, userProfileImage, name, bio },
-  type = "friends",
-}: Props) => {
+const RequestUserCard = ({ user, type = "friends" }: Props) => {
+  const { _id, userProfileImage, name, bio } = user;
   return (
     <div className="flex min-h-15 w-full cursor-pointer rounded-md px-3 py-1.5 hover:bg-site-foreground">
       <div className="me-2 flex items-center">
@@ -64,7 +63,7 @@ const RequestUserCard = ({
           (type === "blocks" && <BlocksMenu userId={_id} />) ||
           (type === "request" && <RequestsMenu userId={_id} />) ||
           (type === "sent" && <SentMenu userId={_id} />) ||
-          (type === "addFriend" && <AddFriendMenu userId={_id} />)}
+          (type === "addFriend" && <AddFriendMenu user={user} />)}
       </div>
     </div>
   );
@@ -78,6 +77,15 @@ const FriendsMenu = ({ userId }: { userId: string }) => {
       conversations: state.conversations,
     })),
   );
+  const { friendsList, blockedList, setFriendsList, setBlockedList } =
+    useUserStore(
+      useShallow((state) => ({
+        friendsList: state.friendsList,
+        blockedList: state.blockedList,
+        setFriendsList: state.setFriendsList,
+        setBlockedList: state.setBlockedList,
+      })),
+    );
   const setPage = usePageStore((state) => state.setPage);
 
   const handleChatWith = async () => {
@@ -111,6 +119,7 @@ const FriendsMenu = ({ userId }: { userId: string }) => {
     toast.promise(unfriendUserRes, {
       loading: "Deleting...",
       success: () => {
+        setFriendsList(friendsList.filter((f) => f._id !== userId));
         return {
           message: `User is no longer a friend`,
           closeButton: true,
@@ -125,6 +134,11 @@ const FriendsMenu = ({ userId }: { userId: string }) => {
     toast.promise(blockUserRes, {
       loading: "Blocking...",
       success: () => {
+        setBlockedList([
+          ...blockedList,
+          friendsList.find((f) => f._id === userId)!,
+        ]);
+        setFriendsList(friendsList.filter((f) => f._id !== userId));
         return {
           message: `User is no longer a friend`,
           closeButton: true,
@@ -145,7 +159,7 @@ const FriendsMenu = ({ userId }: { userId: string }) => {
             variant="ghostFull"
             onClick={handleChatWith}
           >
-            <LuMessageSquareMore /> Chat withs
+            <LuMessageSquareMore /> Chat with
           </Button>
         </DropdownMenuItem>
         <DropdownMenuItem asChild>
@@ -172,6 +186,12 @@ const FriendsMenu = ({ userId }: { userId: string }) => {
 };
 
 const BlocksMenu = ({ userId }: { userId: string }) => {
+  const { blockedList, setBlockedList } = useUserStore(
+    useShallow((state) => ({
+      blockedList: state.blockedList,
+      setBlockedList: state.setBlockedList,
+    })),
+  );
   const [isUnblocking, setIsUnblocking] = useState(false);
   const [isUnblocked, setIsUnblocked] = useState(false);
   const handleUnblockUser = async () => {
@@ -179,6 +199,7 @@ const BlocksMenu = ({ userId }: { userId: string }) => {
     try {
       await unblockUser(userId);
       setIsUnblocked(true);
+      setBlockedList(blockedList.filter((b) => b._id !== userId));
     } catch (error) {
       console.log(error);
     } finally {
@@ -219,7 +240,19 @@ const BlocksMenu = ({ userId }: { userId: string }) => {
 const RequestsMenu = ({ userId }: { userId: string }) => {
   const [isSending, setIsSending] = useState(false);
   const [isSent, setIsSent] = useState(false);
-
+  const {
+    friendsList,
+    setFriendsList,
+    receivedRequestsList,
+    setReceivedRequestsList,
+  } = useUserStore(
+    useShallow((state) => ({
+      receivedRequestsList: state.receivedRequestsList,
+      friendsList: state.friendsList,
+      setReceivedRequestsList: state.setReceivedRequestsList,
+      setFriendsList: state.setFriendsList,
+    })),
+  );
   const handleFriendRequest = async (
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
   ) => {
@@ -227,9 +260,21 @@ const RequestsMenu = ({ userId }: { userId: string }) => {
     const id = e.currentTarget.id;
     try {
       if (id === "accept-request") {
-        await acceptFriendRequest(userId);
+        const acceptFriendRequestRes = await acceptFriendRequest(userId);
+        console.log(acceptFriendRequestRes);
+        console.log(receivedRequestsList.find((r) => r._id === userId)!);
+        setFriendsList([
+          ...friendsList,
+          receivedRequestsList.find((r) => r._id === userId)!,
+        ]);
+        setReceivedRequestsList(
+          receivedRequestsList.filter((r) => r._id !== userId),
+        );
       } else {
         await cancelFriendRequest(userId);
+        setReceivedRequestsList(
+          receivedRequestsList.filter((r) => r._id !== userId),
+        );
       }
       setIsSent(true);
     } catch (error) {
@@ -293,11 +338,18 @@ const RequestsMenu = ({ userId }: { userId: string }) => {
 const SentMenu = ({ userId }: { userId: string }) => {
   const [isCancelling, setIsCancelling] = useState(false);
   const [isCancelled, setIsCancelled] = useState(false);
+  const { sentRequestsList, setSentRequestsList } = useUserStore(
+    useShallow((state) => ({
+      sentRequestsList: state.sentRequestsList,
+      setSentRequestsList: state.setSentRequestsList,
+    })),
+  );
   const handleAddingFriend = async () => {
     setIsCancelling(true);
     try {
       await cancelFriendRequest(userId);
       setIsCancelled(true);
+      setSentRequestsList(sentRequestsList.filter((r) => r._id !== userId));
     } catch (error) {
       console.log(error);
     } finally {
@@ -335,14 +387,22 @@ const SentMenu = ({ userId }: { userId: string }) => {
   );
 };
 
-const AddFriendMenu = ({ userId }: { userId: string }) => {
+const AddFriendMenu = ({ user }: { user: RequestUserType }) => {
+  const { _id: userId } = user;
   const [isSending, setIsSending] = useState(false);
   const [isSent, setIsSent] = useState(false);
+  const { sentRequestsList, setSentRequestsList } = useUserStore(
+    useShallow((state) => ({
+      setSentRequestsList: state.setSentRequestsList,
+      sentRequestsList: state.sentRequestsList,
+    })),
+  );
   const handleAddingFriend = async () => {
     setIsSending(true);
     try {
       await sendFriendRequest(userId);
       setIsSent(true);
+      setSentRequestsList([...sentRequestsList, user]);
     } catch (error) {
       console.log(error);
     } finally {

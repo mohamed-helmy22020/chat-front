@@ -9,38 +9,19 @@ import {
 } from "@/components/ui/dialog";
 import { RiUserReceived2Line } from "react-icons/ri";
 
-import { getFriendsRequests } from "@/lib/actions/user.actions";
-import { useEffect, useState } from "react";
-import { LuLoader } from "react-icons/lu";
+import { useUserStore } from "@/store/userStore";
+import { useState } from "react";
 import RequestUserCard from "./RequestUserCard";
 import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
 
 const ReceivedRequestsList = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const [fetchedUsers, setFetchedUsers] = useState<RequestUserType[]>([]);
-  const fetchedUsersElements = fetchedUsers.map((user) => (
+  const receivedRequestsList = useUserStore(
+    (state) => state.receivedRequestsList,
+  );
+  const fetchedUsersElements = receivedRequestsList.map((user) => (
     <RequestUserCard user={user} type="request" key={user._id} />
   ));
-
-  useEffect(() => {
-    const fetchFriendsRequests = async () => {
-      setIsLoading(true);
-      try {
-        const friendsRequestsRes = await getFriendsRequests();
-        if (!friendsRequestsRes.success) {
-          throw new Error(friendsRequestsRes.msg);
-        }
-        setFetchedUsers(friendsRequestsRes.friendRequests);
-      } catch (error) {
-        console.log(error);
-      }
-      setIsLoading(false);
-    };
-    if (isOpen) {
-      fetchFriendsRequests();
-    }
-  }, [isOpen]);
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -69,11 +50,7 @@ const ReceivedRequestsList = () => {
             The friends requests that have sent to you
           </DialogDescription>
         </DialogHeader>
-        {isLoading ? (
-          <div className="flex items-center justify-center p-5">
-            <LuLoader className="animate-spin" />
-          </div>
-        ) : fetchedUsersElements.length > 0 ? (
+        {fetchedUsersElements.length > 0 ? (
           <div className="flex flex-col">{fetchedUsersElements}</div>
         ) : (
           <div className="flex items-center justify-center p-5">

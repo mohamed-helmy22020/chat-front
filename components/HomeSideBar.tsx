@@ -9,7 +9,13 @@ import {
   LuUsers,
 } from "react-icons/lu";
 
-import { getAllConversations } from "@/lib/actions/user.actions";
+import {
+  getAllConversations,
+  getBlockedList,
+  getFriendsList,
+  getFriendsRequests,
+  getSentRequests,
+} from "@/lib/actions/user.actions";
 import { chatSocket } from "@/src/socket";
 import { useChatStore } from "@/store/chatStore";
 import { PageType, usePageStore } from "@/store/pageStore";
@@ -53,6 +59,26 @@ const HomeSideBar = ({ userProp }: Props) => {
       changeIsTyping: state.changeIsTyping,
     })),
   );
+  const {
+    friendsList,
+    receivedRequests,
+    sentRequests,
+    setFriendsList,
+    setReceivedRequestsList,
+    setSentRequestsList,
+    setBlockedList,
+  } = useUserStore(
+    useShallow((state) => ({
+      friendsList: state.friendsList,
+      blockedUser: state.blockedList,
+      receivedRequests: state.receivedRequestsList,
+      sentRequests: state.sentRequestsList,
+      setFriendsList: state.setFriendsList,
+      setBlockedList: state.setBlockedList,
+      setReceivedRequestsList: state.setReceivedRequestsList,
+      setSentRequestsList: state.setSentRequestsList,
+    })),
+  );
 
   useEffect(() => {
     if (chatSocket.connected) {
@@ -79,14 +105,46 @@ const HomeSideBar = ({ userProp }: Props) => {
       changeIsTyping(res.conversationId, res.isTyping);
     };
 
+    const onFriendDeleted = (res: { userId: string }) => {
+      setFriendsList(friendsList.filter((f) => f._id !== res.userId));
+    };
+
+    const onNewFriendRequest = (res: { user: RequestUserType }) => {
+      setReceivedRequestsList([...receivedRequests, res.user]);
+    };
+
+    const onFriendAccepted = (res: { userId: string }) => {
+      setFriendsList([
+        ...friendsList,
+        sentRequests.find((r) => r._id === res.userId)!,
+      ]);
+      setSentRequestsList(sentRequests.filter((r) => r._id !== res.userId));
+    };
+
+    const onFriendRequestCancelled = (res: { userId: string }) => {
+      console.log("onFriendRequestCancelled", res);
+      setSentRequestsList(sentRequests.filter((r) => r._id !== res.userId));
+      setReceivedRequestsList(
+        receivedRequests.filter((r) => r._id !== res.userId),
+      );
+    };
+
     chatSocket.on("receiveMessage", onReceiveMessage);
     chatSocket.on("typing", onTyping);
+    chatSocket.on("friendDeleted", onFriendDeleted);
+    chatSocket.on("newFriendRequest", onNewFriendRequest);
+    chatSocket.on("friendAccepted", onFriendAccepted);
+    chatSocket.on("friendRequestCancelled", onFriendRequestCancelled);
     chatSocket.on("connect", onConnect);
     chatSocket.on("disconnect", onDisconnect);
 
     return () => {
       chatSocket.off("receiveMessage", onReceiveMessage);
       chatSocket.off("typing", onTyping);
+      chatSocket.off("friendDeleted", onFriendDeleted);
+      chatSocket.off("newFriendRequest", onNewFriendRequest);
+      chatSocket.off("friendAccepted", onFriendAccepted);
+      chatSocket.off("friendRequestCancelled", onFriendRequestCancelled);
       chatSocket.off("connect", onConnect);
       chatSocket.off("disconnect", onDisconnect);
     };
@@ -97,22 +155,54 @@ const HomeSideBar = ({ userProp }: Props) => {
     changeLastMessage,
     addMessage,
     changeIsTyping,
+    friendsList,
+    receivedRequests,
+    sentRequests,
+    setFriendsList,
+    setReceivedRequestsList,
+    setSentRequestsList,
+    setBlockedList,
   ]);
 
   useEffect(() => {
     const getData = async () => {
       try {
-        const getConversationsRes = await getAllConversations();
+        const [
+          getConversationsRes,
+          getFriendsListRes,
+          sentRequestsRes,
+          friendsRequestsRes,
+          getBlockedListRes,
+        ] = await Promise.all([
+          getAllConversations(),
+          getFriendsList(),
+          getSentRequests(),
+          getFriendsRequests(),
+          getBlockedList(),
+        ]);
+
+        // Update state with the results
         changeConversations(getConversationsRes.conversations);
+        setFriendsList(getFriendsListRes.friends);
+        setSentRequestsList(sentRequestsRes.sentRequests);
+        setReceivedRequestsList(friendsRequestsRes.friendRequests);
+        setBlockedList(getBlockedListRes.blockedUsers);
       } catch (e: any) {
-        console.log("Error getting conversations", e);
+        console.log("Error getting data", e);
       }
     };
 
     if (isConnected) {
       getData();
     }
-  }, [isConnected, changeConversations]);
+  }, [
+    isConnected,
+    changeConversations,
+    setFriendsList,
+    setSentRequestsList,
+    setReceivedRequestsList,
+    setBlockedList,
+  ]);
 
   useEffect(() => {
     if (user?.accessToken) {

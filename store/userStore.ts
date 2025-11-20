@@ -3,7 +3,15 @@ import { create } from "zustand";
 import { devtools, persist } from "zustand/middleware";
 export interface userStateType {
   user: UserType | null;
+  friendsList: RequestUserType[];
+  sentRequestsList: RequestUserType[];
+  receivedRequestsList: RequestUserType[];
+  blockedList: RequestUserType[];
   changeUserData: (user: Partial<UserType>) => void;
+  setFriendsList(friends: RequestUserType[]): void;
+  setSentRequestsList(requests: RequestUserType[]): void;
+  setReceivedRequestsList(requests: RequestUserType[]): void;
+  setBlockedList(requests: RequestUserType[]): void;
   logout: () => void;
 }
 export const useUserStore = create<userStateType>()(
@@ -11,6 +19,34 @@ export const useUserStore = create<userStateType>()(
     persist(
       (set) => ({
         user: null,
+        friendsList: [],
+        sentRequestsList: [],
+        receivedRequestsList: [],
+        blockedList: [],
+        setBlockedList: (requests: RequestUserType[]) =>
+          set(
+            produce((state: userStateType) => {
+              state.blockedList = requests;
+            }),
+          ),
+        setSentRequestsList: (requests: RequestUserType[]) =>
+          set(
+            produce((state: userStateType) => {
+              state.sentRequestsList = requests;
+            }),
+          ),
+        setReceivedRequestsList: (requests: RequestUserType[]) =>
+          set(
+            produce((state: userStateType) => {
+              state.receivedRequestsList = requests;
+            }),
+          ),
+        setFriendsList: (friends: RequestUserType[]) =>
+          set(
+            produce((state: userStateType) => {
+              state.friendsList = friends;
+            }),
+          ),
         changeUserData: (user: any) =>
           set(
             produce((state: userStateType) => {

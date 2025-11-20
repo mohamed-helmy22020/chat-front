@@ -9,39 +9,17 @@ import {
 } from "@/components/ui/dialog";
 import { RiUserShared2Line } from "react-icons/ri";
 
-import { getSentRequests } from "@/lib/actions/user.actions";
-import { useEffect, useState } from "react";
-import { LuLoader } from "react-icons/lu";
+import { useUserStore } from "@/store/userStore";
+import { useState } from "react";
 import RequestUserCard from "./RequestUserCard";
 import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
 
 const SentRequestsList = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const [fetchedUsers, setFetchedUsers] = useState<RequestUserType[]>([]);
-  const fetchedUsersElements = fetchedUsers.map((user) => (
+  const sentRequestsList = useUserStore((state) => state.sentRequestsList);
+  const fetchedUsersElements = sentRequestsList.map((user) => (
     <RequestUserCard user={user} type="sent" key={user._id} />
   ));
-
-  useEffect(() => {
-    const fetchSentRequests = async () => {
-      setIsLoading(true);
-      try {
-        const sentRequestsRes = await getSentRequests();
-        if (!sentRequestsRes.success) {
-          throw new Error(sentRequestsRes.msg);
-        }
-        setFetchedUsers(sentRequestsRes.sentRequests);
-      } catch (error) {
-        console.log(error);
-      }
-      setIsLoading(false);
-    };
-
-    if (isOpen) {
-      fetchSentRequests();
-    }
-  }, [isOpen]);
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -68,11 +46,7 @@ const SentRequestsList = () => {
           <DialogTitle>Sent Requests</DialogTitle>
           <DialogDescription>The user requests you have sent</DialogDescription>
         </DialogHeader>
-        {isLoading ? (
-          <div className="flex items-center justify-center p-5">
-            <LuLoader className="animate-spin" />
-          </div>
-        ) : fetchedUsersElements.length > 0 ? (
+        {fetchedUsersElements.length > 0 ? (
           <div className="flex flex-col">{fetchedUsersElements}</div>
         ) : (
           <div className="flex items-center justify-center p-5">
