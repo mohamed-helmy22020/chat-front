@@ -33,7 +33,6 @@ const ConversationMessages = () => {
 
       try {
         const getMessagesRes = await getConversationMessages(otherSide!._id);
-        console.log(getMessagesRes);
         if (getMessagesRes.success) {
           changeCurrentConversationMessages(getMessagesRes.messages);
         } else {

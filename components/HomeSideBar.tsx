@@ -14,11 +14,14 @@ import {
   getBlockedList,
   getFriendsList,
   getFriendsRequests,
+  getFriendsStatuses,
   getSentRequests,
+  getUserStatuses,
 } from "@/lib/actions/user.actions";
 import { chatSocket } from "@/src/socket";
 import { useChatStore } from "@/store/chatStore";
 import { PageType, usePageStore } from "@/store/pageStore";
+import { useStatusStore } from "@/store/statusStore";
 import { useUserStore } from "@/store/userStore";
 import { useEffect } from "react";
 import { toast } from "sonner";
@@ -80,6 +83,15 @@ const HomeSideBar = ({ userProp }: Props) => {
       setSentRequestsList: state.setSentRequestsList,
     })),
   );
+  const { changeUserStatuses, changeFriendsStatuses, addFriendStatus } =
+    useStatusStore(
+      useShallow((state) => ({
+        changeUserStatuses: state.changeUserStatuses,
+        changeFriendsStatuses: state.changeFriendsStatuses,
+        currentStatus: state.currentStatus,
+        addFriendStatus: state.addFriendStatus,
+      })),
+    );
 
   useEffect(() => {
     if (chatSocket.connected) {
@@ -93,6 +105,10 @@ const HomeSideBar = ({ userProp }: Props) => {
       console.log("chat disconnect");
       changeIsConnected(false);
     };
+    const onErrors = (error: any) => {
+      toast.error(error);
+    };
+
     const onReceiveMessage = (res: ReceiveMessageType) => {
       if (res.success) {
         changeLastMessage(res.conversation, res.message);
@@ -123,14 +139,14 @@ const HomeSideBar = ({ userProp }: Props) => {
     };
 
     const onFriendRequestCancelled = (res: { userId: string }) => {
-      console.log("onFriendRequestCancelled", res);
       setSentRequestsList(sentRequests.filter((r) => r._id !== res.userId));
       setReceivedRequestsList(
         receivedRequests.filter((r) => r._id !== res.userId),
       );
     };
-    const onErrors = (error: any) => {
-      toast.error(error);
+    const onNewFriendStatus = (res: { status: FriendsStatusType }) => {
+      console.log(res);
+      addFriendStatus(res.status);
     };
 
     chatSocket.on("receiveMessage", onReceiveMessage);
@@ -139,6 +155,7 @@ const HomeSideBar = ({ userProp }: Props) => {
     chatSocket.on("newFriendRequest", onNewFriendRequest);
     chatSocket.on("friendAccepted", onFriendAccepted);
     chatSocket.on("friendRequestCancelled", onFriendRequestCancelled);
+    chatSocket.on("newFriendStatus", onNewFriendStatus);
     chatSocket.on("errors", onErrors);
     chatSocket.on("connect", onConnect);
     chatSocket.on("disconnect", onDisconnect);
@@ -150,6 +167,7 @@ const HomeSideBar = ({ userProp }: Props) => {
       chatSocket.off("newFriendRequest", onNewFriendRequest);
       chatSocket.off("friendAccepted", onFriendAccepted);
       chatSocket.off("friendRequestCancelled", onFriendRequestCancelled);
+      chatSocket.off("newFriendStatus", onNewFriendStatus);
       chatSocket.off("errors", onErrors);
       chatSocket.off("connect", onConnect);
       chatSocket.off("disconnect", onDisconnect);
@@ -168,6 +186,7 @@ const HomeSideBar = ({ userProp }: Props) => {
     setReceivedRequestsList,
     setSentRequestsList,
     setBlockedList,
+    addFriendStatus,
   ]);
 
   useEffect(() => {
@@ -179,12 +198,16 @@ const HomeSideBar = ({ userProp }: Props) => {
           sentRequestsRes,
           friendsRequestsRes,
           getBlockedListRes,
+          userStatusesRes,
+          friendsStatusesRes,
         ] = await Promise.all([
           getAllConversations(),
           getFriendsList(),
           getSentRequests(),
           getFriendsRequests(),
           getBlockedList(),
+          getUserStatuses(),
+          getFriendsStatuses(),
         ]);
 
         // Update state with the results
@@ -193,6 +216,8 @@ const HomeSideBar = ({ userProp }: Props) => {
         setSentRequestsList(sentRequestsRes.sentRequests);
         setReceivedRequestsList(friendsRequestsRes.friendRequests);
         setBlockedList(getBlockedListRes.blockedUsers);
+        changeUserStatuses(userStatusesRes.statuses);
+        changeFriendsStatuses(friendsStatusesRes.statuses);
       } catch (e: any) {
         console.log("Error getting data", e);
       }
@@ -208,6 +233,8 @@ const HomeSideBar = ({ userProp }: Props) => {
     setSentRequestsList,
     setReceivedRequestsList,
     setBlockedList,
+    changeFriendsStatuses,
+    changeUserStatuses,
   ]);
 
   useEffect(() => {

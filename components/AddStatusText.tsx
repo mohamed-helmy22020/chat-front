@@ -1,6 +1,7 @@
 import { addTextStatus } from "@/lib/actions/user.actions";
 import { getFontSizeForText, isTextExceeded } from "@/lib/utils";
-import { X } from "lucide-react";
+import { useStatusStore } from "@/store/statusStore";
+import { Loader2, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { IoMdSend } from "react-icons/io";
 import { IoColorPaletteSharp } from "react-icons/io5";
@@ -15,6 +16,8 @@ const AddStatusText = ({ setShowAddText }: Props) => {
   const colorIndex = useRef(0);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [text, setText] = useState("");
+  const [isSending, setIsSending] = useState(false);
+  const addUserStatus = useStatusStore((state) => state.addUserStatus);
 
   const changeColor = () => {
     const colors = [
@@ -56,17 +59,20 @@ const AddStatusText = ({ setShowAddText }: Props) => {
   }, [text]);
 
   const handleSendingStatus = async () => {
+    setIsSending(true);
     if (!text.trim()) {
       toast.error("Status cannot be empty.");
       return;
     }
     const addTextStatusRes = await addTextStatus(text);
-
+    console.log(addTextStatusRes);
+    setIsSending(false);
     if (!addTextStatusRes.success) {
       toast.error(addTextStatusRes.msg);
       return;
     }
     setShowAddText(false);
+    addUserStatus(addTextStatusRes.status);
     toast.success("Status added successfully!");
   };
   return (
@@ -107,8 +113,9 @@ const AddStatusText = ({ setShowAddText }: Props) => {
           className="h-fit scale-200 cursor-pointer rounded-full bg-green-700 !p-2"
           variant="ghostFull"
           onClick={handleSendingStatus}
+          disabled={isSending}
         >
-          <IoMdSend />
+          {isSending ? <Loader2 className="animate-spin" /> : <IoMdSend />}
         </Button>
       </div>
     </div>

@@ -29,7 +29,6 @@ const ConversationMenu = () => {
     changeCurrentConversation(null);
   };
   const deleteConversation = async () => {
-    console.log("delete message");
     try {
       const toastId = toast.loading("Deleting Conversation...");
       const deleteConversationRes = await deleteConversationAction(

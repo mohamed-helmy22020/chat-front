@@ -260,9 +260,7 @@ const RequestsMenu = ({ userId }: { userId: string }) => {
     const id = e.currentTarget.id;
     try {
       if (id === "accept-request") {
-        const acceptFriendRequestRes = await acceptFriendRequest(userId);
-        console.log(acceptFriendRequestRes);
-        console.log(receivedRequestsList.find((r) => r._id === userId)!);
+        await acceptFriendRequest(userId);
         setFriendsList([
           ...friendsList,
           receivedRequestsList.find((r) => r._id === userId)!,

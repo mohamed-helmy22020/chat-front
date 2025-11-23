@@ -1,39 +1,11 @@
-import {
-  getFriendsStatuses,
-  getUserStatuses,
-} from "@/lib/actions/user.actions";
 import { useStatusStore } from "@/store/statusStore";
-import { useEffect } from "react";
-import { useShallow } from "zustand/react/shallow";
 import AddStatus from "./AddStatus";
 import MyStatus from "./MyStatus";
 import Statuses from "./Statuses";
 import StatusOverlay from "./StatusOverlay";
 
 const Status = () => {
-  const { changeUserStatuses, changeFriendsStatuses, currentStatus } =
-    useStatusStore(
-      useShallow((state) => ({
-        changeUserStatuses: state.changeUserStatuses,
-        changeFriendsStatuses: state.changeFriendsStatuses,
-        currentStatus: state.currentStatus,
-      })),
-    );
-  useEffect(() => {
-    const getStatuses = async () => {
-      const [userStatusesRes, friendsStatusesRes] = await Promise.all([
-        getUserStatuses(),
-        getFriendsStatuses(),
-      ]);
-      if (userStatusesRes.success) {
-        changeUserStatuses(userStatusesRes.statuses);
-      }
-      if (friendsStatusesRes.success) {
-        changeFriendsStatuses(friendsStatusesRes.statuses);
-      }
-    };
-    getStatuses();
-  }, [changeUserStatuses, changeFriendsStatuses]);
+  const currentStatus = useStatusStore((state) => state.currentStatus);
 
   return (
     <>

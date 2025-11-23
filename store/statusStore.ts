@@ -12,6 +12,8 @@ export interface statusStateType {
   previousStatus: () => void;
   nextStatus: () => void;
   changeUserStatuses: (statuses: UserStatusType[]) => void;
+  addUserStatus: (status: UserStatusType) => void;
+  addFriendStatus: (status: FriendsStatusType) => void;
   changeFriendsStatuses: (statuses: FriendsStatusType[]) => void;
   changeCurrentStatus: (userId: string | null, isMe?: boolean) => void;
   changeCurrentStatusTime: (time: number) => void;
@@ -83,6 +85,19 @@ export const useStatusStore = create<statusStateType>()(
             state.userStatuses = statuses;
           }),
         ),
+      addUserStatus: (status: UserStatusType) =>
+        set(
+          produce((state: statusStateType) => {
+            state.userStatuses.push(status);
+          }),
+        ),
+      addFriendStatus: (status: FriendsStatusType) =>
+        set(
+          produce((state: statusStateType) => {
+            state.friendsStatuses.push(status);
+          }),
+        ),
+
       changeFriendsStatuses: (statuses: FriendsStatusType[]) =>
         set(
           produce((state: statusStateType) => {
