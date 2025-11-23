@@ -449,12 +449,15 @@ export const getConversationMessages = async (userId: string) => {
   const accessToken = cookieStore.get("accessToken")?.value;
 
   try {
-    const res = await fetchWithErrorHandling(`/chat/conversations/${userId}`, {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
+    const res = await fetchWithErrorHandling(
+      `/chat/conversations/messages/${userId}`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
       },
-    });
+    );
 
     return { success: true, messages: res.messages };
   } catch (error: any) {
@@ -514,6 +517,27 @@ export const getUserConversation = async (userId: string) => {
       `/chat/conversations/user/${userId}`,
       {
         method: "GET",
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      },
+    );
+
+    return res;
+  } catch (error: any) {
+    return { success: false, ...error };
+  }
+};
+
+export const deleteConversation = async (conversationId: string) => {
+  const cookieStore = await cookies();
+  const accessToken = cookieStore.get("accessToken")?.value;
+
+  try {
+    const res = await fetchWithErrorHandling(
+      `/chat/conversations/${conversationId}`,
+      {
+        method: "DELETE",
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },

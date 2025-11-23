@@ -1,5 +1,10 @@
+import { deleteConversation as deleteConversationAction } from "@/lib/actions/user.actions";
 import { useChatStore } from "@/store/chatStore";
+import { IoMdClose } from "react-icons/io";
 import { LuEllipsisVertical } from "react-icons/lu";
+import { MdBlockFlipped, MdDelete } from "react-icons/md";
+import { toast } from "sonner";
+import { useShallow } from "zustand/react/shallow";
 import { Button } from "./ui/button";
 import {
   DropdownMenu,
@@ -9,11 +14,37 @@ import {
 } from "./ui/dropdown-menu";
 
 const ConversationMenu = () => {
-  const changeCurrentConversation = useChatStore(
-    (state) => state.changeCurrentConversation,
+  const {
+    changeCurrentConversation,
+    conversation,
+    deleteConversationFromState,
+  } = useChatStore(
+    useShallow((state) => ({
+      changeCurrentConversation: state.changeCurrentConversation,
+      conversation: state.currentConversation,
+      deleteConversationFromState: state.deleteConversation,
+    })),
   );
   const closeChat = () => {
     changeCurrentConversation(null);
+  };
+  const deleteConversation = async () => {
+    console.log("delete message");
+    try {
+      const toastId = toast.loading("Deleting Conversation...");
+      const deleteConversationRes = await deleteConversationAction(
+        conversation?.id as string,
+      );
+
+      if (deleteConversationRes.success) {
+        changeCurrentConversation(null);
+        deleteConversationFromState(conversation?.id as string);
+        toast.dismiss(toastId);
+        toast.success(deleteConversationRes.msg);
+      }
+    } catch (error: any) {
+      console.log(error);
+    }
   };
   return (
     <DropdownMenu>
@@ -26,7 +57,19 @@ const ConversationMenu = () => {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent>
-        <DropdownMenuItem onClick={closeChat}>Close Chat</DropdownMenuItem>
+        <DropdownMenuItem onClick={deleteConversation}>
+          <MdDelete />
+          Delete Chat
+        </DropdownMenuItem>
+
+        <DropdownMenuItem>
+          <MdBlockFlipped />
+          Block User
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={closeChat}>
+          <IoMdClose />
+          Close Chat
+        </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );

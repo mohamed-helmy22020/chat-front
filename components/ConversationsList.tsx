@@ -5,6 +5,7 @@ import NewConversation from "./NewConversation";
 
 const ConversationsList = () => {
   const conversations = useChatStore((state) => state.conversations);
+  console.log({ conversations });
   const conversationsElements = [...conversations]
     .filter((m) => m.lastMessage !== null)
     .sort((a, b) => {

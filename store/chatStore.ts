@@ -13,6 +13,7 @@ type State = {
 type Actions = {
   changeSearch: (search: string) => void;
   changeConversations: (conversations: ConversationType[]) => void;
+  deleteConversation: (conversationId: string) => void;
   changeCurrentConversation: (conversation: ConversationType | null) => void;
   addConversation: (conversation: ConversationType) => void;
   changeCurrentConversationMessages: (messages: MessageType[]) => void;
@@ -52,6 +53,15 @@ export const useChatStore = create<State & Actions>()(
             state.conversations = conversations;
           }),
         ),
+      deleteConversation: (conversationId: string) =>
+        set(
+          produce((state: State & Actions) => {
+            state.conversations = state.conversations.filter(
+              (c) => c.id !== conversationId,
+            );
+          }),
+        ),
+
       changeCurrentConversation: (conversation: ConversationType | null) =>
         set(
           produce((state: State & Actions) => {
