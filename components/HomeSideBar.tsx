@@ -21,6 +21,7 @@ import { useChatStore } from "@/store/chatStore";
 import { PageType, usePageStore } from "@/store/pageStore";
 import { useUserStore } from "@/store/userStore";
 import { useEffect } from "react";
+import { toast } from "sonner";
 import { useShallow } from "zustand/react/shallow";
 import { Separator } from "./ui/separator";
 import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
@@ -128,6 +129,9 @@ const HomeSideBar = ({ userProp }: Props) => {
         receivedRequests.filter((r) => r._id !== res.userId),
       );
     };
+    const onErrors = (error: any) => {
+      toast.error(error);
+    };
 
     chatSocket.on("receiveMessage", onReceiveMessage);
     chatSocket.on("typing", onTyping);
@@ -135,6 +139,7 @@ const HomeSideBar = ({ userProp }: Props) => {
     chatSocket.on("newFriendRequest", onNewFriendRequest);
     chatSocket.on("friendAccepted", onFriendAccepted);
     chatSocket.on("friendRequestCancelled", onFriendRequestCancelled);
+    chatSocket.on("errors", onErrors);
     chatSocket.on("connect", onConnect);
     chatSocket.on("disconnect", onDisconnect);
 
@@ -145,6 +150,7 @@ const HomeSideBar = ({ userProp }: Props) => {
       chatSocket.off("newFriendRequest", onNewFriendRequest);
       chatSocket.off("friendAccepted", onFriendAccepted);
       chatSocket.off("friendRequestCancelled", onFriendRequestCancelled);
+      chatSocket.off("errors", onErrors);
       chatSocket.off("connect", onConnect);
       chatSocket.off("disconnect", onDisconnect);
     };
