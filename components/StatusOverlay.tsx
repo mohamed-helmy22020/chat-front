@@ -1,6 +1,6 @@
 import { seeStatus } from "@/lib/actions/user.actions";
 import { useStatusStore } from "@/store/statusStore";
-import { useEffect } from "react";
+import { memo, useEffect } from "react";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa6";
 import { useShallow } from "zustand/react/shallow";
 import StatusContent from "./StatusContent";
@@ -8,6 +8,7 @@ import StatusReplay from "./StatusReplay";
 import StatusTopContent from "./StatusTopContent";
 import StatusViewers from "./StatusViewers";
 import { Button } from "./ui/button";
+const StatusViewersMemo = memo(StatusViewers);
 
 const StatusOverlay = () => {
   const {
@@ -146,8 +147,8 @@ const StatusOverlay = () => {
                 {currentOpenedStatus?.content}
               </div>
             )}
-          {currentStatus?.isMe && <StatusViewers />}
-          {currentStatus?.isMe === false && <StatusReplay />}
+          {currentStatus?.isMe && <StatusViewersMemo />}
+          {!currentStatus?.isMe && <StatusReplay />}
         </div>
       </div>
       {/* status content */}

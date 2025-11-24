@@ -97,9 +97,12 @@ export const useStatusStore = create<statusStateType>()(
             );
             if (
               status &&
-              status.viewers.findIndex((v) => v._id === user._id) === -1
+              status.viewers.findIndex((v) => v.user._id === user._id) === -1
             ) {
-              status.viewers.push(user);
+              status.viewers.push({
+                user,
+                createdAt: new Date().toISOString(),
+              });
             }
           }),
         ),

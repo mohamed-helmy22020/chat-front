@@ -127,6 +127,41 @@ export function formatDateToStatus(dateString: string) {
   return `${label}, ${timeStr}`;
 }
 
+export function formatRelativeDate(dateString: string): string {
+  const inputDate = new Date(dateString);
+  const now = new Date();
+  const diffMs = now.getTime() - inputDate.getTime();
+  const diffMinutes = Math.floor(diffMs / (1000 * 60));
+  const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+  const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+
+  // If more than 7 days ago, format as DD/MM/YYYY
+  if (diffDays > 7) {
+    const day = String(inputDate.getDate()).padStart(2, "0");
+    const month = String(inputDate.getMonth() + 1).padStart(2, "0"); // getMonth() is 0-indexed
+    const year = inputDate.getFullYear();
+    return `${day}/${month}/${year}`;
+  }
+
+  // Less than 1 minute ago → "just now"
+  if (diffMinutes < 1) {
+    return "just now";
+  }
+
+  // Minutes
+  if (diffMinutes < 60) {
+    return `${diffMinutes} minute${diffMinutes === 1 ? "" : "s"} ago`;
+  }
+
+  // Hours
+  if (diffHours < 24) {
+    return `${diffHours} hour${diffHours === 1 ? "" : "s"} ago`;
+  }
+
+  // Days (1 to 7)
+  return `${diffDays} day${diffDays === 1 ? "" : "s"} ago`;
+}
+
 export function sortStatuses(statuses: FriendsStatusType[]) {
   const sorted = [...statuses].sort(
     (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
