@@ -11,8 +11,12 @@ const Statuses = () => {
   for (let i = 0; i < sortedFriendsStatuses.length; i++) {
     const isSeen = sortedFriendsStatuses[i].reduce(
       (acc: boolean, curr: FriendsStatusType) => acc && curr.isSeen,
-      false,
+      true,
     );
+    console.log(isSeen);
+    console.log(sortedFriendsStatuses[i][0]?.isSeen);
+    console.log(sortedFriendsStatuses[i][1]?.isSeen);
+    console.log(sortedFriendsStatuses[i][2]?.isSeen);
     if (isSeen) {
       ViewedStatusesElements.push(
         <StatusCard

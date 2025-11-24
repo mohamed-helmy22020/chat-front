@@ -549,3 +549,35 @@ export const deleteConversation = async (conversationId: string) => {
     return { success: false, ...error };
   }
 };
+
+export const deleteStatus = async (statusId: string) => {
+  const cookieStore = await cookies();
+  const accessToken = cookieStore.get("accessToken")?.value;
+  try {
+    const res = await fetchWithErrorHandling(`/status/${statusId}`, {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+    return res;
+  } catch (error: any) {
+    return { success: false, ...error };
+  }
+};
+
+export const seeStatus = async (statusId: string) => {
+  const cookieStore = await cookies();
+  const accessToken = cookieStore.get("accessToken")?.value;
+  try {
+    const res = await fetchWithErrorHandling(`/status/see/${statusId}`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+    return res;
+  } catch (error: any) {
+    return { success: false, ...error };
+  }
+};

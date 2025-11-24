@@ -11,9 +11,13 @@ export interface statusStateType {
   isMuted: boolean;
   previousStatus: () => void;
   nextStatus: () => void;
+  seeStatus: (statusId: string) => void;
+  userStausSeen: (statusId: string, user: MiniUserType) => void;
   changeUserStatuses: (statuses: UserStatusType[]) => void;
   addUserStatus: (status: UserStatusType) => void;
+  deleteUserStatus: (statusId: string) => void;
   addFriendStatus: (status: FriendsStatusType) => void;
+  deleteFriendStatus: (statusId: string) => void;
   changeFriendsStatuses: (statuses: FriendsStatusType[]) => void;
   changeCurrentStatus: (userId: string | null, isMe?: boolean) => void;
   changeCurrentStatusTime: (time: number) => void;
@@ -73,6 +77,32 @@ export const useStatusStore = create<statusStateType>()(
                 : 5000;
           }),
         ),
+      seeStatus: (statusId: string) =>
+        set(
+          produce((state: statusStateType) => {
+            for (let i = 0; i < state.friendsStatuses.length; i++) {
+              if (state.friendsStatuses[i]._id === statusId) {
+                state.friendsStatuses[i].isSeen = true;
+                break;
+              }
+            }
+          }),
+        ),
+      userStausSeen: (statusId: string, user: MiniUserType) =>
+        set(
+          produce((state: statusStateType) => {
+            console.log({ statusId, user });
+            const status = state.userStatuses.find(
+              (status) => status._id === statusId,
+            );
+            if (
+              status &&
+              status.viewers.findIndex((v) => v._id === user._id) === -1
+            ) {
+              status.viewers.push(user);
+            }
+          }),
+        ),
       changeCurrentStatusInterval: (interval: number) =>
         set(
           produce((state: statusStateType) => {
@@ -91,10 +121,26 @@ export const useStatusStore = create<statusStateType>()(
             state.userStatuses.push(status);
           }),
         ),
+      deleteUserStatus: (statusId: string) =>
+        set(
+          produce((state: statusStateType) => {
+            state.userStatuses = state.userStatuses.filter(
+              (status) => status._id !== statusId,
+            );
+          }),
+        ),
       addFriendStatus: (status: FriendsStatusType) =>
         set(
           produce((state: statusStateType) => {
             state.friendsStatuses.push(status);
+          }),
+        ),
+      deleteFriendStatus: (statusId: string) =>
+        set(
+          produce((state: statusStateType) => {
+            state.friendsStatuses = state.friendsStatuses.filter(
+              (status) => status._id !== statusId,
+            );
           }),
         ),
 

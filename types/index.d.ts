@@ -96,7 +96,7 @@ type FriendsStatusType = {
 };
 
 type UserStatusType = Omit<FriendsStatusType, "isSeen"> & {
-  viewers: MiniUserType;
+  viewers: MiniUserType[];
 };
 
 type CurrentStatusType = {

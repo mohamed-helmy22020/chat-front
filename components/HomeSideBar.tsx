@@ -83,15 +83,22 @@ const HomeSideBar = ({ userProp }: Props) => {
       setSentRequestsList: state.setSentRequestsList,
     })),
   );
-  const { changeUserStatuses, changeFriendsStatuses, addFriendStatus } =
-    useStatusStore(
-      useShallow((state) => ({
-        changeUserStatuses: state.changeUserStatuses,
-        changeFriendsStatuses: state.changeFriendsStatuses,
-        currentStatus: state.currentStatus,
-        addFriendStatus: state.addFriendStatus,
-      })),
-    );
+  const {
+    changeUserStatuses,
+    changeFriendsStatuses,
+    addFriendStatus,
+    deleteFriendStatus,
+    userStausSeen,
+  } = useStatusStore(
+    useShallow((state) => ({
+      changeUserStatuses: state.changeUserStatuses,
+      changeFriendsStatuses: state.changeFriendsStatuses,
+      currentStatus: state.currentStatus,
+      addFriendStatus: state.addFriendStatus,
+      deleteFriendStatus: state.deleteFriendStatus,
+      userStausSeen: state.userStausSeen,
+    })),
+  );
 
   useEffect(() => {
     if (chatSocket.connected) {
@@ -148,6 +155,14 @@ const HomeSideBar = ({ userProp }: Props) => {
       console.log(res);
       addFriendStatus(res.status);
     };
+    const onDeleteFriendStatus = (res: { statusId: string }) => {
+      console.log(res);
+      deleteFriendStatus(res.statusId);
+    };
+    const onStatusSeen = (res: { statusId: string; user: MiniUserType }) => {
+      console.log(res);
+      userStausSeen(res.statusId, res.user);
+    };
 
     chatSocket.on("receiveMessage", onReceiveMessage);
     chatSocket.on("typing", onTyping);
@@ -156,6 +171,8 @@ const HomeSideBar = ({ userProp }: Props) => {
     chatSocket.on("friendAccepted", onFriendAccepted);
     chatSocket.on("friendRequestCancelled", onFriendRequestCancelled);
     chatSocket.on("newFriendStatus", onNewFriendStatus);
+    chatSocket.on("deleteFriendStatus", onDeleteFriendStatus);
+    chatSocket.on("statusSeen", onStatusSeen);
     chatSocket.on("errors", onErrors);
     chatSocket.on("connect", onConnect);
     chatSocket.on("disconnect", onDisconnect);
@@ -168,6 +185,9 @@ const HomeSideBar = ({ userProp }: Props) => {
       chatSocket.off("friendAccepted", onFriendAccepted);
       chatSocket.off("friendRequestCancelled", onFriendRequestCancelled);
       chatSocket.off("newFriendStatus", onNewFriendStatus);
+      chatSocket.off("deleteFriendStatus", onDeleteFriendStatus);
+      chatSocket.off("statusSeen", onStatusSeen);
+
       chatSocket.off("errors", onErrors);
       chatSocket.off("connect", onConnect);
       chatSocket.off("disconnect", onDisconnect);
@@ -187,6 +207,8 @@ const HomeSideBar = ({ userProp }: Props) => {
     setSentRequestsList,
     setBlockedList,
     addFriendStatus,
+    deleteFriendStatus,
+    userStausSeen,
   ]);
 
   useEffect(() => {

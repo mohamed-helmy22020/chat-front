@@ -1,3 +1,4 @@
+import { seeStatus } from "@/lib/actions/user.actions";
 import { useStatusStore } from "@/store/statusStore";
 import { useEffect } from "react";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa6";
@@ -18,6 +19,7 @@ const StatusOverlay = () => {
     previousStatus,
     isPlaying,
     changeIsPlaying,
+    seeStatusState,
   } = useStatusStore(
     useShallow((state) => ({
       currentStatus: state.currentStatus,
@@ -28,15 +30,17 @@ const StatusOverlay = () => {
       previousStatus: state.previousStatus,
       isPlaying: state.isPlaying,
       changeIsPlaying: state.changeIsPlaying,
+      seeStatusState: state.seeStatus,
     })),
   );
-  const currentStatusOpen = currentStatus?.statuses[currentStatus.currentIndex];
+  const currentOpenedStatus =
+    currentStatus?.statuses[currentStatus.currentIndex];
 
   useEffect(() => {
     if (
       (currentStatusTime === 0 && currentStatusInterval === 0) ||
       currentStatusTime > currentStatusInterval ||
-      currentStatusOpen?.mediaType === "video" ||
+      currentOpenedStatus?.mediaType === "video" ||
       !isPlaying
     )
       return;
@@ -60,9 +64,32 @@ const StatusOverlay = () => {
     currentStatusInterval,
     changeCurrentStatusTime,
     nextStatus,
-    currentStatusOpen,
+    currentOpenedStatus,
     isPlaying,
   ]);
+
+  useEffect(() => {
+    const seeStatusFunc = async () => {
+      if (currentStatus === null || !currentOpenedStatus) {
+        return;
+      }
+      if (!("isSeen" in currentOpenedStatus)) {
+        return;
+      }
+
+      if (currentOpenedStatus.isSeen) {
+        return;
+      }
+      try {
+        const seeStatusRes = await seeStatus(currentOpenedStatus._id);
+        console.log(seeStatusRes);
+        seeStatusState(currentOpenedStatus._id);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    seeStatusFunc();
+  }, [currentStatus, currentOpenedStatus, seeStatusState]);
 
   useEffect(() => {
     const handleBlur = () => {
@@ -113,10 +140,10 @@ const StatusOverlay = () => {
         </div>
         {/* bottom content */}
         <div className="flex w-full flex-col bg-linear-to-b from-black/40 to-black/60 pt-3">
-          {currentStatusOpen?.content &&
-            ["image", "video"].includes(currentStatusOpen.mediaType) && (
+          {currentOpenedStatus?.content &&
+            ["image", "video"].includes(currentOpenedStatus.mediaType) && (
               <div className="mx-auto mb-3 w-xl text-center select-none">
-                {currentStatusOpen?.content}
+                {currentOpenedStatus?.content}
               </div>
             )}
           {currentStatus?.isMe && <StatusViewers />}
@@ -126,7 +153,7 @@ const StatusOverlay = () => {
       {/* status content */}
       <StatusContent
         key={currentStatus?.currentIndex}
-        status={currentStatusOpen}
+        status={currentOpenedStatus}
       />
     </div>
   );

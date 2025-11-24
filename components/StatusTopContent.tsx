@@ -3,8 +3,9 @@ import { useStatusStore } from "@/store/statusStore";
 import Image from "next/image";
 import { FaArrowLeft } from "react-icons/fa6";
 import { HiMiniSpeakerWave, HiMiniSpeakerXMark } from "react-icons/hi2";
-import { IoIosPause, IoIosPlay, IoMdClose } from "react-icons/io";
+import { IoIosPause, IoIosPlay } from "react-icons/io";
 import { useShallow } from "zustand/react/shallow";
+import StatusMenu from "./StatusMenu";
 import { Button } from "./ui/button";
 
 const StatusTopContent = () => {
@@ -34,11 +35,11 @@ const StatusTopContent = () => {
     changeCurrentStatue(null);
   };
   return (
-    <div className="relative flex w-full bg-linear-to-t from-black/40 to-black/60 pt-2.5 pb-3">
+    <div className="relative flex w-full items-center bg-linear-to-t from-black/40 to-black/60 pt-2.5 pb-3">
       <Button
         onClick={closeStatus}
         variant="ghostFull"
-        className="cursor-pointer pt-0"
+        className="mx-4 cursor-pointer p-1"
       >
         <FaArrowLeft />
       </Button>
@@ -109,13 +110,7 @@ const StatusTopContent = () => {
           </div>
         </div>
       </div>
-      <Button
-        onClick={closeStatus}
-        variant="ghostFull"
-        className="cursor-pointer pt-0"
-      >
-        <IoMdClose size="100px" />
-      </Button>
+      <StatusMenu />
     </div>
   );
 };
