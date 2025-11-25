@@ -20,7 +20,6 @@ const StatusViewers = () => {
     }),
   );
 
-  console.log("s");
   useEffect(() => {
     if (isListOpen) {
       changeIsPlaying(false);

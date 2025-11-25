@@ -1,5 +1,6 @@
 import { formatDateToStatus } from "@/lib/utils";
 import { useStatusStore } from "@/store/statusStore";
+import { useUserStore } from "@/store/userStore";
 import Image from "next/image";
 import { FaArrowLeft } from "react-icons/fa6";
 import { HiMiniSpeakerWave, HiMiniSpeakerXMark } from "react-icons/hi2";
@@ -9,6 +10,7 @@ import StatusMenu from "./StatusMenu";
 import { Button } from "./ui/button";
 
 const StatusTopContent = () => {
+  const user = useUserStore((state) => state.user);
   const {
     currentStatus,
     changeCurrentStatue,
@@ -110,7 +112,7 @@ const StatusTopContent = () => {
           </div>
         </div>
       </div>
-      <StatusMenu />
+      {currentStatus?.userId === user?._id && <StatusMenu />}
     </div>
   );
 };

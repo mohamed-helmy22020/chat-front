@@ -32,15 +32,16 @@ const StatusMenu = () => {
       const deleteStatusRes = await deleteStatusAction(
         currentOpenedStatus?._id as string,
       );
-      console.log(deleteStatusRes);
-      if (deleteStatusRes.success) {
-        deleteUserStatus(currentOpenedStatus?._id as string);
-        changeCurrentStatus(userId as string, true);
-        toast.dismiss(toastId);
-        toast.success("Status deleted successfully.");
+      if (!deleteStatusRes.success) {
+        throw new Error(deleteStatusRes.message);
       }
+      deleteUserStatus(currentOpenedStatus?._id as string);
+      changeCurrentStatus(userId as string, true);
+      toast.dismiss(toastId);
+      toast.success("Status deleted successfully.");
     } catch (error: any) {
       console.log(error);
+      toast.error(error.message);
     }
   };
   return (

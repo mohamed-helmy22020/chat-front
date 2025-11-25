@@ -249,3 +249,13 @@ export const REACTS: ReactsType = {
     name: "Angry",
   },
 };
+export const MAX_PHOTO_SIZE = 5 * 1024 * 1024; // 5 MB
+export const MAX_VIDEO_SIZE = 100 * 1024 * 1024; // 100 MB
+export const allowedPictureTypes = ["image/jpeg", "image/png", "image/gif"];
+export const allowedVideoTypes = [
+  "video/mp4",
+  "video/quicktime",
+  "video/x-msvideo",
+  "video/x-matroska",
+  "video/webm",
+];

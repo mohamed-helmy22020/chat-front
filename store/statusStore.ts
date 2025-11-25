@@ -91,7 +91,6 @@ export const useStatusStore = create<statusStateType>()(
       userStausSeen: (statusId: string, user: MiniUserType) =>
         set(
           produce((state: statusStateType) => {
-            console.log({ statusId, user });
             const status = state.userStatuses.find(
               (status) => status._id === statusId,
             );

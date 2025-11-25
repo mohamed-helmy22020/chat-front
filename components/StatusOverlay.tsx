@@ -82,8 +82,7 @@ const StatusOverlay = () => {
         return;
       }
       try {
-        const seeStatusRes = await seeStatus(currentOpenedStatus._id);
-        console.log(seeStatusRes);
+        await seeStatus(currentOpenedStatus._id);
         seeStatusState(currentOpenedStatus._id);
       } catch (error) {
         console.log(error);
