@@ -118,8 +118,10 @@ const HomeSideBar = ({ userProp }: Props) => {
 
     const onReceiveMessage = (res: ReceiveMessageType) => {
       if (res.success) {
-        changeLastMessage(res.conversation, res.message);
-        addMessage(res.message, res.conversation);
+        if (res.message.from !== user?._id) {
+          changeLastMessage(res.conversation, res.message);
+          addMessage(res.message, res.conversation);
+        }
       } else {
         console.log("Error receiving message");
       }
@@ -152,15 +154,12 @@ const HomeSideBar = ({ userProp }: Props) => {
       );
     };
     const onNewFriendStatus = (res: { status: FriendsStatusType }) => {
-      console.log(res);
       addFriendStatus(res.status);
     };
     const onDeleteFriendStatus = (res: { statusId: string }) => {
-      console.log(res);
       deleteFriendStatus(res.statusId);
     };
     const onStatusSeen = (res: { statusId: string; user: MiniUserType }) => {
-      console.log(res);
       userStausSeen(res.statusId, res.user);
     };
 

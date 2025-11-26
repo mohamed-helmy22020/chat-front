@@ -444,13 +444,19 @@ export const getAllConversations = async () => {
   }
 };
 
-export const getConversationMessages = async (userId: string) => {
+export const getConversationMessages = async (
+  userId: string,
+  before?: string,
+  limit?: number,
+) => {
   const cookieStore = await cookies();
   const accessToken = cookieStore.get("accessToken")?.value;
+  const query = `${before ? `before=${before}` : ""}&${limit ? `limit=${limit}` : ""}`;
+  console.log(query);
 
   try {
     const res = await fetchWithErrorHandling(
-      `/chat/conversations/messages/${userId}`,
+      `/chat/conversations/messages/${userId}?${query}`,
       {
         method: "GET",
         headers: {
@@ -459,7 +465,7 @@ export const getConversationMessages = async (userId: string) => {
       },
     );
 
-    return { success: true, messages: res.messages };
+    return res;
   } catch (error: any) {
     return { success: false, ...error };
   }

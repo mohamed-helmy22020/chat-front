@@ -12,7 +12,7 @@ import {
   FaFaceSadTear as SadEmoji,
 } from "react-icons/fa6";
 import { FcLike as LoveEmoji } from "react-icons/fc";
-import { RiCheckDoubleFill } from "react-icons/ri";
+import { RiCheckDoubleFill, RiLoader5Fill } from "react-icons/ri";
 import MessageMenu from "./MessageMenu";
 type Props = {
   message: MessageType;
@@ -67,7 +67,11 @@ const ConversationMessage = ({
             <pre className="text-sm break-words">{message.text}</pre>
             <div className="mt-1 mr-1 flex items-center justify-between gap-2 text-right text-xs">
               <p className="text-slate-200">
-                <RiCheckDoubleFill />
+                {message.type === "pending" ? (
+                  <RiLoader5Fill className="animate-spin" />
+                ) : (
+                  <RiCheckDoubleFill />
+                )}
               </p>
               <p className="text-slate-500 dark:text-slate-400">
                 {formatDateToStatus(message.createdAt)}

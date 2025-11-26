@@ -17,7 +17,9 @@ type Actions = {
   changeCurrentConversation: (conversation: ConversationType | null) => void;
   addConversation: (conversation: ConversationType) => void;
   changeCurrentConversationMessages: (messages: MessageType[]) => void;
+  addMoreMessages: (messages: MessageType[]) => void;
   addMessage: (message: MessageType, conversation: ConversationType) => void;
+  updateMessage: (messageId: string, message: MessageType) => void;
   deleteMessage: (messageId: string) => void;
   changeIsConnected: (isConnected: boolean) => void;
   changeIsTyping: (conversationId: string, isTyping: boolean) => void;
@@ -77,7 +79,26 @@ export const useChatStore = create<State & Actions>()(
       changeCurrentConversationMessages: (messages: MessageType[]) =>
         set(
           produce((state: State & Actions) => {
-            state.currentConversationMessages = messages;
+            state.currentConversationMessages = messages.sort((a, b) => {
+              return (
+                new Date(a.createdAt).getTime() -
+                new Date(b.createdAt).getTime()
+              );
+            });
+          }),
+        ),
+      addMoreMessages: (messages: MessageType[]) =>
+        set(
+          produce((state: State & Actions) => {
+            state.currentConversationMessages = [
+              ...messages,
+              ...state.currentConversationMessages,
+            ].sort((a, b) => {
+              return (
+                new Date(a.createdAt).getTime() -
+                new Date(b.createdAt).getTime()
+              );
+            });
           }),
         ),
       addMessage: (message: MessageType, conversation: ConversationType) =>
@@ -98,7 +119,17 @@ export const useChatStore = create<State & Actions>()(
             }
           }),
         ),
-
+      updateMessage: (messageId: string, message: MessageType) =>
+        set(
+          produce((state: State & Actions) => {
+            const messageIndex = state.currentConversationMessages.findIndex(
+              (m) => m.id === messageId,
+            );
+            if (messageIndex > -1) {
+              state.currentConversationMessages[messageIndex] = message;
+            }
+          }),
+        ),
       deleteMessage: (messageId: string) =>
         set(
           produce((state: State & Actions) => {

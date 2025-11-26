@@ -3,6 +3,7 @@ import { useChatStore } from "@/store/chatStore";
 import { useUserStore } from "@/store/userStore";
 import { useState } from "react";
 import { LuPaperclip, LuSend, LuSmile } from "react-icons/lu";
+import { useShallow } from "zustand/react/shallow";
 import { Button } from "./ui/button";
 import { Textarea } from "./ui/textarea";
 
@@ -10,9 +11,15 @@ const ConversationFooter = () => {
   const [message, setMessage] = useState<string>("");
   const [isTyping, setIsTyping] = useState<boolean>(false);
   const user = useUserStore((state) => state.user);
-  const currentConversation = useChatStore(
-    (state) => state.currentConversation,
-  );
+  const { currentConversation, addMessage, updateMessage, changeLastMessage } =
+    useChatStore(
+      useShallow((state) => ({
+        currentConversation: state.currentConversation,
+        addMessage: state.addMessage,
+        updateMessage: state.updateMessage,
+        changeLastMessage: state.changeLastMessage,
+      })),
+    );
   const otherSide = currentConversation?.participants.find(
     (p) => p._id !== user?._id,
   );
@@ -27,8 +34,31 @@ const ConversationFooter = () => {
   };
   const sendMessage = () => {
     if (message.trim() === "") return;
-    chatSocket.emit("sendPrivateMessage", to, message.trim());
+    const id = Math.random().toString();
+    const newMessage: MessageType = {
+      id,
+      conversationId: currentConversation!.id,
+      from: user!._id,
+      to: to,
+      text: message.trim(),
+      seen: false,
+      reacts: [],
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      type: "pending",
+    };
     setMessage("");
+    addMessage(newMessage, currentConversation!);
+    changeLastMessage(currentConversation!, newMessage);
+    chatSocket.emit(
+      "sendPrivateMessage",
+      to,
+      message.trim(),
+      (res: ReceiveMessageType) => {
+        updateMessage(id, res.message);
+        changeLastMessage(res.conversation, res.message);
+      },
+    );
   };
   return (
     <div className="border-t border-slate-200 bg-site-foreground p-3 dark:border-slate-700">

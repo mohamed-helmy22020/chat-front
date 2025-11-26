@@ -71,6 +71,7 @@ type MessageType = {
   reacts: ReactType[];
   createdAt: string;
   updatedAt: string;
+  type?: "pending" | "received";
 };
 type ReactsType = Record<
   string,

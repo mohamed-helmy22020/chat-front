@@ -1,7 +1,9 @@
 import { useChatStore } from "@/store/chatStore";
+import { memo } from "react";
 import ChatSearch from "./ChatSearch";
 import ConversationItem from "./ConversationItem";
 import NewConversation from "./NewConversation";
+const ConversationItemMemo = memo(ConversationItem);
 
 const ConversationsList = () => {
   const conversations = useChatStore((state) => state.conversations);
@@ -13,7 +15,7 @@ const ConversationsList = () => {
         new Date(a.lastMessage.createdAt).getTime()
       );
     })
-    .map((c) => <ConversationItem conversation={c} key={c.id} />);
+    .map((c) => <ConversationItemMemo conversation={c} key={c.id} />);
   return (
     <div className="flex max-h-screen w-4/12 flex-col overflow-hidden border-e-2 border-site-foreground">
       <div className="flex items-center justify-between p-5">
