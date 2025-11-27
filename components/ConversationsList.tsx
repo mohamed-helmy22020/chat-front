@@ -25,7 +25,7 @@ const ConversationsList = () => {
         </div>
       </div>
       <ChatSearch />
-      <div className="flex-1 overflow-y-auto px-3 py-2">
+      <div className="flex flex-1 flex-col gap-2 overflow-y-auto px-3 py-2">
         {conversationsElements}
       </div>
     </div>

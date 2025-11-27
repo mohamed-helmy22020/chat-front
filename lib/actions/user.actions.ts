@@ -451,7 +451,7 @@ export const getConversationMessages = async (
 ) => {
   const cookieStore = await cookies();
   const accessToken = cookieStore.get("accessToken")?.value;
-  const query = `${before ? `before=${before}` : ""}&${limit ? `limit=${limit}` : ""}`;
+  const query = `${before ? `before=${before}` : ""}&limit=${limit || 50}`;
   console.log(query);
 
   try {

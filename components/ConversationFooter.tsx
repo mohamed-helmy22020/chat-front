@@ -49,6 +49,7 @@ const ConversationFooter = () => {
     };
     setMessage("");
     addMessage(newMessage, currentConversation!);
+
     changeLastMessage(currentConversation!, newMessage);
     chatSocket.emit(
       "sendPrivateMessage",

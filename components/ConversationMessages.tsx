@@ -1,6 +1,7 @@
 import { getConversationMessages } from "@/lib/actions/user.actions";
 import { useChatStore } from "@/store/chatStore";
 import { useUserStore } from "@/store/userStore";
+import clsx from "clsx";
 import { Loader2 } from "lucide-react";
 import {
   memo,
@@ -10,17 +11,15 @@ import {
   useRef,
   useState,
 } from "react";
+import { IoIosArrowDown } from "react-icons/io";
 import { useShallow } from "zustand/react/shallow";
 import ConversationMessage from "./ConversationMessage";
+import { Button } from "./ui/button";
 const ConversationMessageMemo = memo(ConversationMessage);
 
 const ConversationMessages = () => {
   const user = useUserStore((state) => state.user);
-  const scrollableDiv = useRef<HTMLDivElement>(null);
-  const [isGettingMessages, setIsGettingMessages] = useState(false);
-  const wasAtBottomRef = useRef<boolean | undefined>(true);
-  const [hasMore, setHasMore] = useState(false);
-
+  const [lastMessage, setLastMessage] = useState<MessageType | null>(null);
   const {
     currentConversationMessages,
     changeCurrentConversationMessages,
@@ -38,6 +37,59 @@ const ConversationMessages = () => {
   const otherSide = currentConversation?.participants.find(
     (p) => p._id !== user?._id,
   );
+  const scrollableDiv = useRef<HTMLDivElement>(null);
+  const [isGettingMessages, setIsGettingMessages] = useState(false);
+  const wasAtBottomRef = useRef<boolean | undefined>(true);
+  const [hasMore, setHasMore] = useState(false);
+  const [newMessagesCount, setNewMessagesCount] = useState(0);
+
+  const isAtBottom = () => {
+    const scrollable = scrollableDiv.current;
+    if (!scrollable) return false;
+
+    return (
+      scrollable.scrollHeight - scrollable.scrollTop <=
+      scrollable.clientHeight + 3
+    );
+  };
+
+  useEffect(() => {
+    const container = scrollableDiv.current;
+    console.log("1");
+
+    if (!container) return;
+    console.log("2");
+    const handleScroll = () => {
+      console.log("scrolling");
+      if (isAtBottom()) {
+        setNewMessagesCount(0);
+      }
+      wasAtBottomRef.current = isAtBottom();
+    };
+
+    container.addEventListener("scroll", handleScroll);
+    return () => container.removeEventListener("scroll", handleScroll);
+  }, [otherSide]);
+
+  useEffect(() => {
+    const currentConversationLastMessage =
+      currentConversationMessages[currentConversationMessages.length - 1];
+    console.log({ currentConversationLastMessage });
+    console.log({ lastMessage });
+    if (
+      wasAtBottomRef.current ||
+      currentConversationLastMessage?.type === "pending"
+    ) {
+      scrollableDiv.current?.scrollTo(0, scrollableDiv.current?.scrollHeight);
+    } else if (
+      currentConversationLastMessage?.from !== user?._id &&
+      lastMessage?.id !== currentConversationLastMessage?.id
+    ) {
+      console.log("new message");
+      setLastMessage(currentConversationLastMessage);
+      setNewMessagesCount((count) => count + 1);
+    }
+  }, [currentConversationMessages, user, lastMessage]);
 
   const getMessages = useCallback(
     async (before?: string, limit?: number) => {
@@ -67,34 +119,12 @@ const ConversationMessages = () => {
 
   useEffect(() => {
     changeCurrentConversationMessages([]);
-    (async () => {
+    (async function () {
       const messages = await getMessages();
       changeCurrentConversationMessages(messages);
+      console.log(scrollableDiv.current?.scrollTop);
     })();
   }, [getMessages, changeCurrentConversationMessages]);
-
-  const isAtBottom = () => {
-    const scrollable = scrollableDiv.current;
-    if (!scrollable) return false;
-
-    return (
-      scrollable.scrollHeight - scrollable.scrollTop <=
-      scrollable.clientHeight + 3
-    );
-  };
-
-  useEffect(() => {
-    const container = scrollableDiv.current;
-
-    if (!container) return;
-
-    const handleScroll = () => {
-      wasAtBottomRef.current = isAtBottom();
-    };
-
-    container.addEventListener("scroll", handleScroll);
-    return () => container.removeEventListener("scroll", handleScroll);
-  }, [otherSide]);
 
   useEffect(() => {
     const container = scrollableDiv.current;
@@ -104,7 +134,7 @@ const ConversationMessages = () => {
     const handleScroll = () => {
       const oldScrollHeight = container.scrollHeight;
       const oldScrollTop = container.scrollTop;
-      if (container.scrollTop <= 25 && hasMore && !isGettingMessages) {
+      if (container.scrollTop <= 0 && hasMore && !isGettingMessages) {
         console.log("at the top");
 
         (async () => {
@@ -120,13 +150,14 @@ const ConversationMessages = () => {
             const newScrollTop =
               newScrollHeight - oldScrollHeight + oldScrollTop;
 
-            container.scrollTop = newScrollTop - 20;
+            container.scrollTop = newScrollTop;
           }, 0);
         })();
       }
     };
 
     container.addEventListener("scroll", handleScroll);
+
     return () => container.removeEventListener("scroll", handleScroll);
   }, [
     otherSide,
@@ -136,12 +167,6 @@ const ConversationMessages = () => {
     getMessages,
     currentConversationMessages,
   ]);
-
-  useEffect(() => {
-    if (wasAtBottomRef.current) {
-      scrollableDiv.current?.scrollTo(0, scrollableDiv.current?.scrollHeight);
-    }
-  }, [currentConversationMessages]);
 
   const messagesElements = currentConversationMessages.map((message, index) => (
     <ConversationMessageMemo
@@ -161,15 +186,36 @@ const ConversationMessages = () => {
 
   return (
     <>
+      {newMessagesCount > 0 && (
+        <Button
+          variant="ghostFull"
+          className="absolute end-8 bottom-20 z-30 flex !h-10 w-10 cursor-pointer items-center justify-center rounded-full bg-mainColor-600 !p-0"
+          onClick={() => {
+            scrollableDiv.current?.scrollTo(
+              0,
+              scrollableDiv.current?.scrollHeight,
+            );
+          }}
+        >
+          <IoIosArrowDown />
+          <div className="absolute -end-2 -bottom-2 flex h-6 w-6 items-center justify-center rounded-full bg-site-foreground">
+            {newMessagesCount}
+          </div>
+        </Button>
+      )}
       <div
-        className="flex flex-1 flex-col overflow-y-auto bg-site-background p-4"
+        className="relative flex flex-1 flex-col overflow-y-auto bg-site-background p-4"
         ref={scrollableDiv}
       >
-        {isGettingMessages && (
-          <div className="flex flex-1 items-center justify-center">
-            <Loader2 className="scale-50 animate-spin" />
-          </div>
-        )}
+        <div
+          className={clsx(
+            "flex flex-1 items-center justify-center",
+            !isGettingMessages && "invisible",
+          )}
+        >
+          <Loader2 className="scale-50 animate-spin" />
+        </div>
+
         <div className="mt-auto space-y-3">{messagesElements}</div>
       </div>
     </>
