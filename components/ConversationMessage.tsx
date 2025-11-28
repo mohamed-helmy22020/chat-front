@@ -1,12 +1,14 @@
 import { formatDateToStatus, REACTS } from "@/lib/utils";
+import { useChatStore } from "@/store/chatStore";
 import clsx from "clsx";
 import Image from "next/image";
+import { memo } from "react";
 import {
   AiTwotoneDislike as DislikeEmoji,
   AiTwotoneLike as LikeEmoji,
 } from "react-icons/ai";
 import { BsFillEmojiSurpriseFill as WowEmoji } from "react-icons/bs";
-import { FaAngry as AngryEmoji } from "react-icons/fa";
+import { FaAngry as AngryEmoji, FaPlay } from "react-icons/fa";
 import {
   FaFaceLaughBeam as LaughEmoji,
   FaFaceSadTear as SadEmoji,
@@ -14,6 +16,7 @@ import {
 import { FcLike as LoveEmoji } from "react-icons/fc";
 import { RiCheckDoubleFill, RiLoader5Fill } from "react-icons/ri";
 import MessageMenu from "./MessageMenu";
+import { Button } from "./ui/button";
 type Props = {
   message: MessageType;
   isMine: boolean;
@@ -63,7 +66,13 @@ const ConversationMessage = ({
             message.reacts && message.reacts.length > 0 && "mb-[22px]",
           )}
         >
-          <div className="message-bubble self rounded-xs bg-mainColor-100 px-2 py-2 shadow-sm dark:bg-mainColor-900">
+          <div className="self rounded-sm bg-mainColor-100 px-2 py-2 shadow-sm dark:bg-mainColor-900">
+            {message.mediaType === "image" && message.mediaUrl && (
+              <MessageImg message={message} />
+            )}
+            {message.mediaType === "video" && message.mediaUrl && (
+              <MessageVid message={message} />
+            )}
             <pre className="text-sm break-words">{message.text}</pre>
             <div className="mt-1 mr-1 flex items-center justify-between gap-2 text-right text-xs">
               <p className="text-slate-200">
@@ -113,7 +122,13 @@ const ConversationMessage = ({
           message.reacts && message.reacts.length > 0 && "mb-[22px]",
         )}
       >
-        <div className="message-bubble rounded-xs bg-white px-2 py-2 shadow-sm dark:bg-slate-600">
+        <div className="rounded-xs bg-white px-2 py-2 shadow-sm dark:bg-slate-600">
+          {message.mediaType === "image" && message.mediaUrl && (
+            <MessageImg message={message} />
+          )}
+          {message.mediaType === "video" && message.mediaUrl && (
+            <MessageVid message={message} />
+          )}
           <pre className="text-sm break-words">{message.text}</pre>
           <div className="mt-1 ml-1 flex items-center justify-end text-xs">
             <p className="text-slate-500 dark:text-slate-400">
@@ -132,5 +147,53 @@ const ConversationMessage = ({
     </div>
   );
 };
+
+const MessageImg = memo(({ message }: { message: MessageType }) => {
+  const changeCurrentSelectedMediaMessage = useChatStore(
+    (state) => state.changeCurrentSelectedMediaMessage,
+  );
+  return (
+    <Button
+      variant="ghostFull"
+      className="!max-h-80 !max-w-60 cursor-pointer overflow-hidden !p-0"
+      onClick={() => changeCurrentSelectedMediaMessage(message)}
+    >
+      <div className="relative flex max-h-full w-full items-center justify-center">
+        <Image src={message.mediaUrl!} width={240} height={320} alt="fs" />
+      </div>
+    </Button>
+  );
+});
+MessageImg.displayName = "MessageImg";
+
+const MessageVid = ({ message }: { message: MessageType }) => {
+  const changeCurrentSelectedMediaMessage = useChatStore(
+    (state) => state.changeCurrentSelectedMediaMessage,
+  );
+  return (
+    <Button
+      variant="ghostFull"
+      className="!max-h-80 !max-w-60 cursor-pointer overflow-hidden !p-0"
+      onClick={() => changeCurrentSelectedMediaMessage(message)}
+    >
+      <div className="relative flex max-h-full w-full items-center justify-center">
+        <video
+          src={message.mediaUrl}
+          className="max-h-full max-w-full"
+          muted
+          autoPlay={false}
+          controlsList="nodownload"
+          preload="metadata"
+        />
+        <div className="absolute inset-0 flex items-center justify-center bg-black/50">
+          <div className="flex items-center justify-center rounded-full p-2">
+            <FaPlay />
+          </div>
+        </div>
+      </div>
+    </Button>
+  );
+};
+MessageVid.displayName = "MessageVid";
 
 export default ConversationMessage;

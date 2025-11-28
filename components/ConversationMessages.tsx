@@ -55,12 +55,9 @@ const ConversationMessages = () => {
 
   useEffect(() => {
     const container = scrollableDiv.current;
-    console.log("1");
 
     if (!container) return;
-    console.log("2");
     const handleScroll = () => {
-      console.log("scrolling");
       if (isAtBottom()) {
         setNewMessagesCount(0);
       }
@@ -74,8 +71,6 @@ const ConversationMessages = () => {
   useEffect(() => {
     const currentConversationLastMessage =
       currentConversationMessages[currentConversationMessages.length - 1];
-    console.log({ currentConversationLastMessage });
-    console.log({ lastMessage });
     if (
       wasAtBottomRef.current ||
       currentConversationLastMessage?.type === "pending"
@@ -85,7 +80,6 @@ const ConversationMessages = () => {
       currentConversationLastMessage?.from !== user?._id &&
       lastMessage?.id !== currentConversationLastMessage?.id
     ) {
-      console.log("new message");
       setLastMessage(currentConversationLastMessage);
       setNewMessagesCount((count) => count + 1);
     }
@@ -104,7 +98,6 @@ const ConversationMessages = () => {
         setIsGettingMessages(false);
         if (getMessagesRes.success) {
           setHasMore(getMessagesRes.hasMore);
-          console.log(getMessagesRes);
           return getMessagesRes.messages;
         } else {
           throw new Error("Error getting messages");
@@ -122,7 +115,6 @@ const ConversationMessages = () => {
     (async function () {
       const messages = await getMessages();
       changeCurrentConversationMessages(messages);
-      console.log(scrollableDiv.current?.scrollTop);
     })();
   }, [getMessages, changeCurrentConversationMessages]);
 
@@ -135,8 +127,6 @@ const ConversationMessages = () => {
       const oldScrollHeight = container.scrollHeight;
       const oldScrollTop = container.scrollTop;
       if (container.scrollTop <= 0 && hasMore && !isGettingMessages) {
-        console.log("at the top");
-
         (async () => {
           const messages = await getMessages(
             currentConversationMessages[0].createdAt,

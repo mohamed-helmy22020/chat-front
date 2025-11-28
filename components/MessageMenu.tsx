@@ -21,6 +21,7 @@ import {
 import { FcLike as LoveEmoji } from "react-icons/fc";
 import { IoCopy } from "react-icons/io5";
 import { MdDeleteForever, MdKeyboardArrowDown } from "react-icons/md";
+import { toast } from "sonner";
 import { Button } from "./ui/button";
 import {
   DropdownMenu,
@@ -99,6 +100,7 @@ const MessageMenu = ({ message }: Props) => {
       await navigator.clipboard.writeText(message.text);
     } catch (error) {
       console.log("Failed to copy message text", error);
+      toast.error("Failed to copy message text");
     }
   };
   return (

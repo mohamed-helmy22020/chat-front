@@ -3,6 +3,7 @@ import { useChatStore } from "@/store/chatStore";
 import { useUserStore } from "@/store/userStore";
 import clsx from "clsx";
 import Image from "next/image";
+import { FaImage, FaVideo } from "react-icons/fa";
 import { useShallow } from "zustand/react/shallow";
 import { Button } from "./ui/button";
 type Props = {
@@ -28,6 +29,20 @@ const ConversationItem = ({ conversation }: Props) => {
       seen: true,
     });
   };
+  const content =
+    lastMessage.mediaType === "image" ? (
+      <>
+        <FaImage /> {lastMessage.text || "Image"}
+      </>
+    ) : lastMessage.mediaType === "video" ? (
+      <>
+        <FaVideo />
+
+        {lastMessage.text || "Video"}
+      </>
+    ) : (
+      lastMessage.text
+    );
   return (
     <div
       className={clsx(
@@ -57,12 +72,12 @@ const ConversationItem = ({ conversation }: Props) => {
           </div>
           <div
             className={clsx(
-              "max-w-full truncate font-light text-slate-400",
+              "flex max-w-full items-center gap-1 truncate font-light text-slate-400",
               lastMessage.from !== userId && !lastMessage.seen && "text-white",
               conversation.isTyping && "animate-pulse",
             )}
           >
-            {conversation.isTyping ? "Typing..." : lastMessage.text}
+            {conversation.isTyping ? "Typing..." : content}
           </div>
         </div>
       </Button>

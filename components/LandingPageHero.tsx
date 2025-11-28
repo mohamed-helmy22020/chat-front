@@ -108,7 +108,7 @@ const LandingPageHero = () => {
                         alt="user-1"
                       />
                       <div>
-                        <div className="message-bubble bg-white px-4 py-2 shadow-sm dark:bg-slate-600">
+                        <div className="bg-white px-4 py-2 shadow-sm dark:bg-slate-600">
                           <p className="text-sm">
                             Hey there! How are you doing?
                           </p>
@@ -120,7 +120,7 @@ const LandingPageHero = () => {
                     </div>
                     <div className="flex items-start justify-end">
                       <div>
-                        <div className="message-bubble self bg-mainColor-100 px-4 py-2 shadow-sm dark:bg-mainColor-900">
+                        <div className="self bg-mainColor-100 px-4 py-2 shadow-sm dark:bg-mainColor-900">
                           <p className="text-sm">
                             I am doing great! Just finished that project we were
                             working on.
@@ -140,7 +140,7 @@ const LandingPageHero = () => {
                         alt="user-1"
                       />
                       <div>
-                        <div className="message-bubble bg-white px-4 py-2 shadow-sm dark:bg-slate-600">
+                        <div className="bg-white px-4 py-2 shadow-sm dark:bg-slate-600">
                           <p className="text-sm">
                             That is awesome! Can you share the files with me?
                           </p>
@@ -152,7 +152,7 @@ const LandingPageHero = () => {
                     </div>
                     <div className="flex items-start justify-end">
                       <div>
-                        <div className="message-bubble self bg-mainColor-100 px-4 py-2 shadow-sm dark:bg-mainColor-900">
+                        <div className="self bg-mainColor-100 px-4 py-2 shadow-sm dark:bg-mainColor-900">
                           <div className="flex items-center space-x-2">
                             <LuFile className="h-5 w-5 text-mainColor-600 dark:text-mainColor-400" />
                             <div>

@@ -71,6 +71,8 @@ type MessageType = {
   reacts: ReactType[];
   createdAt: string;
   updatedAt: string;
+  mediaUrl?: string;
+  mediaType?: "image" | "video" | "";
   type?: "pending" | "received";
 };
 type ReactsType = Record<

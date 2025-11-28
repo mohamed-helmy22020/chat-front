@@ -1,59 +1,94 @@
-import {
-  allowedPictureTypes,
-  allowedVideoTypes,
-  fetchWithErrorHandling,
-} from "@/lib/utils";
-import { useStatusStore } from "@/store/statusStore";
+import { allowedPictureTypes, allowedVideoTypes } from "@/lib/utils";
+import { chatSocket } from "@/src/socket";
+import { useChatStore } from "@/store/chatStore";
 import { useUserStore } from "@/store/userStore";
 import { Loader2, X } from "lucide-react";
 import Image from "next/image";
 import { useMemo, useState } from "react";
 import { IoMdSend } from "react-icons/io";
-import { toast } from "sonner";
+import { useShallow } from "zustand/react/shallow";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 
 type Props = {
-  setShowAddMedia: React.Dispatch<React.SetStateAction<boolean>>;
   file: File;
   setSelectedFile: React.Dispatch<React.SetStateAction<File | null>>;
+  oldMessageText: string;
+  to: string;
 };
-const AddStatusMedia = ({ setShowAddMedia, setSelectedFile, file }: Props) => {
+const AddMessageMedia = ({
+  setSelectedFile,
+  file,
+  oldMessageText,
+  to,
+}: Props) => {
+  const isAllowedImage = allowedPictureTypes.includes(file.type);
   const mediaUrl = useMemo(() => {
     return URL.createObjectURL(file);
   }, [file]);
 
   const user = useUserStore((state) => state.user);
+  const {
+    currentConversation,
+    addMessage,
+    changeLastMessage,
+    updateMessage,
+    deleteMessage,
+  } = useChatStore(
+    useShallow((state) => ({
+      currentConversation: state.currentConversation,
+      addMessage: state.addMessage,
+      updateMessage: state.updateMessage,
+      changeLastMessage: state.changeLastMessage,
+      deleteMessage: state.deleteMessage,
+    })),
+  );
   const [isSending, setIsSending] = useState(false);
-  const [caption, setCaption] = useState("");
-  const addUserStatus = useStatusStore((state) => state.addUserStatus);
-  const handleSendStatus = async () => {
+  const [messageText, setMessageText] = useState(oldMessageText);
+
+  const sendMessage = () => {
     setIsSending(true);
-    const formData = new FormData();
-    formData.append("statusMedia", file);
-    formData.append("content", caption);
-    try {
-      const response = await fetchWithErrorHandling("/status", {
-        method: "POST",
-        body: formData,
-        headers: {
-          Authorization: `Bearer ${user?.accessToken}`,
-        },
-      });
-      if (!response.success) {
-        throw new Error(response.msg);
-      }
-      setShowAddMedia(false);
-      setSelectedFile(null);
-      setCaption("");
-      addUserStatus(response.status);
-      toast.success("Status added successfully!");
-    } catch (error: any) {
-      console.log(error);
-      toast.error(error.msg);
-    }
-    setIsSending(false);
+    const id = Math.random().toString();
+    const newMessage: MessageType = {
+      id,
+      conversationId: currentConversation!.id,
+      from: user!._id,
+      to: to,
+      text: messageText.trim(),
+      seen: false,
+      mediaUrl: mediaUrl,
+      mediaType: isAllowedImage ? "image" : "video",
+      reacts: [],
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      type: "pending",
+    };
+    addMessage(newMessage, currentConversation!);
+
+    changeLastMessage(currentConversation!, newMessage);
+    chatSocket.emit(
+      "sendPrivateMessage",
+      to,
+      messageText.trim(),
+      {
+        buffer: file,
+        mimetype: file.type,
+      },
+      (res: ReceiveMessageType) => {
+        setMessageText("");
+
+        if (res.success) {
+          updateMessage(id, res.message);
+          changeLastMessage(res.conversation, res.message);
+        } else {
+          deleteMessage(id!);
+        }
+        setIsSending(false);
+        setSelectedFile(null);
+      },
+    );
   };
+
   return (
     <div className="fixed top-0 left-0 z-50 flex h-screen w-screen flex-col overflow-hidden bg-site-background">
       <div className="flex items-start justify-start px-3 py-3">
@@ -61,7 +96,6 @@ const AddStatusMedia = ({ setShowAddMedia, setSelectedFile, file }: Props) => {
           className="scale-110 cursor-pointer"
           variant="ghostFull"
           onClick={() => {
-            setShowAddMedia(false);
             setSelectedFile(null);
           }}
         >
@@ -74,7 +108,7 @@ const AddStatusMedia = ({ setShowAddMedia, setSelectedFile, file }: Props) => {
             <Image
               unoptimized
               src={mediaUrl}
-              alt="status"
+              alt="message media"
               fill
               className="object-contain"
             />
@@ -101,8 +135,8 @@ const AddStatusMedia = ({ setShowAddMedia, setSelectedFile, file }: Props) => {
             <Input
               className="w-full rounded-sm border-0 !bg-site-foreground ring-0 placeholder:text-white"
               placeholder="Add a caption"
-              value={caption}
-              onChange={(e) => setCaption(e.target.value)}
+              value={messageText}
+              onChange={(e) => setMessageText(e.target.value)}
               disabled={isSending}
             />
           </div>
@@ -110,7 +144,7 @@ const AddStatusMedia = ({ setShowAddMedia, setSelectedFile, file }: Props) => {
             <Button
               variant="ghostFull"
               className="cursor-pointer"
-              onClick={handleSendStatus}
+              onClick={sendMessage}
               disabled={isSending}
             >
               {isSending ? <Loader2 className="animate-spin" /> : <IoMdSend />}
@@ -122,4 +156,4 @@ const AddStatusMedia = ({ setShowAddMedia, setSelectedFile, file }: Props) => {
   );
 };
 
-export default AddStatusMedia;
+export default AddMessageMedia;

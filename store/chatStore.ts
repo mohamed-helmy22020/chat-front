@@ -6,6 +6,10 @@ type State = {
   search: string;
   conversations: ConversationType[];
   currentConversation: ConversationType | null;
+  currentSelectedMediaMessage: {
+    message: MessageType;
+    user: MiniUserType;
+  } | null;
   currentConversationMessages: MessageType[];
   isConnected: boolean;
 };
@@ -24,6 +28,7 @@ type Actions = {
   changeIsConnected: (isConnected: boolean) => void;
   changeIsTyping: (conversationId: string, isTyping: boolean) => void;
   addReaction: (messageId: string, userId: string, react: ReactType) => void;
+  changeCurrentSelectedMediaMessage: (message: MessageType | null) => void;
   changeLastMessage: (
     conversation: ConversationType,
     lastMessage: MessageType,
@@ -35,6 +40,7 @@ const initialState: State = {
   search: "",
   conversations: [],
   currentConversation: null,
+  currentSelectedMediaMessage: null,
   currentConversationMessages: [],
   isConnected: false,
 };
@@ -222,6 +228,20 @@ export const useChatStore = create<State & Actions>()(
                 ...conversation,
               });
             }
+          }),
+        ),
+      changeCurrentSelectedMediaMessage: (message: MessageType) =>
+        set(
+          produce((state: State & Actions) => {
+            if (message === null) {
+              state.currentSelectedMediaMessage = null;
+              return;
+            }
+            const user = state.currentConversation?.participants.find(
+              (u) => u._id === message.from,
+            );
+            if (!user) return;
+            state.currentSelectedMediaMessage = { message, user };
           }),
         ),
 
