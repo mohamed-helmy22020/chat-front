@@ -7,7 +7,7 @@ type Props = {
 
 const StatusViewerCard = ({
   viewer: {
-    user: { name, userProfileImage, _id },
+    user: { name, userProfileImage },
     createdAt,
   },
 }: Props) => {

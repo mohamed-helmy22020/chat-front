@@ -1,4 +1,5 @@
 import { getConversationMessages } from "@/lib/actions/user.actions";
+import { chatSocket } from "@/src/socket";
 import { useChatStore } from "@/store/chatStore";
 import { useUserStore } from "@/store/userStore";
 import clsx from "clsx";
@@ -18,8 +19,30 @@ import { Button } from "./ui/button";
 const ConversationMessageMemo = memo(ConversationMessage);
 
 const ConversationMessages = () => {
+  const oldScrollHeight = useRef(0);
+  const oldScrollTop = useRef(0);
   const user = useUserStore((state) => state.user);
   const [lastMessage, setLastMessage] = useState<MessageType | null>(null);
+  const [isFocus, setIsFocus] = useState(true);
+
+  useEffect(() => {
+    const handleBlur = () => {
+      setIsFocus(false);
+    };
+
+    const handleFocus = () => {
+      setIsFocus(true);
+    };
+
+    window.addEventListener("blur", handleBlur);
+    window.addEventListener("focus", handleFocus);
+
+    return () => {
+      window.removeEventListener("blur", handleBlur);
+      window.removeEventListener("focus", handleFocus);
+    };
+  }, []);
+
   const {
     currentConversationMessages,
     changeCurrentConversationMessages,
@@ -42,6 +65,8 @@ const ConversationMessages = () => {
   const wasAtBottomRef = useRef<boolean | undefined>(true);
   const [hasMore, setHasMore] = useState(false);
   const [newMessagesCount, setNewMessagesCount] = useState(0);
+  const prevScrollHeightRef = useRef(0);
+  const isPrependingRef = useRef(false);
 
   const isAtBottom = () => {
     const scrollable = scrollableDiv.current;
@@ -59,16 +84,30 @@ const ConversationMessages = () => {
     if (!container) return;
     const handleScroll = () => {
       if (isAtBottom()) {
+        const currentConversationLastMessage =
+          currentConversationMessages[currentConversationMessages.length - 1];
         setNewMessagesCount(0);
+        if (
+          currentConversationLastMessage?.from !== user?._id &&
+          !currentConversationLastMessage?.seen
+        ) {
+          chatSocket.emit(
+            "seeAllMessages",
+            otherSide?._id,
+            (res: { success: boolean }) => {
+              console.log("See all messages response:", res);
+            },
+          );
+        }
       }
       wasAtBottomRef.current = isAtBottom();
     };
 
     container.addEventListener("scroll", handleScroll);
     return () => container.removeEventListener("scroll", handleScroll);
-  }, [otherSide]);
+  }, [otherSide, isFocus, user, currentConversationMessages]);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const currentConversationLastMessage =
       currentConversationMessages[currentConversationMessages.length - 1];
     if (
@@ -76,6 +115,19 @@ const ConversationMessages = () => {
       currentConversationLastMessage?.type === "pending"
     ) {
       scrollableDiv.current?.scrollTo(0, scrollableDiv.current?.scrollHeight);
+      if (
+        currentConversationLastMessage?.from !== user?._id &&
+        !currentConversationLastMessage?.seen &&
+        isFocus
+      ) {
+        chatSocket.emit(
+          "seeAllMessages",
+          otherSide?._id,
+          (res: { success: boolean }) => {
+            console.log("See all messages response:", res);
+          },
+        );
+      }
     } else if (
       currentConversationLastMessage?.from !== user?._id &&
       lastMessage?.id !== currentConversationLastMessage?.id
@@ -83,7 +135,7 @@ const ConversationMessages = () => {
       setLastMessage(currentConversationLastMessage);
       setNewMessagesCount((count) => count + 1);
     }
-  }, [currentConversationMessages, user, lastMessage]);
+  }, [currentConversationMessages, user, lastMessage, otherSide, isFocus]);
 
   const getMessages = useCallback(
     async (before?: string, limit?: number) => {
@@ -95,6 +147,9 @@ const ConversationMessages = () => {
           before,
           limit,
         );
+        await new Promise((resolve) => {
+          setTimeout(resolve, 5000);
+        });
         setIsGettingMessages(false);
         if (getMessagesRes.success) {
           setHasMore(getMessagesRes.hasMore);
@@ -112,11 +167,19 @@ const ConversationMessages = () => {
 
   useEffect(() => {
     changeCurrentConversationMessages([]);
+
     (async function () {
-      const messages = await getMessages();
+      const messages: MessageType[] = await getMessages();
+      chatSocket.emit(
+        "seeAllMessages",
+        otherSide?._id,
+        (res: { success: boolean }) => {
+          console.log("See all messages response:", res);
+        },
+      );
       changeCurrentConversationMessages(messages);
     })();
-  }, [getMessages, changeCurrentConversationMessages]);
+  }, [getMessages, changeCurrentConversationMessages, otherSide, user]);
 
   useEffect(() => {
     const container = scrollableDiv.current;
@@ -124,24 +187,19 @@ const ConversationMessages = () => {
     if (!container) return;
 
     const handleScroll = () => {
-      const oldScrollHeight = container.scrollHeight;
-      const oldScrollTop = container.scrollTop;
+      console.log("scrolling");
+      oldScrollHeight.current = container.scrollHeight;
+      oldScrollTop.current = container.scrollTop;
       if (container.scrollTop <= 0 && hasMore && !isGettingMessages) {
+        prevScrollHeightRef.current = container.scrollHeight;
+        isPrependingRef.current = true;
+
         (async () => {
           const messages = await getMessages(
             currentConversationMessages[0].createdAt,
           );
+
           addMoreMessages(messages);
-          setTimeout(() => {
-            const container = scrollableDiv.current;
-            if (!container) return;
-
-            const newScrollHeight = container.scrollHeight;
-            const newScrollTop =
-              newScrollHeight - oldScrollHeight + oldScrollTop;
-
-            container.scrollTop = newScrollTop;
-          }, 0);
         })();
       }
     };
@@ -158,6 +216,20 @@ const ConversationMessages = () => {
     currentConversationMessages,
   ]);
 
+  useLayoutEffect(() => {
+    if (isPrependingRef.current && scrollableDiv.current) {
+      const container = scrollableDiv.current;
+
+      const newScrollHeight = container.scrollHeight;
+      const newScrollTop =
+        newScrollHeight - oldScrollHeight.current + oldScrollTop.current;
+
+      container.scrollTop = newScrollTop;
+
+      isPrependingRef.current = false;
+    }
+  }, [currentConversationMessages]);
+
   const messagesElements = currentConversationMessages.map((message, index) => (
     <ConversationMessageMemo
       key={message.id}
@@ -170,9 +242,6 @@ const ConversationMessages = () => {
       otherSide={otherSide!}
     />
   ));
-  useLayoutEffect(() => {
-    scrollableDiv.current?.scrollTo(0, scrollableDiv.current?.scrollHeight);
-  }, [otherSide]);
 
   return (
     <>

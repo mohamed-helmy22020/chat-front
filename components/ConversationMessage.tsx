@@ -59,6 +59,7 @@ const ConversationMessage = ({
           "mb-[1px] flex flex-row-reverse items-center justify-start break-words break-all",
           isFirstMessage && "mt-3",
         )}
+        data-message-id={message.id}
       >
         <div
           className={clsx(
@@ -74,12 +75,14 @@ const ConversationMessage = ({
               <MessageVid message={message} />
             )}
             <pre className="text-sm break-words">{message.text}</pre>
-            <div className="mt-1 mr-1 flex items-center justify-between gap-2 text-right text-xs">
-              <p className="text-slate-200">
+            <div className="mt-1 mr-1 flex items-center justify-between gap-2 text-right text-sm">
+              <p className="scale-125 text-slate-200">
                 {message.type === "pending" ? (
                   <RiLoader5Fill className="animate-spin" />
                 ) : (
-                  <RiCheckDoubleFill />
+                  <RiCheckDoubleFill
+                    color={`${message.seen ? "#0284c7" : "#fff"}`}
+                  />
                 )}
               </p>
               <p className="text-slate-500 dark:text-slate-400">
@@ -104,6 +107,7 @@ const ConversationMessage = ({
         "mb-[1px] flex items-center break-words break-all",
         isFirstMessage && "mt-3",
       )}
+      data-message-id={message.id}
     >
       {isFirstMessage ? (
         <Image
@@ -122,7 +126,7 @@ const ConversationMessage = ({
           message.reacts && message.reacts.length > 0 && "mb-[22px]",
         )}
       >
-        <div className="rounded-xs bg-white px-2 py-2 shadow-sm dark:bg-slate-600">
+        <div className="rounded-sm bg-white px-2 py-2 shadow-sm dark:bg-slate-600">
           {message.mediaType === "image" && message.mediaUrl && (
             <MessageImg message={message} />
           )}

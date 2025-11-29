@@ -1,6 +1,9 @@
 import { produce } from "immer";
 import { create } from "zustand";
 import { devtools } from "zustand/middleware";
+import { useUserStore } from "./userStore";
+
+const user = useUserStore.getState().user;
 
 type State = {
   search: string;
@@ -25,6 +28,7 @@ type Actions = {
   addMessage: (message: MessageType, conversation: ConversationType) => void;
   updateMessage: (messageId: string, message: MessageType) => void;
   deleteMessage: (messageId: string) => void;
+  seeAllMessages: () => void;
   changeIsConnected: (isConnected: boolean) => void;
   changeIsTyping: (conversationId: string, isTyping: boolean) => void;
   addReaction: (messageId: string, userId: string, react: ReactType) => void;
@@ -118,8 +122,13 @@ export const useChatStore = create<State & Actions>()(
               (c) => c.id === conversation.id,
             );
             if (conversationIndex > -1) {
-              state.conversations[conversationIndex].lastMessage =
-                conversation.lastMessage;
+              state.conversations[conversationIndex].lastMessage = {
+                ...conversation.lastMessage,
+                seen:
+                  state.currentConversation?.id === conversation.id
+                    ? true
+                    : message.seen,
+              };
             } else {
               state.conversations.push(conversation);
             }
@@ -160,6 +169,17 @@ export const useChatStore = create<State & Actions>()(
             }
           }),
         ),
+      seeAllMessages: () =>
+        set(
+          produce((state: State & Actions) => {
+            state.currentConversationMessages
+              .filter((m) => !m.seen && m.from === user?._id)
+              .map((m) => {
+                m.seen = true;
+              });
+          }),
+        ),
+
       changeIsConnected: (isConnected: boolean) =>
         set(
           produce((state: State & Actions) => {

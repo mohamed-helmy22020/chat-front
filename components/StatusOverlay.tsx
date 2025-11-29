@@ -103,7 +103,6 @@ const StatusOverlay = () => {
     window.addEventListener("blur", handleBlur);
     window.addEventListener("focus", handleFocus);
 
-    // Cleanup
     return () => {
       window.removeEventListener("blur", handleBlur);
       window.removeEventListener("focus", handleFocus);

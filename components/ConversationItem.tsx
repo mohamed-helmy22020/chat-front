@@ -11,6 +11,7 @@ type Props = {
 };
 const ConversationItem = ({ conversation }: Props) => {
   const { lastMessage, participants } = conversation;
+  console.log({ lastMessage });
   const userId = useUserStore((state) => state.user?._id);
   const otherSide = participants.find((p) => p._id !== userId);
   const { changeCurrentConversation, changeLastMessage, currentCOnversation } =

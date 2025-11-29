@@ -92,6 +92,7 @@ const ConversationFooter = () => {
       type: "pending",
     };
     setMessageText("");
+    setIsTyping(false);
     addMessage(newMessage, currentConversation!);
 
     changeLastMessage(currentConversation!, newMessage);
