@@ -259,3 +259,37 @@ export const allowedVideoTypes = [
   "video/x-matroska",
   "video/webm",
 ];
+
+export async function getVideoThumbnail(
+  videoUrl: string,
+  time = 0,
+): Promise<string> {
+  return new Promise((resolve, reject) => {
+    // Create a video element in memory (not attached to DOM)
+    const video = document.createElement("video");
+    video.crossOrigin = "anonymous"; // Needed if video is from another origin
+    video.preload = "metadata";
+
+    video.onloadedmetadata = () => {
+      // Seek to desired time (clamped to video duration)
+      video.currentTime = Math.min(time, video.duration - 0.1 || 0);
+    };
+
+    video.onseeked = () => {
+      // Create an offscreen canvas
+      const canvas = document.createElement("canvas");
+      const ctx = canvas.getContext("2d");
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      ctx!.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+      // Get image as Data URL
+      const dataUrl = canvas.toDataURL("image/jpeg", 0.8);
+      resolve(dataUrl);
+    };
+
+    video.onerror = () => reject(new Error("Failed to load video"));
+
+    video.src = videoUrl;
+  });
+}

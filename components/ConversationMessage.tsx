@@ -59,7 +59,6 @@ const ConversationMessage = ({
           "mb-[1px] flex flex-row-reverse items-center justify-start break-words break-all",
           isFirstMessage && "mt-3",
         )}
-        data-message-id={message.id}
       >
         <div
           className={clsx(
@@ -107,7 +106,6 @@ const ConversationMessage = ({
         "mb-[1px] flex items-center break-words break-all",
         isFirstMessage && "mt-3",
       )}
-      data-message-id={message.id}
     >
       {isFirstMessage ? (
         <Image
@@ -133,8 +131,8 @@ const ConversationMessage = ({
           {message.mediaType === "video" && message.mediaUrl && (
             <MessageVid message={message} />
           )}
-          <pre className="text-sm break-words">{message.text}</pre>
-          <div className="mt-1 ml-1 flex items-center justify-end text-xs">
+          <div className="mt-1 ml-1 flex items-center justify-between gap-2 text-xs">
+            <pre className="text-sm break-words">{message.text}</pre>
             <p className="text-slate-500 dark:text-slate-400">
               {formatDateToStatus(message.createdAt)}
             </p>
@@ -180,7 +178,7 @@ const MessageVid = ({ message }: { message: MessageType }) => {
       className="!max-h-80 !max-w-60 cursor-pointer overflow-hidden !p-0"
       onClick={() => changeCurrentSelectedMediaMessage(message)}
     >
-      <div className="relative flex max-h-full w-full items-center justify-center">
+      <div className="relative flex max-h-80 w-full max-w-60 items-center justify-center">
         <video
           src={message.mediaUrl}
           className="max-h-full max-w-full"
@@ -189,7 +187,7 @@ const MessageVid = ({ message }: { message: MessageType }) => {
           controlsList="nodownload"
           preload="metadata"
         />
-        <div className="absolute inset-0 flex items-center justify-center bg-black/50">
+        <div className="absolute inset-0 flex items-center justify-center bg-black/25">
           <div className="flex items-center justify-center rounded-full p-2">
             <FaPlay />
           </div>

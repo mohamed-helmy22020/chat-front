@@ -1,25 +1,54 @@
 import { formatDateToStatus } from "@/lib/utils";
 import { useChatStore } from "@/store/chatStore";
+import clsx from "clsx";
+import { ArrowBigLeft, ArrowBigRight } from "lucide-react";
 import Image from "next/image";
 import { FaRegSmile } from "react-icons/fa";
 import { IoMdClose, IoMdDownload } from "react-icons/io";
 import { useShallow } from "zustand/react/shallow";
+import AllConversationMedia from "./AllConversationMedia";
 import { Button } from "./ui/button";
 
 const ShowMessageMedia = () => {
   const {
-    currentSelectedMediaMessage: {
-      message: { createdAt, text, mediaType, mediaUrl },
-      user: { name, userProfileImage },
-    },
+    currentSelectedMediaMessage,
     changeCurrentSelectedMediaMessage,
+    currentConversationMessages,
   } = useChatStore(
     useShallow((state) => ({
       currentSelectedMediaMessage: state.currentSelectedMediaMessage!,
       changeCurrentSelectedMediaMessage:
         state.changeCurrentSelectedMediaMessage,
+      currentConversationMessages: state.currentConversationMessages,
     })),
   );
+
+  const {
+    message: { createdAt, text, mediaType, mediaUrl },
+    user: { name, userProfileImage },
+  } = currentSelectedMediaMessage;
+  const messagesWithMedia = currentConversationMessages.filter(
+    (message) => !!message.mediaUrl,
+  );
+
+  const currentSelectedMediaMessageIndex = messagesWithMedia.findIndex(
+    (message) => message.id === currentSelectedMediaMessage?.message.id,
+  );
+  const nextMedia = () => {
+    if (currentSelectedMediaMessageIndex < messagesWithMedia.length - 1) {
+      changeCurrentSelectedMediaMessage(
+        messagesWithMedia[currentSelectedMediaMessageIndex + 1],
+      );
+    }
+  };
+  const prevMedia = () => {
+    if (currentSelectedMediaMessageIndex > 0) {
+      changeCurrentSelectedMediaMessage(
+        messagesWithMedia[currentSelectedMediaMessageIndex - 1],
+      );
+    }
+  };
+
   return (
     <div className="fixed top-0 left-0 z-50 flex h-screen w-screen flex-col bg-site-background select-none">
       <div className="flex h-16 justify-between px-5 py-2">
@@ -65,10 +94,37 @@ const ShowMessageMedia = () => {
         </div>
       </div>
       <div
-        className="flex flex-1 flex-col"
+        className="relative flex flex-1 flex-col"
         onClick={() => changeCurrentSelectedMediaMessage(null)}
       >
-        <div className="flex flex-1 items-center justify-center py-5">
+        <Button
+          variant="ghostFull"
+          className={clsx(
+            "absolute top-1/2 left-5 z-20 -translate-y-1/2 scale-125 cursor-pointer rounded-full bg-site-foreground !p-2 hover:opacity-70",
+            currentSelectedMediaMessageIndex === 0 && "hidden",
+          )}
+          onClick={(e) => {
+            e.stopPropagation();
+            prevMedia();
+          }}
+        >
+          <ArrowBigLeft />
+        </Button>
+        <Button
+          variant="ghostFull"
+          className={clsx(
+            "absolute top-1/2 right-5 z-20 -translate-y-1/2 scale-125 cursor-pointer rounded-full bg-site-foreground !p-2 hover:opacity-70",
+            currentSelectedMediaMessageIndex === messagesWithMedia.length - 1 &&
+              "hidden",
+          )}
+          onClick={(e) => {
+            e.stopPropagation();
+            nextMedia();
+          }}
+        >
+          <ArrowBigRight />
+        </Button>
+        <div className="relative flex flex-1 items-center justify-center py-5">
           {mediaType === "image" && (
             <div className="relative flex h-full w-full items-center justify-center">
               <Image
@@ -99,7 +155,9 @@ const ShowMessageMedia = () => {
         </div>
         <div className="flex items-center justify-center p-2">{text}</div>
       </div>
-      <div className="h-24 border-t"></div>
+      <div className="h-24 w-screen border-t pt-1">
+        <AllConversationMedia message={currentSelectedMediaMessage.message} />
+      </div>
     </div>
   );
 };
