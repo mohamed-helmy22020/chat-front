@@ -1,5 +1,7 @@
+"use client";
+import LoadingComponent from "@/components/Loading";
 const Loading = () => {
-  return <p>Loading...</p>;
+  return <LoadingComponent />;
 };
 
 export default Loading;

@@ -4,6 +4,7 @@ import RenderPage from "./RenderPage";
 
 const HomePage = async () => {
   const getUserRes = await getUserData();
+
   return (
     <div className="flex min-h-screen overflow-hidden">
       <HomeSideBar userProp={getUserRes?.userData} />

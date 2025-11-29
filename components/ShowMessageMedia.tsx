@@ -144,8 +144,7 @@ const ShowMessageMedia = () => {
                 autoPlay
                 className="absolute max-h-full max-w-full object-cover"
                 controls
-                muted
-                controlsList="nofullscreen nodownload noremoteplayback noplaybackrate"
+                controlsList="nofullscreen nodownload noremoteplayback noplaybackrate speed"
                 disablePictureInPicture
                 disableRemotePlayback
                 onClick={(e) => e.stopPropagation()}

@@ -1,6 +1,7 @@
 import { getConversationMessages } from "@/lib/actions/user.actions";
 import { chatSocket } from "@/src/socket";
 import { useChatStore } from "@/store/chatStore";
+import { useSettingsStore } from "@/store/settingsStore";
 import { useUserStore } from "@/store/userStore";
 import clsx from "clsx";
 import { Loader2 } from "lucide-react";
@@ -23,25 +24,7 @@ const ConversationMessages = () => {
   const oldScrollTop = useRef(0);
   const user = useUserStore((state) => state.user);
   const [lastMessage, setLastMessage] = useState<MessageType | null>(null);
-  const [isFocus, setIsFocus] = useState(true);
-
-  useEffect(() => {
-    const handleBlur = () => {
-      setIsFocus(false);
-    };
-
-    const handleFocus = () => {
-      setIsFocus(true);
-    };
-
-    window.addEventListener("blur", handleBlur);
-    window.addEventListener("focus", handleFocus);
-
-    return () => {
-      window.removeEventListener("blur", handleBlur);
-      window.removeEventListener("focus", handleFocus);
-    };
-  }, []);
+  const isFocus = useSettingsStore((state) => state.isFocus);
 
   const {
     currentConversationMessages,
@@ -89,15 +72,10 @@ const ConversationMessages = () => {
         setNewMessagesCount(0);
         if (
           currentConversationLastMessage?.from !== user?._id &&
-          !currentConversationLastMessage?.seen
+          !currentConversationLastMessage?.seen &&
+          isFocus
         ) {
-          chatSocket.emit(
-            "seeAllMessages",
-            otherSide?._id,
-            (res: { success: boolean }) => {
-              console.log("See all messages response:", res);
-            },
-          );
+          chatSocket.emit("seeAllMessages", otherSide?._id);
         }
       }
       wasAtBottomRef.current = isAtBottom();
@@ -120,13 +98,7 @@ const ConversationMessages = () => {
         !currentConversationLastMessage?.seen &&
         isFocus
       ) {
-        chatSocket.emit(
-          "seeAllMessages",
-          otherSide?._id,
-          (res: { success: boolean }) => {
-            console.log("See all messages response:", res);
-          },
-        );
+        chatSocket.emit("seeAllMessages", otherSide?._id);
       }
     } else if (
       currentConversationLastMessage?.from !== user?._id &&
@@ -167,13 +139,7 @@ const ConversationMessages = () => {
 
     (async function () {
       const messages: MessageType[] = await getMessages();
-      chatSocket.emit(
-        "seeAllMessages",
-        otherSide?._id,
-        (res: { success: boolean }) => {
-          console.log("See all messages response:", res);
-        },
-      );
+      chatSocket.emit("seeAllMessages", otherSide?._id);
       changeCurrentConversationMessages(messages);
     })();
   }, [getMessages, changeCurrentConversationMessages, otherSide, user]);
@@ -184,7 +150,6 @@ const ConversationMessages = () => {
     if (!container) return;
 
     const handleScroll = () => {
-      console.log("scrolling");
       oldScrollHeight.current = container.scrollHeight;
       oldScrollTop.current = container.scrollTop;
       if (container.scrollTop <= 0 && hasMore && !isGettingMessages) {

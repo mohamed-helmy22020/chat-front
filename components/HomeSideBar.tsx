@@ -21,6 +21,7 @@ import {
 import { chatSocket } from "@/src/socket";
 import { useChatStore } from "@/store/chatStore";
 import { PageType, usePageStore } from "@/store/pageStore";
+import { useSettingsStore } from "@/store/settingsStore";
 import { useStatusStore } from "@/store/statusStore";
 import { useUserStore } from "@/store/userStore";
 import { useEffect } from "react";
@@ -43,6 +44,30 @@ const HomeSideBar = ({ userProp }: Props) => {
       changeUserData(userProp);
     }
   }, [userProp, changeUserData]);
+  const changeIsFocuse = useSettingsStore((state) => state.changeIsFocus);
+  useEffect(() => {
+    const handleBlur = () => {
+      changeIsFocuse(false);
+    };
+
+    const handleFocus = () => {
+      changeIsFocuse(true);
+    };
+
+    window.addEventListener("blur", handleBlur);
+    window.addEventListener("focus", handleFocus);
+
+    return () => {
+      window.removeEventListener("blur", handleBlur);
+      window.removeEventListener("focus", handleFocus);
+    };
+  }, [changeIsFocuse]);
+  const { addLoadingProgress, changeIsLoadingData } = useSettingsStore(
+    useShallow((state) => ({
+      addLoadingProgress: state.addLoadingProgress,
+      changeIsLoadingData: state.changeIsLoadingData,
+    })),
+  );
 
   const {
     changeIsConnected,
@@ -225,13 +250,34 @@ const HomeSideBar = ({ userProp }: Props) => {
           userStatusesRes,
           friendsStatusesRes,
         ] = await Promise.all([
-          getAllConversations(),
-          getFriendsList(),
-          getSentRequests(),
-          getFriendsRequests(),
-          getBlockedList(),
-          getUserStatuses(),
-          getFriendsStatuses(),
+          getAllConversations().then((data) => {
+            addLoadingProgress(100 / 7);
+            return data;
+          }),
+          getFriendsList().then((data) => {
+            addLoadingProgress(100 / 7);
+            return data;
+          }),
+          getSentRequests().then((data) => {
+            addLoadingProgress(100 / 7);
+            return data;
+          }),
+          getFriendsRequests().then((data) => {
+            addLoadingProgress(100 / 7);
+            return data;
+          }),
+          getBlockedList().then((data) => {
+            addLoadingProgress(100 / 7);
+            return data;
+          }),
+          getUserStatuses().then((data) => {
+            addLoadingProgress(100 / 7);
+            return data;
+          }),
+          getFriendsStatuses().then((data) => {
+            addLoadingProgress(100 / 7);
+            return data;
+          }),
         ]);
 
         // Update state with the results
@@ -242,6 +288,7 @@ const HomeSideBar = ({ userProp }: Props) => {
         setBlockedList(getBlockedListRes.blockedUsers);
         changeUserStatuses(userStatusesRes.statuses);
         changeFriendsStatuses(friendsStatusesRes.statuses);
+        changeIsLoadingData(false);
       } catch (e: any) {
         console.log("Error getting data", e);
       }
@@ -259,6 +306,8 @@ const HomeSideBar = ({ userProp }: Props) => {
     setBlockedList,
     changeFriendsStatuses,
     changeUserStatuses,
+    addLoadingProgress,
+    changeIsLoadingData,
   ]);
 
   useEffect(() => {

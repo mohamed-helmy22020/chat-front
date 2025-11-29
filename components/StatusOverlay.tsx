@@ -1,4 +1,5 @@
 import { seeStatus } from "@/lib/actions/user.actions";
+import { useSettingsStore } from "@/store/settingsStore";
 import { useStatusStore } from "@/store/statusStore";
 import { memo, useEffect } from "react";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa6";
@@ -91,23 +92,11 @@ const StatusOverlay = () => {
     seeStatusFunc();
   }, [currentStatus, currentOpenedStatus, seeStatusState]);
 
+  const isFocus = useSettingsStore((state) => state.isFocus);
+
   useEffect(() => {
-    const handleBlur = () => {
-      changeIsPlaying(false);
-    };
-
-    const handleFocus = () => {
-      changeIsPlaying(true);
-    };
-
-    window.addEventListener("blur", handleBlur);
-    window.addEventListener("focus", handleFocus);
-
-    return () => {
-      window.removeEventListener("blur", handleBlur);
-      window.removeEventListener("focus", handleFocus);
-    };
-  }, [changeIsPlaying]);
+    changeIsPlaying(isFocus);
+  }, [isFocus, changeIsPlaying]);
 
   return (
     <div className="fixed top-0 left-0 z-50 h-full w-full bg-black">
