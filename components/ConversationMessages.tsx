@@ -147,9 +147,6 @@ const ConversationMessages = () => {
           before,
           limit,
         );
-        await new Promise((resolve) => {
-          setTimeout(resolve, 5000);
-        });
         setIsGettingMessages(false);
         if (getMessagesRes.success) {
           setHasMore(getMessagesRes.hasMore);
