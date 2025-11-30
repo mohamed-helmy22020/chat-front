@@ -165,14 +165,24 @@ const HomeSideBar = ({ userProp }: Props) => {
 
     const onNewFriendRequest = (res: { user: RequestUserType }) => {
       setReceivedRequestsList([...receivedRequests, res.user]);
+      toast.info(
+        <div className="text-md">
+          <span className="text-md font-extrabold">{res.user.name}</span> sent
+          you a friend request
+        </div>,
+      );
     };
 
     const onFriendAccepted = (res: { userId: string }) => {
-      setFriendsList([
-        ...friendsList,
-        sentRequests.find((r) => r._id === res.userId)!,
-      ]);
+      const sentRequest = sentRequests.find((r) => r._id === res.userId)!;
+      setFriendsList([...friendsList, sentRequest]);
       setSentRequestsList(sentRequests.filter((r) => r._id !== res.userId));
+      toast.success(
+        <div className="text-md">
+          <span className="text-md font-extrabold">{sentRequest.name}</span>{" "}
+          accept your friend request
+        </div>,
+      );
     };
 
     const onFriendRequestCancelled = (res: { userId: string }) => {

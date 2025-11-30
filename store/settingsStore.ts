@@ -14,7 +14,7 @@ export const useSettingsStore = create<settingsStateType>()(
   devtools(
     (set) => ({
       isFocus: true,
-      isLoadingData: false,
+      isLoadingData: true,
       loadingProgress: 0,
       changeIsFocus: (isFocus: boolean) =>
         set(

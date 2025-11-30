@@ -152,7 +152,9 @@ const ShowMessageMedia = () => {
             </div>
           )}
         </div>
-        <div className="flex items-center justify-center p-2">{text}</div>
+        <div className="flex items-center justify-center p-2">
+          <div className="line-clamp-4 max-w-1/2 overflow-hidden">{text}</div>
+        </div>
       </div>
       <div className="h-24 w-screen border-t pt-1">
         <AllConversationMedia message={currentSelectedMediaMessage.message} />

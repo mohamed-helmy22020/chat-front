@@ -14,7 +14,7 @@ const FriendsList = () => {
   ));
   return (
     <div className="flex flex-1">
-      <div className="flex h-full w-5/12 flex-col border-e-2">
+      <div className="flex h-full w-full flex-col border-e-2 md:w-5/12">
         <div className="flex items-center justify-between p-5">
           <h1>Friends List</h1>
           <div className="flex">
@@ -37,7 +37,7 @@ const FriendsList = () => {
           </div>
         )}
       </div>
-      <div className="flex w-7/12 items-center justify-center">a</div>
+      <div className="hidden w-7/12 items-center justify-center md:flex">a</div>
     </div>
   );
 };

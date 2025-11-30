@@ -64,6 +64,7 @@ const ConversationMessage = ({
           className={clsx(
             "peer relative max-w-4/5 ps-1",
             message.reacts && message.reacts.length > 0 && "mb-[22px]",
+            message.mediaUrl && "max-w-[240px]",
           )}
         >
           <div className="self rounded-sm bg-mainColor-100 px-2 py-2 shadow-sm dark:bg-mainColor-900">
@@ -108,13 +109,14 @@ const ConversationMessage = ({
       )}
     >
       {isFirstMessage ? (
-        <Image
-          width={40}
-          height={40}
-          src={otherSide.userProfileImage || "/imgs/user.jpg"}
-          className="rounded-full border-2 border-white dark:border-slate-800"
-          alt="user-1"
-        />
+        <div className="relative flex h-10 w-10 items-center justify-center rounded-full border-2 border-white dark:border-slate-800">
+          <Image
+            className="rounded-full object-cover"
+            src={otherSide.userProfileImage || "/imgs/user.jpg"}
+            alt="avatar"
+            fill
+          />
+        </div>
       ) : (
         <div className="h-10 w-10 flex-shrink-0"></div>
       )}
@@ -122,6 +124,7 @@ const ConversationMessage = ({
         className={clsx(
           "peer relative ms-2 max-w-4/5 pe-1",
           message.reacts && message.reacts.length > 0 && "mb-[22px]",
+          message.mediaUrl && "max-w-[240px]",
         )}
       >
         <div className="rounded-sm bg-white px-2 py-2 shadow-sm dark:bg-slate-600">
@@ -131,7 +134,7 @@ const ConversationMessage = ({
           {message.mediaType === "video" && message.mediaUrl && (
             <MessageVid message={message} />
           )}
-          <div className="mt-1 ml-1 flex items-center justify-between gap-2 text-xs">
+          <div className="mt-1 ml-1 flex items-end justify-between gap-2 text-xs">
             <pre className="text-sm break-words">{message.text}</pre>
             <p className="text-slate-500 dark:text-slate-400">
               {formatDateToStatus(message.createdAt)}

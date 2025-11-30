@@ -4,14 +4,13 @@ import Image from "next/image";
 const SettingsProfileCard = () => {
   const user = useUserStore((state) => state.user);
   return (
-    <div className="flex min-h-15 w-full cursor-pointer rounded-md px-3 py-1.5 hover:bg-site-foreground">
-      <div className="me-2 flex items-center">
+    <div className="flex min-h-15 w-full cursor-pointer gap-2 rounded-md px-3 py-1.5 hover:bg-site-foreground">
+      <div className="relative flex min-h-15 min-w-15 items-center justify-center rounded-full border-2 border-white dark:border-slate-800">
         <Image
           className="rounded-full object-cover"
           src={user?.userProfileImage || "/imgs/user.jpg"}
           alt="avatar"
-          width={40}
-          height={40}
+          fill
         />
       </div>
       <div className="flex flex-1 flex-col items-start justify-center">

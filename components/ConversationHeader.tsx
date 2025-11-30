@@ -16,13 +16,14 @@ const ConversationHeader = () => {
   return (
     <div className="flex items-center justify-between border-b border-slate-200 bg-site-foreground p-4 dark:border-slate-700">
       <div className="flex items-center">
-        <Image
-          width={40}
-          height={40}
-          src={userProfileImage || "/imgs/user.jpg"}
-          className="rounded-full border-2 border-white object-cover dark:border-slate-800"
-          alt="user-1"
-        />
+        <div className="relative flex min-h-9 min-w-9 items-center justify-center rounded-full border-2 border-white dark:border-slate-800">
+          <Image
+            className="rounded-full object-cover"
+            src={userProfileImage || "/imgs/user.jpg"}
+            alt="avatar"
+            fill
+          />
+        </div>
         <div className="ml-3">
           <p className="font-medium">{name}</p>
           <p

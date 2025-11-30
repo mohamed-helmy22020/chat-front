@@ -44,14 +44,13 @@ type Props = {
 const RequestUserCard = ({ user, type = "friends" }: Props) => {
   const { _id, userProfileImage, name, bio } = user;
   return (
-    <div className="flex min-h-15 w-full cursor-pointer rounded-md px-3 py-1.5 hover:bg-site-foreground">
-      <div className="me-2 flex items-center">
+    <div className="flex min-h-15 w-full cursor-pointer items-center gap-2 rounded-md px-3 py-1.5 hover:bg-site-foreground">
+      <div className="relative flex h-9 w-9 items-center justify-center rounded-full border-2 border-white dark:border-slate-800">
         <Image
           className="rounded-full object-cover"
           src={userProfileImage || "/imgs/user.jpg"}
           alt="avatar"
-          width={25}
-          height={25}
+          fill
         />
       </div>
       <div className="flex flex-1 flex-col items-start justify-center">

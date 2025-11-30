@@ -10,7 +10,7 @@ const Chat = () => {
   return (
     <div className="flex flex-1 overflow-hidden">
       <ConversationsList />
-      {currentConversation ? <Conversation /> : <div></div>}
+      {currentConversation ? <Conversation /> : <div className="hidden"></div>}
     </div>
   );
 };
