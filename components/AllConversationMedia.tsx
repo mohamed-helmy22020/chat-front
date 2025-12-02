@@ -78,7 +78,7 @@ const Media = ({ url, type }: { url: string; type: "image" | "video" }) => {
           src={url}
           alt="media"
           fill
-          className="object-contain"
+          className="object-cover"
         />
       )}
       {type === "video" && (

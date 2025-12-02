@@ -33,6 +33,7 @@ type RequestUserType = {
   isFriend?: boolean;
   isSentRequest?: boolean;
   isReceivedRequest?: boolean;
+  isOnline?: boolean;
 };
 
 type ReceiveMessageType = {

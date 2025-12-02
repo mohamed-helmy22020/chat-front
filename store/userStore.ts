@@ -12,6 +12,7 @@ export interface userStateType {
   setSentRequestsList(requests: RequestUserType[]): void;
   setReceivedRequestsList(requests: RequestUserType[]): void;
   setBlockedList(requests: RequestUserType[]): void;
+  changeFriendsOnlineStatus(userId: string, isOnline: boolean): void;
   logout: () => void;
 }
 export const useUserStore = create<userStateType>()(
@@ -56,6 +57,18 @@ export const useUserStore = create<userStateType>()(
               };
             }),
           ),
+        changeFriendsOnlineStatus: (userId: string, isOnline: boolean) =>
+          set(
+            produce((state: userStateType) => {
+              const friendIndex = state.friendsList.findIndex(
+                (f) => f._id === userId,
+              );
+              if (friendIndex > -1) {
+                state.friendsList[friendIndex].isOnline = isOnline;
+              }
+            }),
+          ),
+
         logout: () =>
           set(
             produce((state: userStateType) => {

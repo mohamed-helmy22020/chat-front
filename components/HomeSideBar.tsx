@@ -33,10 +33,11 @@ type Props = {
   userProp?: UserType;
 };
 const HomeSideBar = ({ userProp }: Props) => {
-  const { user, changeUserData } = useUserStore(
+  const { user, changeUserData, changeFriendsOnlineStatus } = useUserStore(
     useShallow((state) => ({
       changeUserData: state.changeUserData,
       user: state.user,
+      changeFriendsOnlineStatus: state.changeFriendsOnlineStatus,
     })),
   );
   useEffect(() => {
@@ -200,6 +201,11 @@ const HomeSideBar = ({ userProp }: Props) => {
     const onStatusSeen = (res: { statusId: string; user: MiniUserType }) => {
       userStausSeen(res.statusId, res.user);
     };
+    const onFriendIsOnline = (res: { userId: string; isOnline: boolean }) => {
+      console.log("is online");
+      console.log({ res });
+      changeFriendsOnlineStatus(res.userId, res.isOnline);
+    };
     chatSocket.on("receiveMessage", onReceiveMessage);
     chatSocket.on("messagesSeen", onMessagesSeen);
     chatSocket.on("typing", onTyping);
@@ -210,6 +216,7 @@ const HomeSideBar = ({ userProp }: Props) => {
     chatSocket.on("newFriendStatus", onNewFriendStatus);
     chatSocket.on("deleteFriendStatus", onDeleteFriendStatus);
     chatSocket.on("statusSeen", onStatusSeen);
+    chatSocket.on("friendIsOnline", onFriendIsOnline);
     chatSocket.on("errors", onErrors);
     chatSocket.on("connect", onConnect);
     chatSocket.on("disconnect", onDisconnect);
@@ -217,7 +224,6 @@ const HomeSideBar = ({ userProp }: Props) => {
     return () => {
       chatSocket.off("receiveMessage", onReceiveMessage);
       chatSocket.off("messagesSeen", onMessagesSeen);
-
       chatSocket.off("typing", onTyping);
       chatSocket.off("friendDeleted", onFriendDeleted);
       chatSocket.off("newFriendRequest", onNewFriendRequest);
@@ -226,7 +232,7 @@ const HomeSideBar = ({ userProp }: Props) => {
       chatSocket.off("newFriendStatus", onNewFriendStatus);
       chatSocket.off("deleteFriendStatus", onDeleteFriendStatus);
       chatSocket.off("statusSeen", onStatusSeen);
-
+      chatSocket.off("friendIsOnline", onFriendIsOnline);
       chatSocket.off("errors", onErrors);
       chatSocket.off("connect", onConnect);
       chatSocket.off("disconnect", onDisconnect);
@@ -246,6 +252,7 @@ const HomeSideBar = ({ userProp }: Props) => {
     addMessage,
     user,
     seeAllMessages,
+    changeFriendsOnlineStatus,
   ]);
 
   useEffect(() => {
@@ -266,6 +273,7 @@ const HomeSideBar = ({ userProp }: Props) => {
           }),
           getFriendsList().then((data) => {
             addLoadingProgress(100 / 7);
+            console.log({ data });
             return data;
           }),
           getSentRequests().then((data) => {

@@ -52,6 +52,11 @@ const RequestUserCard = ({ user, type = "friends" }: Props) => {
           alt="avatar"
           fill
         />
+        {user.isOnline === undefined ? null : user.isOnline ? (
+          <div className="absolute -end-0.5 -bottom-0.5 h-3 w-3 rounded-full bg-green-500"></div>
+        ) : (
+          <div className="absolute -end-0.5 -bottom-0.5 h-3 w-3 rounded-full bg-red-500"></div>
+        )}
       </div>
       <div className="flex flex-1 flex-col items-start justify-center">
         <h1 className="text-md font-bold capitalize">{name}</h1>
@@ -397,11 +402,15 @@ const AddFriendMenu = ({ user }: { user: RequestUserType }) => {
   const handleAddingFriend = async () => {
     setIsSending(true);
     try {
-      await sendFriendRequest(userId);
-      setIsSent(true);
-      setSentRequestsList([...sentRequestsList, user]);
-    } catch (error) {
-      console.log(error);
+      const sendFriendRequestRes = await sendFriendRequest(userId);
+      if (sendFriendRequestRes.success) {
+        setIsSent(true);
+        setSentRequestsList([...sentRequestsList, user]);
+      } else {
+        throw new Error(sendFriendRequestRes.msg);
+      }
+    } catch (error: any) {
+      toast.error(error.message);
     } finally {
       setIsSending(false);
     }

@@ -17,7 +17,7 @@ export const signUp = async (userData: SignUpDataType) => {
     });
     cookieStore.set("accessToken", response.accessToken, {
       httpOnly: true,
-      secure: true,
+      secure: process.env.NODE_ENV === "production",
       sameSite: "strict",
       expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 30), // 30 days
     });
@@ -29,7 +29,7 @@ export const signUp = async (userData: SignUpDataType) => {
   } catch (error: any) {
     cookieStore.set("accessToken", "", {
       httpOnly: true,
-      secure: true,
+      secure: process.env.NODE_ENV === "production",
       sameSite: "strict",
     });
 
@@ -55,7 +55,7 @@ export const signIn = async (userData: SignInDataType) => {
 
     cookieStore.set("accessToken", response.accessToken, {
       httpOnly: true,
-      secure: true,
+      secure: process.env.NODE_ENV === "production",
       sameSite: "strict",
       expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 30),
     });
@@ -67,9 +67,10 @@ export const signIn = async (userData: SignInDataType) => {
   } catch (error: any) {
     cookieStore.set("accessToken", "", {
       httpOnly: true,
-      secure: true,
+      secure: process.env.NODE_ENV === "production",
       sameSite: "strict",
     });
+    console.log({ error });
 
     return {
       success: false,
@@ -163,7 +164,7 @@ export const logOut = async () => {
   const cookieStore = await cookies();
   cookieStore.set("accessToken", "", {
     httpOnly: true,
-    secure: true,
+    secure: process.env.NODE_ENV === "production",
     sameSite: "strict",
   });
   redirect("/");

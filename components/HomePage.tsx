@@ -6,7 +6,7 @@ const HomePage = async () => {
   const getUserRes = await getUserData();
 
   return (
-    <div className="flex min-h-screen overflow-hidden">
+    <div className="flex min-h-svh overflow-hidden">
       <HomeSideBar userProp={getUserRes?.userData} />
       <RenderPage />
     </div>
