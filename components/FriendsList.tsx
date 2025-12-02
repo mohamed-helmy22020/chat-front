@@ -8,7 +8,6 @@ import { Alert, AlertTitle } from "./ui/alert";
 
 const FriendsList = () => {
   const friendsList = useUserStore((state) => state.friendsList);
-  console.log({ friendsList });
 
   const friendsListElements = friendsList.map((friend) => (
     <RequestUserCard key={friend._id} user={friend} />

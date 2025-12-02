@@ -202,8 +202,6 @@ const HomeSideBar = ({ userProp }: Props) => {
       userStausSeen(res.statusId, res.user);
     };
     const onFriendIsOnline = (res: { userId: string; isOnline: boolean }) => {
-      console.log("is online");
-      console.log({ res });
       changeFriendsOnlineStatus(res.userId, res.isOnline);
     };
     chatSocket.on("receiveMessage", onReceiveMessage);
@@ -273,7 +271,6 @@ const HomeSideBar = ({ userProp }: Props) => {
           }),
           getFriendsList().then((data) => {
             addLoadingProgress(100 / 7);
-            console.log({ data });
             return data;
           }),
           getSentRequests().then((data) => {
