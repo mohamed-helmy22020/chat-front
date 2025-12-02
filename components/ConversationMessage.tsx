@@ -1,6 +1,7 @@
 import { formatDateToStatus, REACTS } from "@/lib/utils";
 import { useChatStore } from "@/store/chatStore";
 import clsx from "clsx";
+import Linkify from "linkify-react";
 import Image from "next/image";
 import { memo } from "react";
 import {
@@ -17,6 +18,7 @@ import { FcLike as LoveEmoji } from "react-icons/fc";
 import { RiCheckDoubleFill, RiLoader5Fill } from "react-icons/ri";
 import MessageMenu from "./MessageMenu";
 import { Button } from "./ui/button";
+
 type Props = {
   message: MessageType;
   isMine: boolean;
@@ -52,11 +54,23 @@ const ConversationMessage = ({
         reactsElements.push(<AngryEmoji key={react.react} color="#ffcc4d" />);
       }
     });
+
+  const TextLinkify = () => (
+    <Linkify
+      options={{
+        defaultProtocol: "https",
+        target: "_blank",
+        rel: "noopener noreferrer",
+      }}
+    >
+      {message.text}
+    </Linkify>
+  );
   if (isMine) {
     return (
       <div
         className={clsx(
-          "mb-[1px] flex flex-row-reverse items-center justify-start break-words break-all",
+          "message mb-[1px] flex flex-row-reverse items-center justify-start break-words break-all",
           isFirstMessage && "mt-3",
         )}
       >
@@ -74,7 +88,9 @@ const ConversationMessage = ({
             {message.mediaType === "video" && message.mediaUrl && (
               <MessageVid message={message} />
             )}
-            <pre className="text-sm break-words">{message.text}</pre>
+            <pre className="text-sm break-words">
+              <TextLinkify />
+            </pre>
             <div className="mt-1 mr-1 flex items-center justify-between gap-2 text-right text-sm">
               <p className="scale-125 text-slate-200">
                 {message.type === "pending" ? (
@@ -104,7 +120,7 @@ const ConversationMessage = ({
   return (
     <div
       className={clsx(
-        "mb-[1px] flex items-center break-words break-all",
+        "message mb-[1px] flex items-center break-words break-all",
         isFirstMessage && "mt-3",
       )}
     >
@@ -135,7 +151,9 @@ const ConversationMessage = ({
             <MessageVid message={message} />
           )}
           <div className="mt-1 ml-1 flex items-end justify-between gap-2 text-xs">
-            <pre className="text-sm break-words">{message.text}</pre>
+            <pre className="text-sm break-words">
+              <Linkify>{message.text}</Linkify>
+            </pre>
             <p className="text-slate-500 dark:text-slate-400">
               {formatDateToStatus(message.createdAt)}
             </p>

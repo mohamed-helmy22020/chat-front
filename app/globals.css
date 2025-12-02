@@ -262,4 +262,9 @@
   .fade-in-element {
     animation: fadeIn 0.1s ease-in-out forwards;
   }
+
+  .message a {
+    color: #d5d5ff;
+    text-decoration: underline;
+  }
 }

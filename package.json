@@ -21,6 +21,8 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "immer": "^10.1.1",
+    "linkify-react": "^4.3.2",
+    "linkifyjs": "^4.3.2",
     "lottie-react": "^2.4.1",
     "lucide-react": "^0.510.0",
     "next": "^15.5.6",
