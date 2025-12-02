@@ -1,6 +1,7 @@
 import { useChatStore } from "@/store/chatStore";
+import { useUserStore } from "@/store/userStore";
 import clsx from "clsx";
-import { memo } from "react";
+import { memo, useState } from "react";
 import { useShallow } from "zustand/react/shallow";
 import ChatSearch from "./ChatSearch";
 import ConversationItem from "./ConversationItem";
@@ -8,6 +9,8 @@ import NewConversation from "./NewConversation";
 const ConversationItemMemo = memo(ConversationItem);
 
 const ConversationsList = () => {
+  const userId = useUserStore((state) => state.user?._id);
+  const [search, setSearch] = useState("");
   const { conversations, currentConversation } = useChatStore(
     useShallow((state) => ({
       conversations: state.conversations,
@@ -15,7 +18,15 @@ const ConversationsList = () => {
     })),
   );
   const conversationsElements = [...conversations]
-    .filter((m) => m.lastMessage !== null)
+    .filter((c) => {
+      if (c.lastMessage === null) return false;
+      const otherSide = c.participants.find((p) => p._id !== userId);
+      if (!otherSide) return false;
+      return (
+        otherSide.name.toLowerCase().includes(search.toLowerCase()) ||
+        c.lastMessage.text.includes(search.toLowerCase())
+      );
+    })
     .sort((a, b) => {
       return (
         new Date(b.lastMessage.createdAt).getTime() -
@@ -37,7 +48,7 @@ const ConversationsList = () => {
           <NewConversation />
         </div>
       </div>
-      <ChatSearch />
+      <ChatSearch search={search} setSearch={setSearch} />
       <div className="flex flex-1 flex-col gap-0.5 overflow-y-auto px-3 py-2">
         {conversationsElements}
       </div>
