@@ -22,10 +22,13 @@ const useHandleFriendRequest = () => {
       setFriendsList: state.setFriendsList,
     })),
   );
-  const handleFriendRequest = async (userId: string, elementId: string) => {
+  const handleFriendRequest = async (
+    userId: string,
+    actionType: "accept-request" | "cancel-request",
+  ) => {
     setIsLoading(true);
     try {
-      if (elementId === "accept-request") {
+      if (actionType === "accept-request") {
         await acceptFriendRequest(userId);
         setFriendsList([
           ...friendsList,

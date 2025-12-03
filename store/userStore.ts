@@ -33,7 +33,6 @@ export const useUserStore = create<userStateType>()(
         setSentRequestsList: (requests: RequestUserType[]) =>
           set(
             produce((state: userStateType) => {
-              console.log({ requests });
               state.sentRequestsList = requests;
             }),
           ),

@@ -156,8 +156,7 @@ const RequestsMenu = ({ userId }: { userId: string }) => {
             variant="ghostFull"
             className="cursor-pointer rounded-full p-1 hover:scale-110"
             disabled={isLoading || isDone}
-            id="accept-request"
-            onClick={(e) => handleFriendRequest(userId, e.currentTarget.id)}
+            onClick={() => handleFriendRequest(userId, "accept-request")}
           >
             {isLoading ? (
               <LuLoader className="animate-spin" />
@@ -179,8 +178,7 @@ const RequestsMenu = ({ userId }: { userId: string }) => {
               variant="ghostFull"
               className="cursor-pointer rounded-full p-1 hover:scale-110"
               disabled={isLoading || isDone}
-              id="cancel-request"
-              onClick={(e) => handleFriendRequest(userId, e.currentTarget.id)}
+              onClick={() => handleFriendRequest(userId, "cancel-request")}
             >
               {isLoading ? (
                 <LuLoader className="animate-spin" />

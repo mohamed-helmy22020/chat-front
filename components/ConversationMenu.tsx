@@ -1,5 +1,7 @@
 import useAddFriend from "@/hooks/useAddFriend";
 import useBlockUser from "@/hooks/useBlockUser";
+import useCancelSentRequest from "@/hooks/useCancelSentRequest";
+import useHandleFriendRequest from "@/hooks/useHandleFriendRequest";
 import useUnBlockUser from "@/hooks/useUnBlockUser";
 import useUnFriendUser from "@/hooks/useUnFriendUser";
 import { deleteConversation as deleteConversationAction } from "@/lib/actions/user.actions";
@@ -8,7 +10,7 @@ import { useUserStore } from "@/store/userStore";
 import { CgUnblock } from "react-icons/cg";
 import { FaUserMinus, FaUserPlus } from "react-icons/fa6";
 import { IoMdClose } from "react-icons/io";
-import { LuEllipsisVertical } from "react-icons/lu";
+import { LuCheck, LuEllipsisVertical, LuUserX, LuX } from "react-icons/lu";
 import { MdBlockFlipped, MdDelete } from "react-icons/md";
 import { toast } from "sonner";
 import { useShallow } from "zustand/react/shallow";
@@ -21,11 +23,19 @@ import {
 } from "./ui/dropdown-menu";
 
 const ConversationMenu = () => {
-  const { currentUserId, blockedList, friendsList } = useUserStore(
+  const {
+    currentUserId,
+    blockedList,
+    friendsList,
+    receivedRequestsList,
+    sentRequestsList,
+  } = useUserStore(
     useShallow((state) => ({
       currentUserId: state.user?._id,
       friendsList: state.friendsList,
       blockedList: state.blockedList,
+      sentRequestsList: state.sentRequestsList,
+      receivedRequestsList: state.receivedRequestsList,
     })),
   );
   const {
@@ -44,10 +54,17 @@ const ConversationMenu = () => {
   );
   const isBlocked = blockedList.findIndex((f) => f._id === otherSide?._id) > -1;
   const isFriend = friendsList.findIndex((f) => f._id === otherSide?._id) > -1;
+  const isSentRequest =
+    sentRequestsList.findIndex((f) => f._id === otherSide?._id) > -1;
+  const isReceivedRequest =
+    receivedRequestsList.findIndex((f) => f._id === otherSide?._id) > -1;
+
   const blockUser = useBlockUser();
   const { unblockUser } = useUnBlockUser();
   const { addFriend } = useAddFriend();
   const unFriendUser = useUnFriendUser();
+  const { cancelSentRequest } = useCancelSentRequest();
+  const { handleFriendRequest } = useHandleFriendRequest();
   const closeChat = () => {
     changeCurrentConversation(null);
   };
@@ -104,13 +121,29 @@ const ConversationMenu = () => {
           {isBlocked ? <CgUnblock /> : <MdBlockFlipped />}
           {isBlocked ? "Unblock User" : "Block User"}
         </DropdownMenuItem>
-        {!isBlocked && (
+        {!isBlocked && !isSentRequest && !isReceivedRequest && (
           <DropdownMenuItem
             onClick={async () => {
               if (isFriend) {
-                unFriendUser(otherSide!._id);
+                toast.promise(unFriendUser(otherSide!._id), {
+                  loading: "Unfriending...",
+                  success: () => {
+                    return {
+                      message: `User is no longer a friend`,
+                    };
+                  },
+                  error: "Error",
+                });
               } else {
-                addFriend(otherSide!._id);
+                toast.promise(addFriend(otherSide!._id), {
+                  loading: "Sending friend request...",
+                  success: () => {
+                    return {
+                      message: `Friend request is sent`,
+                    };
+                  },
+                  error: "Error",
+                });
               }
             }}
           >
@@ -118,6 +151,67 @@ const ConversationMenu = () => {
             {isFriend ? "Unfriend User" : "Add Friend"}
           </DropdownMenuItem>
         )}
+        {isSentRequest && (
+          <DropdownMenuItem
+            onClick={async () => {
+              toast.promise(cancelSentRequest(otherSide!._id), {
+                loading: "Cancelling sent request...",
+                success: () => {
+                  return {
+                    message: `Request is cancelled`,
+                  };
+                },
+                error: "Error",
+              });
+            }}
+          >
+            <LuUserX />
+            Cancel Sent Request
+          </DropdownMenuItem>
+        )}
+        {isReceivedRequest && (
+          <>
+            <DropdownMenuItem
+              onClick={async () => {
+                toast.promise(
+                  handleFriendRequest(otherSide!._id, "accept-request"),
+                  {
+                    loading: "Accepting friend request...",
+                    success: () => {
+                      return {
+                        message: `User is now a friend`,
+                      };
+                    },
+                    error: "Error",
+                  },
+                );
+              }}
+            >
+              <LuCheck />
+              Accept Friend Request
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={async () => {
+                toast.promise(
+                  handleFriendRequest(otherSide!._id, "cancel-request"),
+                  {
+                    loading: "Rejecting friend request...",
+                    success: () => {
+                      return {
+                        message: `User is cancelled`,
+                      };
+                    },
+                    error: "Error",
+                  },
+                );
+              }}
+            >
+              <LuX />
+              Reject Friend Request
+            </DropdownMenuItem>
+          </>
+        )}
+
         <DropdownMenuItem onClick={closeChat}>
           <IoMdClose />
           Close Chat

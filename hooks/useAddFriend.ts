@@ -18,7 +18,6 @@ const useAddFriend = () => {
     setIsSending(true);
     try {
       const sendFriendRequestRes = await sendFriendRequest(userId);
-      console.log(sendFriendRequestRes);
       if (sendFriendRequestRes.success) {
         setIsSent(true);
         setSentRequestsList([...sentRequestsList, sendFriendRequestRes.user]);

@@ -9,23 +9,13 @@ import {
   LuUsers,
 } from "react-icons/lu";
 
-import {
-  getAllConversations,
-  getBlockedList,
-  getFriendsList,
-  getFriendsRequests,
-  getFriendsStatuses,
-  getSentRequests,
-  getUserStatuses,
-} from "@/lib/actions/user.actions";
-import { chatSocket } from "@/src/socket";
-import { useChatStore } from "@/store/chatStore";
+import useGetAllData from "@/hooks/useGetAllData";
+
+import usePageFocus from "@/hooks/usePageFocus";
+import useSocketConnection from "@/hooks/useSocketConnection";
 import { PageType, usePageStore } from "@/store/pageStore";
-import { useSettingsStore } from "@/store/settingsStore";
-import { useStatusStore } from "@/store/statusStore";
 import { useUserStore } from "@/store/userStore";
 import { useEffect } from "react";
-import { toast } from "sonner";
 import { useShallow } from "zustand/react/shallow";
 import { Separator } from "./ui/separator";
 import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
@@ -33,11 +23,9 @@ type Props = {
   userProp?: UserType;
 };
 const HomeSideBar = ({ userProp }: Props) => {
-  const { user, changeUserData, changeFriendsOnlineStatus } = useUserStore(
+  const { changeUserData } = useUserStore(
     useShallow((state) => ({
       changeUserData: state.changeUserData,
-      user: state.user,
-      changeFriendsOnlineStatus: state.changeFriendsOnlineStatus,
     })),
   );
   useEffect(() => {
@@ -45,297 +33,10 @@ const HomeSideBar = ({ userProp }: Props) => {
       changeUserData(userProp);
     }
   }, [userProp, changeUserData]);
-  const changeIsFocuse = useSettingsStore((state) => state.changeIsFocus);
-  useEffect(() => {
-    const handleBlur = () => {
-      changeIsFocuse(false);
-    };
 
-    const handleFocus = () => {
-      changeIsFocuse(true);
-    };
-
-    window.addEventListener("blur", handleBlur);
-    window.addEventListener("focus", handleFocus);
-
-    return () => {
-      window.removeEventListener("blur", handleBlur);
-      window.removeEventListener("focus", handleFocus);
-    };
-  }, [changeIsFocuse]);
-  const { addLoadingProgress, changeIsLoadingData } = useSettingsStore(
-    useShallow((state) => ({
-      addLoadingProgress: state.addLoadingProgress,
-      changeIsLoadingData: state.changeIsLoadingData,
-    })),
-  );
-
-  const {
-    changeIsConnected,
-    changeConversations,
-    isConnected,
-    addMessage,
-    changeIsTyping,
-    seeAllMessages,
-  } = useChatStore(
-    useShallow((state) => ({
-      changeIsConnected: state.changeIsConnected,
-      isConnected: state.isConnected,
-      changeConversations: state.changeConversations,
-      changeCurrentConversation: state.changeCurrentConversation,
-      changeSearch: state.changeSearch,
-      addMessage: state.addMessage,
-      changeIsTyping: state.changeIsTyping,
-      seeAllMessages: state.seeAllMessages,
-    })),
-  );
-  const {
-    friendsList,
-    receivedRequests,
-    sentRequests,
-    setFriendsList,
-    setReceivedRequestsList,
-    setSentRequestsList,
-    setBlockedList,
-  } = useUserStore(
-    useShallow((state) => ({
-      friendsList: state.friendsList,
-      blockedUser: state.blockedList,
-      receivedRequests: state.receivedRequestsList,
-      sentRequests: state.sentRequestsList,
-      setFriendsList: state.setFriendsList,
-      setBlockedList: state.setBlockedList,
-      setReceivedRequestsList: state.setReceivedRequestsList,
-      setSentRequestsList: state.setSentRequestsList,
-    })),
-  );
-  const {
-    changeUserStatuses,
-    changeFriendsStatuses,
-    addFriendStatus,
-    deleteFriendStatus,
-    userStausSeen,
-  } = useStatusStore(
-    useShallow((state) => ({
-      changeUserStatuses: state.changeUserStatuses,
-      changeFriendsStatuses: state.changeFriendsStatuses,
-      currentStatus: state.currentStatus,
-      addFriendStatus: state.addFriendStatus,
-      deleteFriendStatus: state.deleteFriendStatus,
-      userStausSeen: state.userStausSeen,
-    })),
-  );
-
-  useEffect(() => {
-    if (chatSocket.connected) {
-      changeIsConnected(true);
-    }
-    const onConnect = () => {
-      console.log("chat connected");
-      changeIsConnected(true);
-    };
-    const onDisconnect = () => {
-      console.log("chat disconnect");
-      changeIsConnected(false);
-    };
-    const onErrors = (error: any) => {
-      toast.error(error);
-    };
-
-    const onReceiveMessage = (res: ReceiveMessageType) => {
-      if (res.success) {
-        if (res.message.from !== user?._id) {
-          addMessage(res.message, res.conversation);
-        }
-      } else {
-        console.log("Error receiving message");
-      }
-    };
-
-    const onMessagesSeen = () => {
-      seeAllMessages();
-    };
-
-    const onTyping = (res: OnTypingRes) => {
-      changeIsTyping(res.conversationId, res.isTyping);
-    };
-
-    const onFriendDeleted = (res: { userId: string }) => {
-      setFriendsList(friendsList.filter((f) => f._id !== res.userId));
-    };
-
-    const onNewFriendRequest = (res: { user: RequestUserType }) => {
-      setReceivedRequestsList([...receivedRequests, res.user]);
-      toast.info(
-        <div className="text-md">
-          <span className="text-md font-extrabold">{res.user.name}</span> sent
-          you a friend request
-        </div>,
-      );
-    };
-
-    const onFriendAccepted = (res: { userId: string }) => {
-      console.log({ res });
-      console.log({ sentRequests });
-      const sentRequest = sentRequests.find((r) => r._id === res.userId)!;
-      console.log({ sentRequest });
-      setFriendsList([...friendsList, sentRequest]);
-      setSentRequestsList(sentRequests.filter((r) => r._id !== res.userId));
-      toast.success(
-        <div className="text-md">
-          <span className="text-md font-extrabold">{sentRequest.name}</span>{" "}
-          accept your friend request
-        </div>,
-      );
-    };
-
-    const onFriendRequestCancelled = (res: { userId: string }) => {
-      setSentRequestsList(sentRequests.filter((r) => r._id !== res.userId));
-      setReceivedRequestsList(
-        receivedRequests.filter((r) => r._id !== res.userId),
-      );
-    };
-    const onNewFriendStatus = (res: { status: FriendsStatusType }) => {
-      addFriendStatus(res.status);
-    };
-    const onDeleteFriendStatus = (res: { statusId: string }) => {
-      deleteFriendStatus(res.statusId);
-    };
-    const onStatusSeen = (res: { statusId: string; user: MiniUserType }) => {
-      userStausSeen(res.statusId, res.user);
-    };
-    const onFriendIsOnline = (res: { userId: string; isOnline: boolean }) => {
-      changeFriendsOnlineStatus(res.userId, res.isOnline);
-    };
-    chatSocket.on("receiveMessage", onReceiveMessage);
-    chatSocket.on("messagesSeen", onMessagesSeen);
-    chatSocket.on("typing", onTyping);
-    chatSocket.on("friendDeleted", onFriendDeleted);
-    chatSocket.on("newFriendRequest", onNewFriendRequest);
-    chatSocket.on("friendAccepted", onFriendAccepted);
-    chatSocket.on("friendRequestCancelled", onFriendRequestCancelled);
-    chatSocket.on("newFriendStatus", onNewFriendStatus);
-    chatSocket.on("deleteFriendStatus", onDeleteFriendStatus);
-    chatSocket.on("statusSeen", onStatusSeen);
-    chatSocket.on("friendIsOnline", onFriendIsOnline);
-    chatSocket.on("errors", onErrors);
-    chatSocket.on("connect", onConnect);
-    chatSocket.on("disconnect", onDisconnect);
-
-    return () => {
-      chatSocket.off("receiveMessage", onReceiveMessage);
-      chatSocket.off("messagesSeen", onMessagesSeen);
-      chatSocket.off("typing", onTyping);
-      chatSocket.off("friendDeleted", onFriendDeleted);
-      chatSocket.off("newFriendRequest", onNewFriendRequest);
-      chatSocket.off("friendAccepted", onFriendAccepted);
-      chatSocket.off("friendRequestCancelled", onFriendRequestCancelled);
-      chatSocket.off("newFriendStatus", onNewFriendStatus);
-      chatSocket.off("deleteFriendStatus", onDeleteFriendStatus);
-      chatSocket.off("statusSeen", onStatusSeen);
-      chatSocket.off("friendIsOnline", onFriendIsOnline);
-      chatSocket.off("errors", onErrors);
-      chatSocket.off("connect", onConnect);
-      chatSocket.off("disconnect", onDisconnect);
-    };
-  }, [
-    changeIsConnected,
-    changeIsTyping,
-    friendsList,
-    receivedRequests,
-    sentRequests,
-    setFriendsList,
-    setReceivedRequestsList,
-    setSentRequestsList,
-    addFriendStatus,
-    deleteFriendStatus,
-    userStausSeen,
-    addMessage,
-    user,
-    seeAllMessages,
-    changeFriendsOnlineStatus,
-  ]);
-
-  useEffect(() => {
-    const getData = async () => {
-      try {
-        const [
-          getConversationsRes,
-          getFriendsListRes,
-          sentRequestsRes,
-          friendsRequestsRes,
-          getBlockedListRes,
-          userStatusesRes,
-          friendsStatusesRes,
-        ] = await Promise.all([
-          getAllConversations().then((data) => {
-            addLoadingProgress(100 / 7);
-            return data;
-          }),
-          getFriendsList().then((data) => {
-            addLoadingProgress(100 / 7);
-            return data;
-          }),
-          getSentRequests().then((data) => {
-            addLoadingProgress(100 / 7);
-            return data;
-          }),
-          getFriendsRequests().then((data) => {
-            addLoadingProgress(100 / 7);
-            return data;
-          }),
-          getBlockedList().then((data) => {
-            addLoadingProgress(100 / 7);
-            return data;
-          }),
-          getUserStatuses().then((data) => {
-            addLoadingProgress(100 / 7);
-            return data;
-          }),
-          getFriendsStatuses().then((data) => {
-            addLoadingProgress(100 / 7);
-            return data;
-          }),
-        ]);
-
-        // Update state with the results
-        changeConversations(getConversationsRes.conversations);
-        setFriendsList(getFriendsListRes.friends);
-        setSentRequestsList(sentRequestsRes.sentRequests);
-        setReceivedRequestsList(friendsRequestsRes.friendRequests);
-        setBlockedList(getBlockedListRes.blockedUsers);
-        changeUserStatuses(userStatusesRes.statuses);
-        changeFriendsStatuses(friendsStatusesRes.statuses);
-        changeIsLoadingData(false);
-      } catch (e: any) {
-        console.log("Error getting data", e);
-      }
-    };
-
-    if (isConnected) {
-      getData();
-    }
-  }, [
-    isConnected,
-    changeConversations,
-    setFriendsList,
-    setSentRequestsList,
-    setReceivedRequestsList,
-    setBlockedList,
-    changeFriendsStatuses,
-    changeUserStatuses,
-    addLoadingProgress,
-    changeIsLoadingData,
-  ]);
-
-  useEffect(() => {
-    if (user?.accessToken) {
-      chatSocket.io.opts.extraHeaders = {
-        Authorization: `Bearer ${user?.accessToken}`,
-      };
-      chatSocket.connect();
-    }
-  }, [user]);
+  usePageFocus();
+  useSocketConnection();
+  useGetAllData();
 
   return (
     <div className="flex flex-col overflow-hidden bg-site-foreground px-2 py-3.5">
