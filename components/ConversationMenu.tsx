@@ -1,5 +1,12 @@
+import useAddFriend from "@/hooks/useAddFriend";
+import useBlockUser from "@/hooks/useBlockUser";
+import useUnBlockUser from "@/hooks/useUnBlockUser";
+import useUnFriendUser from "@/hooks/useUnFriendUser";
 import { deleteConversation as deleteConversationAction } from "@/lib/actions/user.actions";
 import { useChatStore } from "@/store/chatStore";
+import { useUserStore } from "@/store/userStore";
+import { CgUnblock } from "react-icons/cg";
+import { FaUserMinus, FaUserPlus } from "react-icons/fa6";
 import { IoMdClose } from "react-icons/io";
 import { LuEllipsisVertical } from "react-icons/lu";
 import { MdBlockFlipped, MdDelete } from "react-icons/md";
@@ -14,6 +21,13 @@ import {
 } from "./ui/dropdown-menu";
 
 const ConversationMenu = () => {
+  const { currentUserId, blockedList, friendsList } = useUserStore(
+    useShallow((state) => ({
+      currentUserId: state.user?._id,
+      friendsList: state.friendsList,
+      blockedList: state.blockedList,
+    })),
+  );
   const {
     changeCurrentConversation,
     conversation,
@@ -25,6 +39,15 @@ const ConversationMenu = () => {
       deleteConversationFromState: state.deleteConversation,
     })),
   );
+  const otherSide = conversation?.participants.find(
+    (p) => p._id !== currentUserId,
+  );
+  const isBlocked = blockedList.findIndex((f) => f._id === otherSide?._id) > -1;
+  const isFriend = friendsList.findIndex((f) => f._id === otherSide?._id) > -1;
+  const blockUser = useBlockUser();
+  const { unblockUser } = useUnBlockUser();
+  const { addFriend } = useAddFriend();
+  const unFriendUser = useUnFriendUser();
   const closeChat = () => {
     changeCurrentConversation(null);
   };
@@ -61,10 +84,40 @@ const ConversationMenu = () => {
           Delete Chat
         </DropdownMenuItem>
 
-        <DropdownMenuItem>
-          <MdBlockFlipped />
-          Block User
+        <DropdownMenuItem
+          onClick={async () => {
+            if (isBlocked) {
+              toast.promise(unblockUser(otherSide!._id), {
+                loading: "Unlocking...",
+                success: () => {
+                  return {
+                    message: `User Unblocked`,
+                  };
+                },
+                error: "Error",
+              });
+            } else {
+              blockUser(otherSide!._id);
+            }
+          }}
+        >
+          {isBlocked ? <CgUnblock /> : <MdBlockFlipped />}
+          {isBlocked ? "Unblock User" : "Block User"}
         </DropdownMenuItem>
+        {!isBlocked && (
+          <DropdownMenuItem
+            onClick={async () => {
+              if (isFriend) {
+                unFriendUser(otherSide!._id);
+              } else {
+                addFriend(otherSide!._id);
+              }
+            }}
+          >
+            {isFriend ? <FaUserMinus /> : <FaUserPlus />}
+            {isFriend ? "Unfriend User" : "Add Friend"}
+          </DropdownMenuItem>
+        )}
         <DropdownMenuItem onClick={closeChat}>
           <IoMdClose />
           Close Chat

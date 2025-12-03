@@ -88,7 +88,7 @@ const ConversationMessage = ({
             {message.mediaType === "video" && message.mediaUrl && (
               <MessageVid message={message} />
             )}
-            <pre className="text-sm break-words">
+            <pre className="text-sm">
               <TextLinkify />
             </pre>
             <div className="mt-1 mr-1 flex items-center justify-between gap-2 text-right text-sm">
@@ -151,7 +151,7 @@ const ConversationMessage = ({
             <MessageVid message={message} />
           )}
           <div className="mt-1 ml-1 flex items-end justify-between gap-2 text-xs">
-            <pre className="text-sm break-words">
+            <pre className="text-sm">
               <Linkify>{message.text}</Linkify>
             </pre>
             <p className="text-slate-500 dark:text-slate-400">

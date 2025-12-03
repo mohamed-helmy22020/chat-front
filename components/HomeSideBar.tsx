@@ -175,7 +175,10 @@ const HomeSideBar = ({ userProp }: Props) => {
     };
 
     const onFriendAccepted = (res: { userId: string }) => {
+      console.log({ res });
+      console.log({ sentRequests });
       const sentRequest = sentRequests.find((r) => r._id === res.userId)!;
+      console.log({ sentRequest });
       setFriendsList([...friendsList, sentRequest]);
       setSentRequestsList(sentRequests.filter((r) => r._id !== res.userId));
       toast.success(

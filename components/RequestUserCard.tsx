@@ -1,12 +1,3 @@
-import {
-  acceptFriendRequest,
-  blockUser,
-  cancelFriendRequest,
-  deleteFriend,
-  getUserConversation,
-  sendFriendRequest,
-  unblockUser,
-} from "@/lib/actions/user.actions";
 import { CgUnblock } from "react-icons/cg";
 import { FiPlusCircle } from "react-icons/fi";
 import {
@@ -20,13 +11,15 @@ import {
   LuX,
 } from "react-icons/lu";
 
-import { useChatStore } from "@/store/chatStore";
-import { usePageStore } from "@/store/pageStore";
-import { useUserStore } from "@/store/userStore";
+import useAddFriend from "@/hooks/useAddFriend";
+import useBlockUser from "@/hooks/useBlockUser";
+import useCancelSentRequest from "@/hooks/useCancelSentRequest";
+import useChatWith from "@/hooks/useChatWith";
+import useHandleFriendRequest from "@/hooks/useHandleFriendRequest";
+import useUnBlockUser from "@/hooks/useUnBlockUser";
+import useUnFriendUser from "@/hooks/useUnFriendUser";
 import Image from "next/image";
 import { useState } from "react";
-import { toast } from "sonner";
-import { useShallow } from "zustand/react/shallow";
 import { Button } from "./ui/button";
 import {
   DropdownMenu,
@@ -67,7 +60,7 @@ const RequestUserCard = ({ user, type = "friends" }: Props) => {
           (type === "blocks" && <BlocksMenu userId={_id} />) ||
           (type === "request" && <RequestsMenu userId={_id} />) ||
           (type === "sent" && <SentMenu userId={_id} />) ||
-          (type === "addFriend" && <AddFriendMenu user={user} />)}
+          (type === "addFriend" && <AddFriendMenu userId={_id} />)}
       </div>
     </div>
   );
@@ -75,82 +68,11 @@ const RequestUserCard = ({ user, type = "friends" }: Props) => {
 
 const FriendsMenu = ({ userId }: { userId: string }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const { changeCurrentConversation, conversations } = useChatStore(
-    useShallow((state) => ({
-      changeCurrentConversation: state.changeCurrentConversation,
-      conversations: state.conversations,
-    })),
-  );
-  const { friendsList, blockedList, setFriendsList, setBlockedList } =
-    useUserStore(
-      useShallow((state) => ({
-        friendsList: state.friendsList,
-        blockedList: state.blockedList,
-        setFriendsList: state.setFriendsList,
-        setBlockedList: state.setBlockedList,
-      })),
-    );
-  const setPage = usePageStore((state) => state.setPage);
 
-  const handleChatWith = async () => {
-    const existConversation = conversations.find(
-      (c) => c.participants.findIndex((p) => p._id === userId) > -1,
-    );
-    if (existConversation) {
-      changeCurrentConversation(existConversation);
-      setPage("chat");
-      return;
-    }
-    try {
-      const toastId = toast.loading("Loading conversation...");
-      const getUserConversationRes = await getUserConversation(userId);
-      toast.dismiss(toastId);
-      if (getUserConversationRes.success) {
-        changeCurrentConversation(getUserConversationRes.conversation);
-        setPage("chat");
-      } else {
-        throw new Error("Error getting conversation");
-      }
-    } catch (error) {
-      console.log(error);
-      toast.error("Error getting conversation");
-    }
-  };
+  const blockUser = useBlockUser();
+  const chatWith = useChatWith();
+  const unFriendUser = useUnFriendUser();
 
-  const handleUnFriendUser = async () => {
-    const unfriendUserRes = deleteFriend(userId);
-
-    toast.promise(unfriendUserRes, {
-      loading: "Deleting...",
-      success: () => {
-        setFriendsList(friendsList.filter((f) => f._id !== userId));
-        return {
-          message: `User is no longer a friend`,
-          closeButton: true,
-        };
-      },
-      error: "Error",
-    });
-  };
-  const handleBlockUser = async () => {
-    const blockUserRes = blockUser(userId);
-
-    toast.promise(blockUserRes, {
-      loading: "Blocking...",
-      success: () => {
-        setBlockedList([
-          ...blockedList,
-          friendsList.find((f) => f._id === userId)!,
-        ]);
-        setFriendsList(friendsList.filter((f) => f._id !== userId));
-        return {
-          message: `User is no longer a friend`,
-          closeButton: true,
-        };
-      },
-      error: "Error",
-    });
-  };
   return (
     <DropdownMenu open={isDropdownOpen} onOpenChange={setIsDropdownOpen}>
       <DropdownMenuTrigger>
@@ -161,14 +83,14 @@ const FriendsMenu = ({ userId }: { userId: string }) => {
           <Button
             className="w-full justify-start"
             variant="ghostFull"
-            onClick={handleChatWith}
+            onClick={() => chatWith(userId)}
           >
             <LuMessageSquareMore /> Chat with
           </Button>
         </DropdownMenuItem>
         <DropdownMenuItem asChild>
           <Button
-            onClick={handleBlockUser}
+            onClick={() => blockUser(userId)}
             className="w-full justify-start"
             variant="ghostFull"
           >
@@ -177,7 +99,7 @@ const FriendsMenu = ({ userId }: { userId: string }) => {
         </DropdownMenuItem>
         <DropdownMenuItem asChild>
           <Button
-            onClick={handleUnFriendUser}
+            onClick={() => unFriendUser(userId)}
             className="w-full justify-start"
             variant="ghostFull"
           >
@@ -190,26 +112,8 @@ const FriendsMenu = ({ userId }: { userId: string }) => {
 };
 
 const BlocksMenu = ({ userId }: { userId: string }) => {
-  const { blockedList, setBlockedList } = useUserStore(
-    useShallow((state) => ({
-      blockedList: state.blockedList,
-      setBlockedList: state.setBlockedList,
-    })),
-  );
-  const [isUnblocking, setIsUnblocking] = useState(false);
-  const [isUnblocked, setIsUnblocked] = useState(false);
-  const handleUnblockUser = async () => {
-    setIsUnblocking(true);
-    try {
-      await unblockUser(userId);
-      setIsUnblocked(true);
-      setBlockedList(blockedList.filter((b) => b._id !== userId));
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setIsUnblocking(false);
-    }
-  };
+  const { unblockUser, isUnblocked, isUnblocking } = useUnBlockUser();
+
   return (
     <Tooltip>
       <TooltipTrigger asChild>
@@ -217,7 +121,7 @@ const BlocksMenu = ({ userId }: { userId: string }) => {
           variant="ghostFull"
           className="cursor-pointer rounded-full p-1 hover:scale-110"
           disabled={isUnblocking || isUnblocked}
-          onClick={handleUnblockUser}
+          onClick={() => unblockUser(userId)}
         >
           {isUnblocking ? (
             <LuLoader className="animate-spin" />
@@ -242,49 +146,8 @@ const BlocksMenu = ({ userId }: { userId: string }) => {
 };
 
 const RequestsMenu = ({ userId }: { userId: string }) => {
-  const [isSending, setIsSending] = useState(false);
-  const [isSent, setIsSent] = useState(false);
-  const {
-    friendsList,
-    setFriendsList,
-    receivedRequestsList,
-    setReceivedRequestsList,
-  } = useUserStore(
-    useShallow((state) => ({
-      receivedRequestsList: state.receivedRequestsList,
-      friendsList: state.friendsList,
-      setReceivedRequestsList: state.setReceivedRequestsList,
-      setFriendsList: state.setFriendsList,
-    })),
-  );
-  const handleFriendRequest = async (
-    e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
-  ) => {
-    setIsSending(true);
-    const id = e.currentTarget.id;
-    try {
-      if (id === "accept-request") {
-        await acceptFriendRequest(userId);
-        setFriendsList([
-          ...friendsList,
-          receivedRequestsList.find((r) => r._id === userId)!,
-        ]);
-        setReceivedRequestsList(
-          receivedRequestsList.filter((r) => r._id !== userId),
-        );
-      } else {
-        await cancelFriendRequest(userId);
-        setReceivedRequestsList(
-          receivedRequestsList.filter((r) => r._id !== userId),
-        );
-      }
-      setIsSent(true);
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setIsSending(false);
-    }
-  };
+  const { handleFriendRequest, isLoading, isDone } = useHandleFriendRequest();
+
   return (
     <div className="flex">
       <Tooltip>
@@ -292,13 +155,13 @@ const RequestsMenu = ({ userId }: { userId: string }) => {
           <Button
             variant="ghostFull"
             className="cursor-pointer rounded-full p-1 hover:scale-110"
-            disabled={isSending || isSent}
+            disabled={isLoading || isDone}
             id="accept-request"
-            onClick={handleFriendRequest}
+            onClick={(e) => handleFriendRequest(userId, e.currentTarget.id)}
           >
-            {isSending ? (
+            {isLoading ? (
               <LuLoader className="animate-spin" />
-            ) : isSent ? (
+            ) : isDone ? (
               <LuCheck />
             ) : (
               <LuCheck />
@@ -309,19 +172,19 @@ const RequestsMenu = ({ userId }: { userId: string }) => {
           <p>Accept friend request</p>
         </TooltipContent>
       </Tooltip>
-      {!isSending && !isSent && (
+      {!isLoading && !isDone && (
         <Tooltip>
           <TooltipTrigger asChild>
             <Button
               variant="ghostFull"
               className="cursor-pointer rounded-full p-1 hover:scale-110"
-              disabled={isSending || isSent}
+              disabled={isLoading || isDone}
               id="cancel-request"
-              onClick={handleFriendRequest}
+              onClick={(e) => handleFriendRequest(userId, e.currentTarget.id)}
             >
-              {isSending ? (
+              {isLoading ? (
                 <LuLoader className="animate-spin" />
-              ) : isSent ? (
+              ) : isDone ? (
                 <LuCheck />
               ) : (
                 <LuX />
@@ -338,26 +201,9 @@ const RequestsMenu = ({ userId }: { userId: string }) => {
 };
 
 const SentMenu = ({ userId }: { userId: string }) => {
-  const [isCancelling, setIsCancelling] = useState(false);
-  const [isCancelled, setIsCancelled] = useState(false);
-  const { sentRequestsList, setSentRequestsList } = useUserStore(
-    useShallow((state) => ({
-      sentRequestsList: state.sentRequestsList,
-      setSentRequestsList: state.setSentRequestsList,
-    })),
-  );
-  const handleAddingFriend = async () => {
-    setIsCancelling(true);
-    try {
-      await cancelFriendRequest(userId);
-      setIsCancelled(true);
-      setSentRequestsList(sentRequestsList.filter((r) => r._id !== userId));
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setIsCancelling(false);
-    }
-  };
+  const { cancelSentRequest, isCancelling, isCancelled } =
+    useCancelSentRequest();
+
   return (
     <Tooltip>
       <TooltipTrigger asChild>
@@ -365,7 +211,7 @@ const SentMenu = ({ userId }: { userId: string }) => {
           variant="ghostFull"
           className="cursor-pointer rounded-full p-1 hover:scale-110"
           disabled={isCancelling || isCancelled}
-          onClick={handleAddingFriend}
+          onClick={() => cancelSentRequest(userId)}
         >
           {isCancelling ? (
             <LuLoader className="animate-spin" />
@@ -389,32 +235,9 @@ const SentMenu = ({ userId }: { userId: string }) => {
   );
 };
 
-const AddFriendMenu = ({ user }: { user: RequestUserType }) => {
-  const { _id: userId } = user;
-  const [isSending, setIsSending] = useState(false);
-  const [isSent, setIsSent] = useState(false);
-  const { sentRequestsList, setSentRequestsList } = useUserStore(
-    useShallow((state) => ({
-      setSentRequestsList: state.setSentRequestsList,
-      sentRequestsList: state.sentRequestsList,
-    })),
-  );
-  const handleAddingFriend = async () => {
-    setIsSending(true);
-    try {
-      const sendFriendRequestRes = await sendFriendRequest(userId);
-      if (sendFriendRequestRes.success) {
-        setIsSent(true);
-        setSentRequestsList([...sentRequestsList, user]);
-      } else {
-        throw new Error(sendFriendRequestRes.msg);
-      }
-    } catch (error: any) {
-      toast.error(error.message);
-    } finally {
-      setIsSending(false);
-    }
-  };
+const AddFriendMenu = ({ userId }: { userId: string }) => {
+  const { addFriend, isSending, isSent } = useAddFriend();
+
   return (
     <Tooltip>
       <TooltipTrigger asChild>
@@ -422,7 +245,7 @@ const AddFriendMenu = ({ user }: { user: RequestUserType }) => {
           variant="ghostFull"
           className="cursor-pointer rounded-full p-1 hover:scale-110"
           disabled={isSending || isSent}
-          onClick={handleAddingFriend}
+          onClick={() => addFriend(userId)}
         >
           {isSending ? (
             <LuLoader className="animate-spin" />
