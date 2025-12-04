@@ -41,7 +41,7 @@ const SentRequestsList = () => {
           </Tooltip>
         </div>
       </DialogTrigger>
-      <DialogContent className="max-h-screen overflow-auto sm:max-w-[425px]">
+      <DialogContent className="max-h-svh overflow-auto sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>Sent Requests</DialogTitle>
           <DialogDescription>The user requests you have sent</DialogDescription>

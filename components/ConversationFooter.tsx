@@ -1,6 +1,7 @@
 import {
   allowedPictureTypes,
   allowedVideoTypes,
+  isMobileDevice,
   MAX_PHOTO_SIZE,
   MAX_VIDEO_SIZE,
 } from "@/lib/utils";
@@ -28,6 +29,8 @@ const ConversationFooter = () => {
   const [isEmojiPickerOpen, setIsEmojiPickerOpen] = useState(false);
   const buttonRef = useRef<HTMLButtonElement>(null);
   const pickerRef = useRef<HTMLDivElement>(null);
+  const isMobile = isMobileDevice();
+
   const {
     currentConversation,
     addMessage,
@@ -105,6 +108,7 @@ const ConversationFooter = () => {
     }
   };
   const sendMessage = () => {
+    textAreaRef.current?.focus();
     if (messageText.trim() === "") return;
     const id = Math.random().toString();
     const newMessage: MessageType = {
@@ -185,18 +189,20 @@ const ConversationFooter = () => {
           >
             <LuPaperclip className="h-5 w-5 text-slate-500 dark:text-slate-400" />
           </button>
-          <button
-            ref={buttonRef}
-            className="cursor-pointer rounded-full p-2 hover:bg-gray-100 dark:hover:bg-slate-700"
-            onClick={(e) => {
-              e.stopPropagation();
+          {!isMobile && (
+            <button
+              ref={buttonRef}
+              className="cursor-pointer rounded-full p-2 hover:bg-gray-100 dark:hover:bg-slate-700"
+              onClick={(e) => {
+                e.stopPropagation();
 
-              setIsEmojiPickerOpen((prev) => !prev);
-            }}
-          >
-            <LuSmile className="h-5 w-5 text-slate-500 dark:text-slate-400" />
-          </button>
-          {isEmojiPickerOpen && (
+                setIsEmojiPickerOpen((prev) => !prev);
+              }}
+            >
+              <LuSmile className="h-5 w-5 text-slate-500 dark:text-slate-400" />
+            </button>
+          )}
+          {isEmojiPickerOpen && !isMobile && (
             <div className="absolute bottom-16 left-0 z-10" ref={pickerRef}>
               <EmojiPicker
                 onEmojiClick={handleOnEmojiClick}

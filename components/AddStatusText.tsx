@@ -76,7 +76,7 @@ const AddStatusText = ({ setShowAddText }: Props) => {
   };
   return (
     <div
-      className={`fixed top-0 left-0 z-50 flex h-screen w-screen flex-col ${color}`}
+      className={`fixed top-0 left-0 z-50 flex h-svh w-screen flex-col ${color}`}
     >
       <div className="flex justify-between px-6 py-6">
         <Button

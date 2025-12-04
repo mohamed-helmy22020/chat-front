@@ -37,7 +37,7 @@ const ConversationsList = () => {
   return (
     <div
       className={clsx(
-        "flex max-h-screen w-full flex-col overflow-hidden border-e-2 border-site-foreground sm:flex sm:w-6/12 md:w-5/12 lg:w-4/12",
+        "flex max-h-svh w-full flex-col overflow-hidden border-e-2 border-site-foreground sm:flex sm:w-6/12 md:w-5/12 lg:w-4/12",
         currentConversation && "hidden",
         !currentConversation && "sm:w-full",
       )}

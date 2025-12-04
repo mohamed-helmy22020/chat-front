@@ -124,6 +124,7 @@ const useGetAllData = () => {
     if (user?.accessToken) {
       chatSocket.io.opts.extraHeaders = {
         Authorization: `Bearer ${user?.accessToken}`,
+        "ngrok-skip-browser-warning": "true",
       };
       chatSocket.connect();
     }

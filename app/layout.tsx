@@ -1,5 +1,5 @@
 import { Toaster } from "@/components/ui/sonner";
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { NextIntlClientProvider } from "next-intl";
 import { getLocale, getMessages } from "next-intl/server";
 import { Inter, Lora } from "next/font/google";
@@ -23,6 +23,11 @@ const loraFont = Lora({
 export const metadata: Metadata = {
   title: "Chat App",
   description: "Chat App",
+};
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  interactiveWidget: "resizes-content",
 };
 
 export default async function RootLayout({

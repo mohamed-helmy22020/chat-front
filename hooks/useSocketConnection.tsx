@@ -124,6 +124,7 @@ const useSocketConnection = () => {
     const onFriendIsOnline = (res: { userId: string; isOnline: boolean }) => {
       changeFriendsOnlineStatus(res.userId, res.isOnline);
     };
+
     chatSocket.on("receiveMessage", onReceiveMessage);
     chatSocket.on("messagesSeen", onMessagesSeen);
     chatSocket.on("typing", onTyping);

@@ -43,7 +43,7 @@ const ReceivedRequestsList = () => {
           </Tooltip>
         </div>
       </DialogTrigger>
-      <DialogContent className="max-h-screen overflow-auto sm:max-w-[425px]">
+      <DialogContent className="max-h-svh overflow-auto sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>Friends Requests</DialogTitle>
           <DialogDescription>

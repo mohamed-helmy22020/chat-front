@@ -50,7 +50,7 @@ const ShowMessageMedia = () => {
   };
 
   return (
-    <div className="fixed top-0 left-0 z-50 flex h-screen w-screen flex-col bg-site-background select-none">
+    <div className="fixed top-0 left-0 z-50 flex h-svh w-screen flex-col bg-site-background select-none">
       <div className="flex h-16 justify-between px-5 py-2">
         <div className="flex h-full items-center justify-center">
           <div className="me-2 flex items-center">

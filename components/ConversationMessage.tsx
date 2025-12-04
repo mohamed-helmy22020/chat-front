@@ -154,6 +154,9 @@ const ConversationMessage = ({
             <pre className="text-sm">
               <Linkify>{message.text}</Linkify>
             </pre>
+          </div>
+          <div className="mt-1 mr-1 flex items-center justify-between gap-2 text-right text-sm">
+            <p></p>
             <p className="text-slate-500 dark:text-slate-400">
               {formatDateToStatus(message.createdAt)}
             </p>

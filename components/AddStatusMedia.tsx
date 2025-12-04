@@ -55,7 +55,7 @@ const AddStatusMedia = ({ setShowAddMedia, setSelectedFile, file }: Props) => {
     setIsSending(false);
   };
   return (
-    <div className="fixed top-0 left-0 z-50 flex h-screen w-screen flex-col overflow-hidden bg-site-background">
+    <div className="fixed top-0 left-0 z-50 flex h-svh w-screen flex-col overflow-hidden bg-site-background">
       <div className="flex items-start justify-start px-3 py-3">
         <Button
           className="scale-110 cursor-pointer"
