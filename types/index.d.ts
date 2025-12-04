@@ -40,6 +40,7 @@ type ReceiveMessageType = {
   success: boolean;
   message: MessageType;
   conversation: ConversationType;
+  error?: string;
 };
 
 type OnTypingRes = {

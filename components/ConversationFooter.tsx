@@ -28,15 +28,21 @@ const ConversationFooter = () => {
   const [isEmojiPickerOpen, setIsEmojiPickerOpen] = useState(false);
   const buttonRef = useRef<HTMLButtonElement>(null);
   const pickerRef = useRef<HTMLDivElement>(null);
-  const { currentConversation, addMessage, updateMessage, changeLastMessage } =
-    useChatStore(
-      useShallow((state) => ({
-        currentConversation: state.currentConversation,
-        addMessage: state.addMessage,
-        updateMessage: state.updateMessage,
-        changeLastMessage: state.changeLastMessage,
-      })),
-    );
+  const {
+    currentConversation,
+    addMessage,
+    updateMessage,
+    changeLastMessage,
+    deleteMessage,
+  } = useChatStore(
+    useShallow((state) => ({
+      currentConversation: state.currentConversation,
+      addMessage: state.addMessage,
+      updateMessage: state.updateMessage,
+      changeLastMessage: state.changeLastMessage,
+      deleteMessage: state.deleteMessage,
+    })),
+  );
   const otherSide = currentConversation?.participants.find(
     (p) => p._id !== user?._id,
   );
@@ -124,8 +130,12 @@ const ConversationFooter = () => {
       messageText.trim(),
       undefined,
       (res: ReceiveMessageType) => {
-        updateMessage(id, res.message);
-        changeLastMessage(res.conversation, res.message);
+        if (res.success) {
+          updateMessage(id, res.message);
+          changeLastMessage(res.conversation, res.message);
+        } else {
+          deleteMessage(newMessage.id);
+        }
       },
     );
   };
