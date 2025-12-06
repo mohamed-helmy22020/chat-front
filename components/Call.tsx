@@ -2,6 +2,7 @@ import { formatVideoTime } from "@/lib/utils";
 import { chatSocket } from "@/src/socket";
 import { useCallStore } from "@/store/callStore";
 import { useUserStore } from "@/store/userStore";
+import clsx from "clsx";
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { useShallow } from "zustand/react/shallow";
@@ -16,7 +17,7 @@ const Call = () => {
   );
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const videoRef = useRef<HTMLVideoElement | null>(null);
-  const [audioTime, setAudioTime] = useState(0);
+  const [mediaTime, setMediaTime] = useState(0);
   const { caller, callee, isIncomingCall, changeCallId, callType, callState } =
     useCallStore(
       useShallow((state) => ({
@@ -77,9 +78,22 @@ const Call = () => {
   };
 
   return (
-    <div className="fixed top-0 left-0 z-50 h-svh w-svw bg-site-background">
-      <div className="flex h-5/6 flex-col items-center justify-center">
-        <div className="relative flex h-52 w-52 items-center justify-center rounded-full border-2 border-white dark:border-slate-800">
+    <div className="fixed top-0 left-0 z-50 flex h-svh w-svw flex-col bg-site-background">
+      <div
+        className={clsx(
+          "flex flex-col items-center justify-center gap-4",
+          (callType === "voice" || callState === "Waiting") && "flex-1",
+          callType === "video" &&
+            callState === "Accepted" &&
+            "flex-row justify-start p-4",
+        )}
+      >
+        <div
+          className={clsx(
+            "relative flex h-52 w-52 items-center justify-center rounded-full border-2 border-white dark:border-slate-800",
+            callType === "video" && callState === "Accepted" && "!h-9 !w-9",
+          )}
+        >
           <Image
             className="rounded-full object-cover"
             src={otherSide?.userProfileImage || "/imgs/user.jpg"}
@@ -87,25 +101,44 @@ const Call = () => {
             fill
           />
         </div>
-        <h1 className="mt-4 text-2xl font-bold">{otherSide?.name}</h1>
+
+        <h1
+          className={clsx(
+            "text-2xl font-bold",
+            callType === "video" && callState === "Accepted" && "flex-1",
+          )}
+        >
+          {otherSide?.name}
+        </h1>
+
         <p className="text-md text-gray-500">
-          {receivedStream ? formatVideoTime(audioTime) : "Calling..."}
+          {receivedStream
+            ? formatVideoTime(mediaTime)
+            : callState === "Accepted"
+              ? "Connecting"
+              : "Calling..."}
         </p>
-        {receivedStream && callType === "video" && (
-          <video
-            className="h-52 w-52 bg-black object-cover"
-            ref={videoRef}
-            autoPlay
-            playsInline
-          />
-        )}
+
         {receivedStream && callType === "voice" && (
           <audio
             ref={audioRef}
-            onTimeUpdate={(e) => setAudioTime((e.target as any).currentTime)}
+            onTimeUpdate={(e) => setMediaTime((e.target as any).currentTime)}
           />
         )}
       </div>
+      {callType === "video" && callState === "Accepted" && (
+        <div className="flex-1">
+          <div className="relative h-full w-full bg-black">
+            <video
+              className="absolute top-1/2 left-1/2 max-h-full max-w-full -translate-1/2 bg-black object-cover"
+              ref={videoRef}
+              autoPlay
+              playsInline
+              onTimeUpdate={(e) => setMediaTime((e.target as any).currentTime)}
+            />
+          </div>
+        </div>
+      )}
       {isIncomingCall ? (
         <IncomingCallFooter
           setReceivedStream={setReceivedStream}
@@ -117,7 +150,7 @@ const Call = () => {
           handleToggleMuteSound={handleToggleMuteSound}
         />
       )}
-      {isIncomingCall && callState === "Waiting" && (
+      {isIncomingCall && callState === "Waiting" && false && (
         <audio src="/ringtone.mp3" autoPlay className="invisible fixed" />
       )}
     </div>

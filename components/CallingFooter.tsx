@@ -1,7 +1,12 @@
 import { chatSocket } from "@/src/socket";
 import { useCallStore } from "@/store/callStore";
 import { useEffect, useRef, useState } from "react";
-import { FaMicrophone, FaMicrophoneSlash } from "react-icons/fa6";
+import {
+  FaMicrophone,
+  FaMicrophoneSlash,
+  FaVideo,
+  FaVideoSlash,
+} from "react-icons/fa6";
 import { HiMiniSpeakerWave, HiMiniSpeakerXMark } from "react-icons/hi2";
 import { MdCallEnd } from "react-icons/md";
 import SimplePeer from "simple-peer";
@@ -20,6 +25,7 @@ const CallingFooter = ({
   const peer = useRef<SimplePeer.Instance>(null);
   const [isSpeakerOff, setIsSpeakerOff] = useState(false);
   const [isMicOff, setIsMicOff] = useState(false);
+  const [isCameraOff, setIsCameraOff] = useState(false);
   const [isConnected, setIsConnected] = useState(false);
   const { callId, callState, callee, endCall, changeCallState, callType } =
     useCallStore(
@@ -41,6 +47,12 @@ const CallingFooter = ({
       track.enabled = isMicOff;
     });
     setIsMicOff((prev) => !prev);
+  };
+  const handleToggleCamera = () => {
+    stream.current?.getVideoTracks().forEach((track) => {
+      track.enabled = isCameraOff;
+    });
+    setIsCameraOff((prev) => !prev);
   };
   const handleEndCall = () => {
     endCall();
@@ -64,14 +76,21 @@ const CallingFooter = ({
   }, [changeCallState, endCall]);
   useEffect(() => {
     const timeoutId = setTimeout(() => {
-      if (callState === "Waiting" || !isConnected) {
+      if (callState === "Waiting") {
         toast.info("No answer");
         endCall();
       }
-    }, 10000);
+    }, 30000);
+    const timeoutId2 = setTimeout(() => {
+      if (!isConnected && callState === "Accepted") {
+        toast.error("Error happened when connecting");
+        endCall();
+      }
+    }, 5000);
 
     return () => {
       clearTimeout(timeoutId);
+      clearTimeout(timeoutId2);
     };
   }, [callState, endCall, isConnected]);
   useEffect(() => {
@@ -152,6 +171,14 @@ const CallingFooter = ({
       >
         {isMicOff ? <FaMicrophoneSlash /> : <FaMicrophone />}
       </Button>
+      {callType === "video" && (
+        <Button
+          className="aspect-square h-10 scale-125 cursor-pointer rounded-full bg-transparent !p-0 text-white hover:bg-site-background hover:opacity-90"
+          onClick={handleToggleCamera}
+        >
+          {isCameraOff ? <FaVideoSlash /> : <FaVideo />}
+        </Button>
+      )}
       <Button
         variant="destructive"
         className="aspect-square h-10 cursor-pointer rounded-full !p-0 hover:opacity-90"
