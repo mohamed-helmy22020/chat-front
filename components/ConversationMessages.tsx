@@ -50,15 +50,17 @@ const ConversationMessages = () => {
   const [newMessagesCount, setNewMessagesCount] = useState(0);
   const prevScrollHeightRef = useRef(0);
   const isPrependingRef = useRef(false);
+  const [isAtBottom, setIsAtBottom] = useState(true);
 
-  const isAtBottom = () => {
+  const checkIsAtBottom = () => {
     const scrollable = scrollableDiv.current;
     if (!scrollable) return false;
-
-    return (
+    const isAtBottomCondition =
       scrollable.scrollHeight - scrollable.scrollTop <=
-      scrollable.clientHeight + 3
-    );
+      scrollable.clientHeight + 3;
+    setIsAtBottom(isAtBottomCondition);
+
+    return isAtBottomCondition;
   };
 
   useEffect(() => {
@@ -66,7 +68,7 @@ const ConversationMessages = () => {
 
     if (!container) return;
     const handleScroll = () => {
-      if (isAtBottom()) {
+      if (checkIsAtBottom()) {
         const currentConversationLastMessage =
           currentConversationMessages[currentConversationMessages.length - 1];
         setNewMessagesCount(0);
@@ -78,7 +80,7 @@ const ConversationMessages = () => {
           chatSocket.emit("seeAllMessages", otherSide?._id);
         }
       }
-      wasAtBottomRef.current = isAtBottom();
+      wasAtBottomRef.current = checkIsAtBottom();
     };
 
     container.addEventListener("scroll", handleScroll);
@@ -207,10 +209,10 @@ const ConversationMessages = () => {
 
   return (
     <>
-      {newMessagesCount > 0 && (
+      {!isAtBottom && (
         <Button
           variant="ghostFull"
-          className="absolute end-8 bottom-20 z-30 flex !h-10 w-10 cursor-pointer items-center justify-center rounded-full bg-mainColor-600 !p-0"
+          className="absolute end-8 bottom-20 z-30 flex !h-10 w-10 cursor-pointer items-center justify-center rounded-full bg-site-foreground !p-0"
           onClick={() => {
             scrollableDiv.current?.scrollTo(
               0,
@@ -219,11 +221,14 @@ const ConversationMessages = () => {
           }}
         >
           <IoIosArrowDown />
-          <div className="absolute -end-2 -bottom-2 flex h-6 w-6 items-center justify-center rounded-full bg-site-foreground">
-            {newMessagesCount}
-          </div>
+          {newMessagesCount > 0 && (
+            <div className="absolute -end-2 -bottom-2 flex h-6 w-6 items-center justify-center rounded-full bg-mainColor-600">
+              {newMessagesCount}
+            </div>
+          )}
         </Button>
       )}
+
       <div
         className="relative flex flex-1 flex-col overflow-y-auto bg-site-background p-4"
         ref={scrollableDiv}

@@ -3,7 +3,7 @@ import { useChatStore } from "@/store/chatStore";
 import clsx from "clsx";
 import Linkify from "linkify-react";
 import Image from "next/image";
-import { memo } from "react";
+import { memo, useState } from "react";
 import {
   AiTwotoneDislike as DislikeEmoji,
   AiTwotoneLike as LikeEmoji,
@@ -107,7 +107,7 @@ const ConversationMessage = ({
             </div>
           </div>
           {message.reacts && message.reacts.length > 0 && (
-            <div className="absolute end-2 bottom-1 z-50 flex translate-y-full items-center justify-center gap-1 rounded-full bg-site-foreground px-2 py-1 text-sm select-none">
+            <div className="absolute end-2 bottom-1 z-10 flex translate-y-full items-center justify-center gap-1 rounded-full bg-site-foreground px-2 py-1 text-sm select-none">
               <div className="flex gap-0.5">{reactsElements}</div>
               {message.reacts.length}
             </div>
@@ -125,13 +125,15 @@ const ConversationMessage = ({
       )}
     >
       {isFirstMessage ? (
-        <div className="relative flex h-10 w-10 items-center justify-center rounded-full border-2 border-white dark:border-slate-800">
-          <Image
-            className="rounded-full object-cover"
-            src={otherSide.userProfileImage || "/imgs/user.jpg"}
-            alt="avatar"
-            fill
-          />
+        <div className="h-full items-start self-stretch">
+          <div className="relative flex h-10 w-10 rounded-full border-2 border-white dark:border-slate-800">
+            <Image
+              className="rounded-full object-cover"
+              src={otherSide.userProfileImage || "/imgs/user.jpg"}
+              alt="avatar"
+              fill
+            />
+          </div>
         </div>
       ) : (
         <div className="h-10 w-10 flex-shrink-0"></div>
@@ -163,7 +165,7 @@ const ConversationMessage = ({
           </div>
         </div>
         {message.reacts && message.reacts.length > 0 && (
-          <div className="absolute end-2 bottom-1 z-50 flex translate-y-full items-center justify-center gap-1 rounded-full bg-site-foreground px-2 py-1 text-xs select-none">
+          <div className="absolute start-2 bottom-1 z-10 flex translate-y-full items-center justify-center gap-1 rounded-full bg-site-foreground px-2 py-1 text-xs select-none">
             <div className="flex gap-0.5">{reactsElements}</div>
             {message.reacts.length}
           </div>
@@ -192,7 +194,8 @@ const MessageImg = memo(({ message }: { message: MessageType }) => {
 });
 MessageImg.displayName = "MessageImg";
 
-const MessageVid = ({ message }: { message: MessageType }) => {
+const MessageVid = memo(({ message }: { message: MessageType }) => {
+  const [isLoaded, setIsLoaded] = useState(false);
   const changeCurrentSelectedMediaMessage = useChatStore(
     (state) => state.changeCurrentSelectedMediaMessage,
   );
@@ -202,7 +205,12 @@ const MessageVid = ({ message }: { message: MessageType }) => {
       className="!max-h-80 !max-w-60 cursor-pointer overflow-hidden !p-0"
       onClick={() => changeCurrentSelectedMediaMessage(message)}
     >
-      <div className="relative flex max-h-80 w-full max-w-60 items-center justify-center">
+      <div
+        className={clsx(
+          "relative flex max-h-80 w-full items-center justify-center",
+          !isLoaded && "h-80 w-full",
+        )}
+      >
         <video
           src={message.mediaUrl}
           className="max-h-full max-w-full"
@@ -210,6 +218,7 @@ const MessageVid = ({ message }: { message: MessageType }) => {
           autoPlay={false}
           controlsList="nodownload"
           preload="metadata"
+          onLoadedMetadata={() => setIsLoaded(true)}
         />
         <div className="absolute inset-0 flex items-center justify-center bg-black/25">
           <div className="flex items-center justify-center rounded-full p-2">
@@ -219,7 +228,7 @@ const MessageVid = ({ message }: { message: MessageType }) => {
       </div>
     </Button>
   );
-};
+});
 MessageVid.displayName = "MessageVid";
 
 export default ConversationMessage;

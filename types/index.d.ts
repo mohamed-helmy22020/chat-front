@@ -114,3 +114,11 @@ type CurrentStatusType = {
   count: number;
   currentIndex: number;
 };
+
+type CallStateType =
+  | "inCall"
+  | "Accepted"
+  | "Rejected"
+  | "Waiting"
+  | "ended"
+  | null;

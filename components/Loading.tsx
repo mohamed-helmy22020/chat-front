@@ -11,7 +11,7 @@ const Loading = () => {
     })),
   );
   return (
-    <div className="fixed top-0 left-0 z-50 flex h-svh w-screen items-center justify-center bg-site-background">
+    <div className="fixed top-0 left-0 z-[51] flex h-svh w-screen items-center justify-center bg-site-background">
       <div className="flex flex-col items-center justify-center gap-4">
         <Image
           src="/imgs/icon.png"
