@@ -65,6 +65,7 @@ const CallingFooter = ({
   useEffect(() => {
     const timeoutId = setTimeout(() => {
       if (callState === "Waiting" || !isConnected) {
+        toast.info("No answer");
         endCall();
       }
     }, 10000);

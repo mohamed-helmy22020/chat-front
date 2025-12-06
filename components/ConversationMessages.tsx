@@ -90,6 +90,9 @@ const ConversationMessages = () => {
   useLayoutEffect(() => {
     const currentConversationLastMessage =
       currentConversationMessages[currentConversationMessages.length - 1];
+    if (!lastMessage) {
+      setLastMessage(currentConversationLastMessage);
+    }
     if (
       wasAtBottomRef.current ||
       currentConversationLastMessage?.type === "pending"
