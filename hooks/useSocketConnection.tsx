@@ -1,4 +1,5 @@
 import { chatSocket } from "@/src/socket";
+import { useCallStore } from "@/store/callStore";
 import { useChatStore } from "@/store/chatStore";
 import { useStatusStore } from "@/store/statusStore";
 import { useUserStore } from "@/store/userStore";
@@ -46,6 +47,11 @@ const useSocketConnection = () => {
       userStausSeen: state.userStausSeen,
     })),
   );
+  const { incomingCall } = useCallStore(
+    useShallow((state) => ({
+      incomingCall: state.incomingCall,
+    })),
+  );
   useEffect(() => {
     if (chatSocket.connected) {
       changeIsConnected(true);
@@ -60,6 +66,14 @@ const useSocketConnection = () => {
     };
     const onErrors = (error: any) => {
       toast.error(error);
+    };
+
+    const onIncomingCall = (data: {
+      from: MiniUserType;
+      callId: string;
+      callType: "voice" | "video";
+    }) => {
+      incomingCall(data.from, data.callId, data.callType);
     };
 
     const onReceiveMessage = (res: ReceiveMessageType) => {
@@ -136,6 +150,7 @@ const useSocketConnection = () => {
     chatSocket.on("deleteFriendStatus", onDeleteFriendStatus);
     chatSocket.on("statusSeen", onStatusSeen);
     chatSocket.on("friendIsOnline", onFriendIsOnline);
+    chatSocket.on("incomingCall", onIncomingCall);
     chatSocket.on("errors", onErrors);
     chatSocket.on("connect", onConnect);
     chatSocket.on("disconnect", onDisconnect);
@@ -152,6 +167,7 @@ const useSocketConnection = () => {
       chatSocket.off("deleteFriendStatus", onDeleteFriendStatus);
       chatSocket.off("statusSeen", onStatusSeen);
       chatSocket.off("friendIsOnline", onFriendIsOnline);
+      chatSocket.off("incomingCall", onIncomingCall);
       chatSocket.off("errors", onErrors);
       chatSocket.off("connect", onConnect);
       chatSocket.off("disconnect", onDisconnect);
@@ -172,6 +188,7 @@ const useSocketConnection = () => {
     user,
     seeAllMessages,
     changeFriendsOnlineStatus,
+    incomingCall,
   ]);
 };
 

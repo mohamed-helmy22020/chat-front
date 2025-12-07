@@ -279,3 +279,18 @@ export function isMobileDevice() {
   });
   return hasTouchScreen || (hasMobileUA && isSmallScreen);
 }
+
+export function formatVideoTime(seconds: number) {
+  const totalSeconds = Math.floor(Math.abs(seconds)); // Handle potential negative input
+  const hrs = Math.floor(totalSeconds / 3600);
+  const mins = Math.floor((totalSeconds % 3600) / 60);
+  const secs = totalSeconds % 60;
+
+  const pad = (num: number) => num.toString().padStart(2, "0");
+
+  if (hrs > 0) {
+    return `${hrs}:${pad(mins)}:${pad(secs)}`;
+  } else {
+    return `${pad(mins)}:${pad(secs)}`;
+  }
+}
