@@ -64,11 +64,17 @@ const useCallHook = (initiator: boolean) => {
   useEffect(() => {
     if (callState !== "Accepted") return;
     const connect = async () => {
-      const streamInstance = await navigator.mediaDevices.getUserMedia({
-        audio: true,
-        video: callType === "video",
-      });
-      setStream(streamInstance);
+      try {
+        const streamInstance = await navigator.mediaDevices.getUserMedia({
+          audio: true,
+          video: callType === "video",
+        });
+        setStream(streamInstance);
+      } catch (error) {
+        console.log(error);
+        toast.error("Please allow microphone access in your browser settings.");
+        endCall();
+      }
     };
     connect();
   }, [callState, callType, endCall]);
