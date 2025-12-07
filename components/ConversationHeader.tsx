@@ -33,7 +33,7 @@ const ConversationHeader = () => {
       toast.error("User is offline. Cannot make a call.");
       return false;
     }
-    if (isInCall && isIncomingCall && isCalling) {
+    if (isInCall || isIncomingCall || isCalling) {
       toast.error("You are already in a call.");
       return false;
     }
