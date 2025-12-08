@@ -1,4 +1,6 @@
 import { useStatusStore } from "@/store/statusStore";
+import { motion } from "motion/react";
+import { LuCircleDotDashed } from "react-icons/lu";
 import AddStatus from "./AddStatus";
 import MyStatus from "./MyStatus";
 import Statuses from "./Statuses";
@@ -23,9 +25,19 @@ const Status = () => {
             <Statuses />
           </div>
         </div>
-        <div className="hidden w-7/12 items-center justify-center md:flex">
-          a
-        </div>
+        <motion.div
+          initial={{ opacity: 0, x: 100 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ type: "tween", duration: 0.1, ease: "easeOut" }}
+          className="hidden w-7/12 flex-col items-center justify-center md:flex"
+        >
+          <LuCircleDotDashed size={100} />
+
+          <p className="mt-5 text-center text-xl">Share status updates</p>
+          <p className="text-md mt-1 p-9 pt-0 text-center text-slate-400">
+            Share photos, videos and text that disappear after 24 hours.
+          </p>
+        </motion.div>
       </div>
     </>
   );

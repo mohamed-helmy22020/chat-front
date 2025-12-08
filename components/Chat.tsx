@@ -1,6 +1,8 @@
 "use client";
 import { useCallStore } from "@/store/callStore";
 import { useChatStore } from "@/store/chatStore";
+import { motion } from "motion/react";
+import Image from "next/image";
 import { useShallow } from "zustand/react/shallow";
 import Call from "./Call";
 import Conversation from "./Conversation";
@@ -24,7 +26,25 @@ const Chat = () => {
         {currentConversation ? (
           <Conversation />
         ) : (
-          <div className="hidden"></div>
+          <motion.div
+            initial={{ opacity: 0, x: 100 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ type: "tween", duration: 0.1, ease: "easeOut" }}
+            className="hidden flex-col items-center justify-center md:flex md:w-7/12 lg:w-8/12"
+          >
+            <Image
+              src="/imgs/icon.png"
+              width={100}
+              height={100}
+              alt="website icon"
+            />
+            <p className="mt-2 text-center text-xl">Chat App</p>
+            <p className="text-md mt-5 p-9 pt-0 text-center text-slate-400">
+              Send and receive messages Seamlessly.
+              <br />
+              Select a conversation to start messaging.
+            </p>
+          </motion.div>
         )}
       </div>
     </>

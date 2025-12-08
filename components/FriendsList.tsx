@@ -1,5 +1,7 @@
 import { useUserStore } from "@/store/userStore";
+import { motion } from "motion/react";
 import { IoAlertCircleSharp } from "react-icons/io5";
+import { LuUsers } from "react-icons/lu";
 import ReceivedRequestsList from "./ReceivedRequestsList";
 import RequestUserCard from "./RequestUserCard";
 import SearchUsers from "./SearchUsers";
@@ -37,7 +39,19 @@ const FriendsList = () => {
           </div>
         )}
       </div>
-      <div className="hidden w-7/12 items-center justify-center md:flex">a</div>
+      <motion.div
+        initial={{ opacity: 0, x: 100 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ type: "tween", duration: 0.1, ease: "easeOut" }}
+        className="hidden w-7/12 flex-col items-center justify-center md:flex"
+      >
+        <LuUsers size={100} />
+        <p className="mt-5 text-center text-xl">Friends List</p>
+        <p className="text-md mt-1 p-9 pt-0 text-center text-slate-400">
+          See friends list, sent requests, and received requests.
+          <br /> You can also unfriend, or block someone.
+        </p>
+      </motion.div>
     </div>
   );
 };

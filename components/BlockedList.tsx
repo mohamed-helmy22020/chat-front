@@ -1,5 +1,6 @@
 import { useUserStore } from "@/store/userStore";
-import { LuCheck } from "react-icons/lu";
+import { motion } from "motion/react";
+import { LuCheck, LuUserRoundX } from "react-icons/lu";
 import RequestUserCard from "./RequestUserCard";
 import { Alert, AlertTitle } from "./ui/alert";
 
@@ -29,7 +30,19 @@ const BlockedList = () => {
           </div>
         )}
       </div>
-      <div className="hidden w-7/12 items-center justify-center md:flex">a</div>
+      <motion.div
+        initial={{ opacity: 0, x: 100 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ type: "tween", duration: 0.1, ease: "easeOut" }}
+        className="hidden w-7/12 flex-col items-center justify-center md:flex"
+      >
+        <LuUserRoundX size={100} />
+        <p className="mt-5 text-center text-xl">Blocked List</p>
+        <p className="text-md mt-1 p-9 pt-0 text-center text-slate-400">
+          See the people you{"'"}ve blocked.
+          <br /> You can also unblock them.
+        </p>
+      </motion.div>
     </div>
   );
 };
