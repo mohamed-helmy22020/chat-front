@@ -2,6 +2,7 @@ import { formatDateToStatus, REACTS } from "@/lib/utils";
 import { useChatStore } from "@/store/chatStore";
 import clsx from "clsx";
 import Linkify from "linkify-react";
+import { motion } from "motion/react";
 import Image from "next/image";
 import { memo, useState } from "react";
 import {
@@ -74,7 +75,13 @@ const ConversationMessage = ({
           isFirstMessage && "mt-3",
         )}
       >
-        <div
+        <motion.div
+          initial={
+            message.type === "pending"
+              ? { opacity: 0, x: 100 }
+              : { opacity: 1, x: 0 }
+          }
+          animate={{ opacity: 1, x: 0 }}
           className={clsx(
             "peer relative max-w-4/5 ps-1",
             message.reacts && message.reacts.length > 0 && "mb-[22px]",
@@ -112,7 +119,7 @@ const ConversationMessage = ({
               {message.reacts.length}
             </div>
           )}
-        </div>
+        </motion.div>
         <MessageMenu message={message} />
       </div>
     );
@@ -125,7 +132,11 @@ const ConversationMessage = ({
       )}
     >
       {isFirstMessage ? (
-        <div className="h-full items-start self-stretch">
+        <motion.div
+          initial={{ opacity: 0, x: -100 }}
+          animate={{ opacity: 1, x: 0 }}
+          className="h-full items-start self-stretch"
+        >
           <div className="relative flex h-10 w-10 rounded-full border-2 border-white dark:border-slate-800">
             <Image
               className="rounded-full object-cover"
@@ -134,11 +145,13 @@ const ConversationMessage = ({
               fill
             />
           </div>
-        </div>
+        </motion.div>
       ) : (
         <div className="h-10 w-10 flex-shrink-0"></div>
       )}
-      <div
+      <motion.div
+        initial={{ opacity: 0, x: -100 }}
+        animate={{ opacity: 1, x: 0 }}
         className={clsx(
           "peer relative ms-2 max-w-4/5 pe-1",
           message.reacts && message.reacts.length > 0 && "mb-[22px]",
@@ -170,7 +183,7 @@ const ConversationMessage = ({
             {message.reacts.length}
           </div>
         )}
-      </div>
+      </motion.div>
       <MessageMenu message={message} />
     </div>
   );

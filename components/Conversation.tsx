@@ -1,4 +1,5 @@
 import { useChatStore } from "@/store/chatStore";
+import { motion } from "motion/react";
 import ConversationFooter from "./ConversationFooter";
 import ConversationHeader from "./ConversationHeader";
 import ConversationMessages from "./ConversationMessages";
@@ -11,11 +12,15 @@ const Conversation = () => {
   return (
     <>
       {currentSelectedMediaMessage && <ShowMessageMedia />}
-      <div className="relative flex max-h-svh w-full flex-col overflow-hidden sm:w-6/12 md:w-7/12 lg:w-8/12">
+      <motion.div
+        initial={{ opacity: 0, x: 100 }}
+        animate={{ opacity: 1, x: 0 }}
+        className="relative flex max-h-svh w-full flex-col overflow-hidden sm:w-6/12 md:w-7/12 lg:w-8/12"
+      >
         <ConversationHeader />
         <ConversationMessages />
         <ConversationFooter />
-      </div>
+      </motion.div>
     </>
   );
 };

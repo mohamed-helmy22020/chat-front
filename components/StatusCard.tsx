@@ -1,6 +1,7 @@
 import { formatDateToStatus } from "@/lib/utils";
 import { useStatusStore } from "@/store/statusStore";
 import clsx from "clsx";
+import { motion } from "motion/react";
 import Image from "next/image";
 import { Button } from "./ui/button";
 
@@ -19,7 +20,11 @@ const StatusCard = ({
   );
 
   return (
-    <div className="rounded-sm select-none hover:bg-gray-800">
+    <motion.div
+      initial={{ opacity: 0, scale: 0.5 }}
+      animate={{ opacity: 1, scale: 1 }}
+      className="rounded-sm select-none hover:bg-gray-800"
+    >
       <Button
         className="flex h-full w-full cursor-pointer gap-3 rounded-sm px-2 py-3"
         variant="ghostFull"
@@ -46,7 +51,7 @@ const StatusCard = ({
           </p>
         </div>
       </Button>
-    </div>
+    </motion.div>
   );
 };
 

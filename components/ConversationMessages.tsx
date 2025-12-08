@@ -233,7 +233,7 @@ const ConversationMessages = () => {
       )}
 
       <div
-        className="relative flex flex-1 flex-col overflow-y-auto bg-site-background p-4"
+        className="relative flex flex-1 flex-col overflow-x-hidden overflow-y-auto bg-site-background p-4"
         ref={scrollableDiv}
       >
         <div

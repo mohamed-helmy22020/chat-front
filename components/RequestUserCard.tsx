@@ -18,6 +18,7 @@ import useChatWith from "@/hooks/useChatWith";
 import useHandleFriendRequest from "@/hooks/useHandleFriendRequest";
 import useUnBlockUser from "@/hooks/useUnBlockUser";
 import useUnFriendUser from "@/hooks/useUnFriendUser";
+import { motion } from "motion/react";
 import Image from "next/image";
 import { useState } from "react";
 import { Button } from "./ui/button";
@@ -28,7 +29,6 @@ import {
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
 import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
-
 type Props = {
   user: RequestUserType;
   type?: "friends" | "blocks" | "request" | "sent" | "addFriend";
@@ -37,7 +37,11 @@ type Props = {
 const RequestUserCard = ({ user, type = "friends" }: Props) => {
   const { _id, userProfileImage, name, bio } = user;
   return (
-    <div className="flex min-h-15 w-full cursor-pointer items-center gap-2 rounded-md px-3 py-1.5 hover:bg-site-foreground">
+    <motion.div
+      initial={{ opacity: 0, scale: 0.5 }}
+      animate={{ opacity: 1, scale: 1 }}
+      className="flex min-h-15 w-full cursor-pointer items-center gap-2 rounded-md px-3 py-1.5 hover:bg-site-foreground"
+    >
       <div className="relative flex h-9 w-9 items-center justify-center rounded-full border-2 border-white dark:border-slate-800">
         <Image
           className="rounded-full object-cover"
@@ -62,7 +66,7 @@ const RequestUserCard = ({ user, type = "friends" }: Props) => {
           (type === "sent" && <SentMenu userId={_id} />) ||
           (type === "addFriend" && <AddFriendMenu userId={_id} />)}
       </div>
-    </div>
+    </motion.div>
   );
 };
 

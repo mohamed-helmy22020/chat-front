@@ -2,6 +2,7 @@ import { formatDateToStatus } from "@/lib/utils";
 import { useChatStore } from "@/store/chatStore";
 import { useUserStore } from "@/store/userStore";
 import clsx from "clsx";
+import { motion } from "motion/react";
 import Image from "next/image";
 import { FaImage, FaVideo } from "react-icons/fa";
 import { useShallow } from "zustand/react/shallow";
@@ -44,11 +45,13 @@ const ConversationItem = ({ conversation }: Props) => {
       lastMessage.text
     );
   return (
-    <div
+    <motion.div
       className={clsx(
         "rounded-sm select-none hover:bg-gray-800",
         currentCOnversation?.id === conversation.id && "bg-gray-800",
       )}
+      initial={{ opacity: 0, scale: 0.5 }}
+      animate={{ opacity: 1, scale: 1 }}
     >
       <Button
         className="flex h-full w-full cursor-pointer justify-start gap-3 rounded-sm px-2 py-3"
@@ -81,7 +84,7 @@ const ConversationItem = ({ conversation }: Props) => {
           </div>
         </div>
       </Button>
-    </div>
+    </motion.div>
   );
 };
 

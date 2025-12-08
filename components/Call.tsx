@@ -3,6 +3,7 @@ import { chatSocket } from "@/src/socket";
 import { useCallStore } from "@/store/callStore";
 import { useUserStore } from "@/store/userStore";
 import clsx from "clsx";
+import { motion } from "motion/react";
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { useShallow } from "zustand/react/shallow";
@@ -78,7 +79,12 @@ const Call = () => {
   };
 
   return (
-    <div className="fixed top-0 left-0 z-50 flex h-svh w-svw flex-col bg-site-background">
+    <motion.div
+      initial={{ opacity: 0, scale: 0.5 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ type: "tween" }}
+      className="fixed top-0 left-0 z-50 flex h-svh w-svw flex-col bg-site-background"
+    >
       <div
         className={clsx(
           "flex flex-col items-center justify-center gap-4",
@@ -90,7 +96,7 @@ const Call = () => {
       >
         <div
           className={clsx(
-            "relative flex h-52 w-52 items-center justify-center rounded-full border-2 border-white dark:border-slate-800",
+            "relative flex h-52 w-52 items-center justify-center rounded-full border-2 border-white transition-all dark:border-slate-800",
             callType === "video" && callState === "Accepted" && "!h-9 !w-9",
           )}
         >
@@ -153,7 +159,7 @@ const Call = () => {
       {isIncomingCall && callState === "Waiting" && false && (
         <audio src="/ringtone.mp3" autoPlay className="invisible fixed" />
       )}
-    </div>
+    </motion.div>
   );
 };
 

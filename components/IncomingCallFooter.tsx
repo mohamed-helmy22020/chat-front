@@ -95,14 +95,14 @@ const IncomingCallFooter = ({
         <>
           <Button
             variant="destructive"
-            className="aspect-square h-10 cursor-pointer rounded-full !p-0 hover:opacity-90"
+            className="aspect-square h-10 cursor-pointer rounded-full !p-0 hover:scale-110 hover:opacity-90"
             onClick={() => endCall()}
           >
             <MdCallEnd />
           </Button>
           <Button
             variant="ghostFull"
-            className="aspect-square !h-10 animate-pulse cursor-pointer rounded-full bg-green-600 !p-0 text-white hover:opacity-90"
+            className="aspect-square !h-10 animate-pulse cursor-pointer rounded-full bg-green-600 !p-0 text-white hover:scale-110 hover:opacity-90"
             onClick={handleAcceptCall}
           >
             <MdCall />

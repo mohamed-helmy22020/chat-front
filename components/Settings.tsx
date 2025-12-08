@@ -1,3 +1,4 @@
+import { motion } from "motion/react";
 import { useState } from "react";
 import { FaArrowLeft } from "react-icons/fa6";
 import SettingsProfile from "./SettingsProfile";
@@ -12,7 +13,11 @@ const Settings = () => {
       <div className="flex h-full w-full flex-col border-e-2 md:w-5/12">
         {currentSettings === "profile" && (
           <>
-            <div className="flex items-center p-5 select-none">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.5 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="flex items-center p-5 select-none"
+            >
               <button
                 onClick={() => setCurrentSettings(undefined)}
                 className="cursor-pointer pe-2"
@@ -20,7 +25,7 @@ const Settings = () => {
                 <FaArrowLeft className="transition hover:-translate-x-1" />
               </button>
               <p>Profile</p>
-            </div>
+            </motion.div>
             <SettingsProfile />
           </>
         )}
@@ -30,12 +35,14 @@ const Settings = () => {
               <h1>Settings</h1>
             </div>
             <div className="flex-1 overflow-y-auto p-2">
-              <button
+              <motion.button
+                initial={{ opacity: 0, scale: 0.5 }}
+                animate={{ opacity: 1, scale: 1 }}
                 onClick={() => setCurrentSettings("profile")}
                 className="w-full"
               >
                 <SettingsProfileCard />
-              </button>
+              </motion.button>
               <Separator className="mt-2" />
             </div>
           </>
