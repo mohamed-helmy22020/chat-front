@@ -2,6 +2,7 @@ import { addTextStatus } from "@/lib/actions/user.actions";
 import { getFontSizeForText, isTextExceeded } from "@/lib/utils";
 import { useStatusStore } from "@/store/statusStore";
 import { Loader2, X } from "lucide-react";
+import { motion } from "motion/react";
 import { useEffect, useRef, useState } from "react";
 import { IoMdSend } from "react-icons/io";
 import { IoColorPaletteSharp } from "react-icons/io5";
@@ -75,7 +76,10 @@ const AddStatusText = ({ setShowAddText }: Props) => {
     toast.success("Status added successfully!");
   };
   return (
-    <div
+    <motion.div
+      initial={{ opacity: 0, scale: 0.5 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ type: "tween" }}
       className={`fixed top-0 left-0 z-50 flex h-svh w-screen flex-col ${color}`}
     >
       <div className="flex justify-between px-6 py-6">
@@ -117,7 +121,7 @@ const AddStatusText = ({ setShowAddText }: Props) => {
           {isSending ? <Loader2 className="animate-spin" /> : <IoMdSend />}
         </Button>
       </div>
-    </div>
+    </motion.div>
   );
 };
 

@@ -70,7 +70,7 @@ const InCallButtons = ({ handleToggleMuteSound, stream }: Props) => {
       )}
       <Button
         variant="destructive"
-        className="aspect-square h-10 cursor-pointer rounded-full !p-0 hover:opacity-90"
+        className="aspect-square h-10 cursor-pointer rounded-full !p-0 hover:scale-110 hover:opacity-90"
         onClick={() => endCall()}
       >
         <MdCallEnd />

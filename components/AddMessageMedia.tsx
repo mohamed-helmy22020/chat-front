@@ -3,6 +3,7 @@ import { chatSocket } from "@/src/socket";
 import { useChatStore } from "@/store/chatStore";
 import { useUserStore } from "@/store/userStore";
 import { Loader2, X } from "lucide-react";
+import { motion } from "motion/react";
 import Image from "next/image";
 import { useMemo, useState } from "react";
 import { IoMdSend } from "react-icons/io";
@@ -90,7 +91,12 @@ const AddMessageMedia = ({
   };
 
   return (
-    <div className="fixed top-0 left-0 z-50 flex h-svh w-screen flex-col overflow-hidden bg-site-background">
+    <motion.div
+      initial={{ opacity: 0, scale: 0.5 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ type: "tween" }}
+      className="fixed top-0 left-0 z-50 flex h-svh w-screen flex-col overflow-hidden bg-site-background"
+    >
       <div className="flex items-start justify-start px-3 py-3">
         <Button
           className="scale-110 cursor-pointer"
@@ -152,7 +158,7 @@ const AddMessageMedia = ({
           </div>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 };
 
