@@ -294,3 +294,16 @@ export function formatVideoTime(seconds: number) {
     return `${pad(mins)}:${pad(secs)}`;
   }
 }
+
+export function objShallowEqual(
+  obj1: Record<string, any> | undefined,
+  obj2: Record<string, any> | undefined,
+): boolean {
+  if (!obj1 || !obj2) return false;
+  const keys1 = Object.keys(obj1);
+  const keys2 = Object.keys(obj2);
+
+  if (keys1.length !== keys2.length) return false;
+
+  return keys1.every((key) => obj1[key] === obj2[key]);
+}

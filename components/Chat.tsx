@@ -30,7 +30,7 @@ const Chat = () => {
             initial={{ opacity: 0, x: 100 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ type: "tween", duration: 0.1, ease: "easeOut" }}
-            className="hidden flex-col items-center justify-center md:flex md:w-7/12 lg:w-8/12"
+            className="hidden flex-col items-center justify-center select-none md:flex md:w-7/12 lg:w-8/12"
           >
             <Image
               src="/imgs/icon.png"

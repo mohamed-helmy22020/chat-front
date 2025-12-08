@@ -154,7 +154,6 @@ const useSocketConnection = () => {
     chatSocket.on("errors", onErrors);
     chatSocket.on("connect", onConnect);
     chatSocket.on("disconnect", onDisconnect);
-
     return () => {
       chatSocket.off("receiveMessage", onReceiveMessage);
       chatSocket.off("messagesSeen", onMessagesSeen);

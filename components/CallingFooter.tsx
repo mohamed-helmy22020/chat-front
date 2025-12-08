@@ -21,7 +21,6 @@ const CallingFooter = ({
 
   const { stream, isConnected, receivedStream } = useCallHook(true);
   useEffect(() => {
-    console.log({ receivedStream });
     setReceivedStream(receivedStream);
   }, [receivedStream, setReceivedStream]);
 

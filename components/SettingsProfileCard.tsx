@@ -14,7 +14,7 @@ const SettingsProfileCard = () => {
         />
       </div>
       <div className="flex flex-1 flex-col items-start justify-center">
-        <h1 className="text-md font-bold capitalize">{user?.name}</h1>
+        <h2 className="text-md font-bold capitalize">{user?.name}</h2>
         {user?.bio && (
           <p className="line-clamp-1 text-sm text-gray-500">{user?.bio}</p>
         )}

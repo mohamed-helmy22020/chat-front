@@ -7,7 +7,8 @@ export interface userStateType {
   sentRequestsList: RequestUserType[];
   receivedRequestsList: RequestUserType[];
   blockedList: RequestUserType[];
-  changeUserData: (user: Partial<UserType>) => void;
+  changeUserSettings: (newUserSettings: UserSettingsType) => void;
+  changeUserData: (newUserData: Partial<UserType>) => void;
   setFriendsList(friends: RequestUserType[]): void;
   setSentRequestsList(requests: RequestUserType[]): void;
   setReceivedRequestsList(requests: RequestUserType[]): void;
@@ -20,10 +21,18 @@ export const useUserStore = create<userStateType>()(
     persist(
       (set) => ({
         user: null,
+        userSettings: null,
         friendsList: [],
         sentRequestsList: [],
         receivedRequestsList: [],
         blockedList: [],
+        changeUserSettings: (newUserSettings: UserSettingsType) =>
+          set(
+            produce((state: userStateType) => {
+              if (!state.user) return;
+              state.user.settings = newUserSettings;
+            }),
+          ),
         setBlockedList: (requests: RequestUserType[]) =>
           set(
             produce((state: userStateType) => {
@@ -48,12 +57,12 @@ export const useUserStore = create<userStateType>()(
               state.friendsList = friends;
             }),
           ),
-        changeUserData: (user: any) =>
+        changeUserData: (newUserData: any) =>
           set(
             produce((state: userStateType) => {
               state.user = {
                 ...state.user,
-                ...user,
+                ...newUserData,
               };
             }),
           ),

@@ -75,7 +75,8 @@ const ConversationMessages = () => {
         if (
           currentConversationLastMessage?.from !== user?._id &&
           !currentConversationLastMessage?.seen &&
-          isFocus
+          isFocus &&
+          user?.settings.privacy.readReceipts === "Enable"
         ) {
           chatSocket.emit("seeAllMessages", otherSide?._id);
         }
@@ -101,7 +102,8 @@ const ConversationMessages = () => {
       if (
         currentConversationLastMessage?.from !== user?._id &&
         !currentConversationLastMessage?.seen &&
-        isFocus
+        isFocus &&
+        user?.settings.privacy.readReceipts === "Enable"
       ) {
         chatSocket.emit("seeAllMessages", otherSide?._id);
       }
@@ -144,7 +146,9 @@ const ConversationMessages = () => {
 
     (async function () {
       const messages: MessageType[] = await getMessages();
-      chatSocket.emit("seeAllMessages", otherSide?._id);
+      if (user?.settings.privacy.readReceipts === "Enable") {
+        chatSocket.emit("seeAllMessages", otherSide?._id);
+      }
       changeCurrentConversationMessages(messages);
     })();
   }, [getMessages, changeCurrentConversationMessages, otherSide, user]);

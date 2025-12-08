@@ -21,6 +21,7 @@ type UserType = {
   userId: string;
   userProfileImage: string;
   accessToken?: string;
+  settings: UserSettingsType;
 };
 type MiniUserType = Pick<UserType, "_id" | "name" | "userProfileImage">;
 
@@ -122,3 +123,12 @@ type CallStateType =
   | "Waiting"
   | "ended"
   | null;
+
+type UserSettingsType = {
+  privacy: PrivacySettingsType;
+};
+
+type PrivacySettingsType = {
+  online: "Everyone" | "Friends" | "None";
+  readReceipts: "Enable" | "Disable";
+};
