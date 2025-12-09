@@ -9,6 +9,7 @@ export interface settingsStateType {
   changeIsLoadingData: (isLoadingData: boolean) => void;
   changeLoadingProgress: (loadingProgress: number) => void;
   addLoadingProgress: (progress: number) => void;
+  resetSettings: () => void;
 }
 export const useSettingsStore = create<settingsStateType>()(
   devtools(
@@ -38,6 +39,14 @@ export const useSettingsStore = create<settingsStateType>()(
         set(
           produce((state: settingsStateType) => {
             state.loadingProgress += progress;
+          }),
+        ),
+      resetSettings: () =>
+        set(
+          produce((state: settingsStateType) => {
+            state.isFocus = true;
+            state.isLoadingData = true;
+            state.loadingProgress = 0;
           }),
         ),
     }),

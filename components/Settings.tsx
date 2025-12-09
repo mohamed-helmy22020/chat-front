@@ -1,3 +1,4 @@
+import useLogout from "@/hooks/useLogout";
 import { motion } from "motion/react";
 import { memo, useState } from "react";
 import { FaArrowLeft } from "react-icons/fa6";
@@ -22,7 +23,7 @@ import { Separator } from "./ui/separator";
 const ICONS_SIZE = 20;
 const Settings = () => {
   const [currentSettings, setCurrentSettings] = useState<string>();
-
+  const { logOut } = useLogout();
   return (
     <div className="flex flex-1">
       <div className="flex h-full w-full flex-col overflow-x-hidden border-e-2 md:w-5/12">
@@ -81,7 +82,9 @@ const Settings = () => {
               animationDelay={0.2}
               title="Log out"
               color="#cf3a3a"
-              onClick={() => {}}
+              onClick={() => {
+                logOut();
+              }}
             >
               <MdOutlineLogout size={ICONS_SIZE} />
             </SettingsCard>

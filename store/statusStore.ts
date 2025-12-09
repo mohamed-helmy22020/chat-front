@@ -24,6 +24,7 @@ export interface statusStateType {
   changeCurrentStatusInterval: (interval: number) => void;
   changeIsPlaying: (isPlaying: boolean) => void;
   changeIsMuted: (isMuted: boolean) => void;
+  resetStatus: () => void;
 }
 export const useStatusStore = create<statusStateType>()(
   devtools(
@@ -212,6 +213,16 @@ export const useStatusStore = create<statusStateType>()(
         set(
           produce((state: statusStateType) => {
             state.isMuted = isMuted;
+          }),
+        ),
+      resetStatus: () =>
+        set(
+          produce((state: statusStateType) => {
+            state.currentStatus = null;
+            state.currentStatusTime = 0;
+            state.currentStatusInterval = 0;
+            state.isPlaying = true;
+            state.isMuted = false;
           }),
         ),
     }),

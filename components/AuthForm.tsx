@@ -6,6 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { FiLoader } from "react-icons/fi";
 import { IoAlertCircleSharp } from "react-icons/io5";
 
+import { usePageStore } from "@/store/pageStore";
 import { useTranslations } from "next-intl";
 import Image from "next/image";
 import Link from "next/link";
@@ -24,6 +25,7 @@ const AuthForm = ({ type }: { type: "sign-up" | "sign-in" }) => {
   const t = useTranslations("Auth");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
+  const setPage = usePageStore((state) => state.setPage);
 
   const formSchema = z.object({
     //both
@@ -83,6 +85,7 @@ const AuthForm = ({ type }: { type: "sign-up" | "sign-in" }) => {
         if (!response.success) {
           throw new Error(response.error.msg);
         }
+        setPage("chat");
         router.replace("/");
       }
       if (type === "sign-in") {
@@ -94,6 +97,7 @@ const AuthForm = ({ type }: { type: "sign-up" | "sign-in" }) => {
         if (!response.success) {
           throw new Error(response.error.msg);
         }
+        setPage("chat");
         router.replace("/");
       }
     } catch (error: any) {

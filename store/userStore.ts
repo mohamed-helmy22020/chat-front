@@ -82,6 +82,10 @@ export const useUserStore = create<userStateType>()(
           set(
             produce((state: userStateType) => {
               state.user = null;
+              state.friendsList = [];
+              state.sentRequestsList = [];
+              state.receivedRequestsList = [];
+              state.blockedList = [];
             }),
           ),
       }),

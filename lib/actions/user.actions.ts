@@ -1,7 +1,7 @@
 "use server";
 
 import { cookies } from "next/headers";
-import { redirect } from "next/navigation";
+import { permanentRedirect } from "next/navigation";
 import { fetchWithErrorHandling } from "../utils";
 
 export const signUp = async (userData: SignUpDataType) => {
@@ -167,7 +167,7 @@ export const logOut = async () => {
     secure: process.env.NODE_ENV === "production",
     sameSite: "strict",
   });
-  redirect("/");
+  permanentRedirect("/");
 };
 
 export const getFriendsList = async () => {

@@ -37,7 +37,7 @@ type Actions = {
     conversation: ConversationType,
     lastMessage: MessageType,
   ) => void;
-  reset: () => void;
+  resetChats: () => void;
 };
 
 const initialState: State = {
@@ -265,7 +265,7 @@ export const useChatStore = create<State & Actions>()(
           }),
         ),
 
-      reset: () => set(initialState),
+      resetChats: () => set(initialState),
     }),
     //options
 

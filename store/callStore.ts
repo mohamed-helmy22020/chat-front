@@ -142,6 +142,7 @@ export const useCallStore = create<callStateType>()(
             state.caller = null;
             state.callee = null;
             state.callId = "";
+            state.callState = null;
           }),
         ),
     }),

@@ -17,12 +17,14 @@ import { useShallow } from "zustand/react/shallow";
 
 const useGetAllData = () => {
   const user = useUserStore((state) => state.user);
-  const { addLoadingProgress, changeIsLoadingData } = useSettingsStore(
-    useShallow((state) => ({
-      addLoadingProgress: state.addLoadingProgress,
-      changeIsLoadingData: state.changeIsLoadingData,
-    })),
-  );
+  const { addLoadingProgress, changeIsLoadingData, changeLoadingProgres } =
+    useSettingsStore(
+      useShallow((state) => ({
+        addLoadingProgress: state.addLoadingProgress,
+        changeIsLoadingData: state.changeIsLoadingData,
+        changeLoadingProgres: state.changeLoadingProgress,
+      })),
+    );
   const { changeConversations, isConnected } = useChatStore(
     useShallow((state) => ({
       isConnected: state.isConnected,
@@ -50,6 +52,8 @@ const useGetAllData = () => {
   );
   useEffect(() => {
     const getData = async () => {
+      changeIsLoadingData(true);
+      changeLoadingProgres(0);
       try {
         const [
           getConversationsRes,
@@ -118,6 +122,7 @@ const useGetAllData = () => {
     changeUserStatuses,
     addLoadingProgress,
     changeIsLoadingData,
+    changeLoadingProgres,
   ]);
 
   useEffect(() => {

@@ -72,9 +72,13 @@ const ConversationFooter = () => {
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Enter") {
-      if (e.shiftKey || enterSend === "Disable") return;
-      e.preventDefault();
-      sendMessage();
+      if (
+        (e.shiftKey && enterSend === "Disable") ||
+        (!e.shiftKey && enterSend === "Enable")
+      ) {
+        e.preventDefault();
+        sendMessage();
+      }
     }
   };
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {

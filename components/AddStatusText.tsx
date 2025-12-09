@@ -50,7 +50,7 @@ const AddStatusText = ({ setShowAddText }: Props) => {
   const autoResize = () => {
     const textarea = textareaRef.current;
     if (textarea) {
-      textarea.style.height = "auto"; // Reset to shrink if needed
+      textarea.style.height = "auto";
       textarea.style.height = `${textarea.scrollHeight}px`;
     }
   };
