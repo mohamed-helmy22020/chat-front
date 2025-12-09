@@ -8,6 +8,7 @@ import {
 import { chatSocket } from "@/src/socket";
 import { useChatStore } from "@/store/chatStore";
 import { useUserStore } from "@/store/userStore";
+import { useLocalStorage } from "@uidotdev/usehooks";
 import EmojiPicker, { Theme } from "emoji-picker-react";
 import { MouseDownEvent } from "emoji-picker-react/dist/config/config";
 import { useEffect, useRef, useState } from "react";
@@ -19,6 +20,7 @@ import { Button } from "./ui/button";
 import { Textarea } from "./ui/textarea";
 
 const ConversationFooter = () => {
+  const [enterSend] = useLocalStorage("enterSend", "Enable");
   const textAreaRef = useRef<HTMLTextAreaElement | null>(null);
   const [messageText, setMessageText] = useState<string>("");
   const oldMessage = useRef("");
@@ -70,7 +72,7 @@ const ConversationFooter = () => {
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Enter") {
-      if (e.shiftKey) return;
+      if (e.shiftKey || enterSend === "Disable") return;
       e.preventDefault();
       sendMessage();
     }
