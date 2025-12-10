@@ -1,4 +1,4 @@
-import { formatDateToStatus, REACTS } from "@/lib/utils";
+import { formatDateToStatus, isMobileDevice, REACTS } from "@/lib/utils";
 import { useChatStore } from "@/store/chatStore";
 import clsx from "clsx";
 import Linkify from "linkify-react";
@@ -17,6 +17,7 @@ import {
 } from "react-icons/fa6";
 import { FcLike as LoveEmoji } from "react-icons/fc";
 import { RiCheckDoubleFill, RiLoader5Fill } from "react-icons/ri";
+import MessageContextMenu from "./MessageContextMenu";
 import MessageMenu from "./MessageMenu";
 import { Button } from "./ui/button";
 
@@ -32,6 +33,7 @@ const ConversationMessage = ({
   isFirstMessage,
   otherSide,
 }: Props) => {
+  const isMobile = isMobileDevice();
   const reactsElements: React.JSX.Element[] = [];
   [...message.reacts]
     .sort(
@@ -72,52 +74,119 @@ const ConversationMessage = ({
   );
   if (isMine) {
     return (
+      <MessageContextMenu message={message}>
+        <div
+          className={clsx(
+            "message mb-[1px] flex flex-row-reverse items-center justify-start break-words break-all",
+            isFirstMessage && "mt-3",
+          )}
+        >
+          <motion.div
+            initial={
+              message.type === "pending"
+                ? { opacity: 0, x: 100 }
+                : { opacity: 1, x: 0 }
+            }
+            animate={{ opacity: 1, x: 0 }}
+            className={clsx(
+              "peer relative max-w-4/5 ps-1",
+              message.reacts && message.reacts.length > 0 && "mb-[22px]",
+              message.mediaUrl && "max-w-[240px]",
+            )}
+          >
+            <div className="self rounded-sm bg-mainColor-100 px-2 py-2 shadow-sm dark:bg-mainColor-900">
+              {message.mediaType === "image" && message.mediaUrl && (
+                <MessageImg message={message} />
+              )}
+              {message.mediaType === "video" && message.mediaUrl && (
+                <MessageVid message={message} />
+              )}
+              <pre className="text-sm">
+                <TextLinkify />
+              </pre>
+              <div className="mt-1 mr-1 flex items-center justify-between gap-2 text-right text-sm">
+                <p className="scale-125 text-slate-200">
+                  {message.type === "pending" ? (
+                    <RiLoader5Fill className="animate-spin" />
+                  ) : (
+                    <RiCheckDoubleFill
+                      color={`${message.seen ? "#0284c7" : "#fff"}`}
+                    />
+                  )}
+                </p>
+                <p className="text-slate-500 dark:text-slate-400">
+                  {formatDateToStatus(message.createdAt)}
+                </p>
+              </div>
+            </div>
+            {message.reacts && message.reacts.length > 0 && (
+              <div className="absolute end-2 bottom-1 z-10 flex translate-y-full items-center justify-center gap-1 rounded-full bg-site-foreground px-2 py-1 text-sm select-none">
+                <div className="flex gap-0.5">{reactsElements}</div>
+                {message.reacts.length}
+              </div>
+            )}
+          </motion.div>
+          {!isMobile && <MessageMenu message={message} />}
+        </div>
+      </MessageContextMenu>
+    );
+  }
+  return (
+    <MessageContextMenu message={message}>
       <div
         className={clsx(
-          "message mb-[1px] flex flex-row-reverse items-center justify-start break-words break-all",
+          "message mb-[1px] flex items-center break-words break-all",
           isFirstMessage && "mt-3",
         )}
       >
+        {isFirstMessage ? (
+          <motion.div
+            initial={{ opacity: 0, x: -100 }}
+            animate={{ opacity: 1, x: 0 }}
+            className="h-full items-start self-stretch"
+          >
+            <div className="relative flex h-10 w-10 rounded-full border-2 border-white dark:border-slate-800">
+              <Image
+                className="rounded-full object-cover"
+                src={otherSide.userProfileImage || "/imgs/user.jpg"}
+                alt="avatar"
+                fill
+              />
+            </div>
+          </motion.div>
+        ) : (
+          <div className="h-10 w-10 flex-shrink-0"></div>
+        )}
         <motion.div
-          initial={
-            message.type === "pending"
-              ? { opacity: 0, x: 100 }
-              : { opacity: 1, x: 0 }
-          }
+          initial={{ opacity: 0, x: -100 }}
           animate={{ opacity: 1, x: 0 }}
           className={clsx(
-            "peer relative max-w-4/5 ps-1",
+            "peer relative ms-2 max-w-4/5 pe-1",
             message.reacts && message.reacts.length > 0 && "mb-[22px]",
             message.mediaUrl && "max-w-[240px]",
           )}
         >
-          <div className="self rounded-sm bg-mainColor-100 px-2 py-2 shadow-sm dark:bg-mainColor-900">
+          <div className="rounded-sm bg-white px-2 py-2 shadow-sm dark:bg-slate-600">
             {message.mediaType === "image" && message.mediaUrl && (
               <MessageImg message={message} />
             )}
             {message.mediaType === "video" && message.mediaUrl && (
               <MessageVid message={message} />
             )}
-            <pre className="text-sm">
-              <TextLinkify />
-            </pre>
+            <div className="mt-1 ml-1 flex items-end justify-between gap-2 text-xs">
+              <pre className="text-sm">
+                <Linkify>{message.text}</Linkify>
+              </pre>
+            </div>
             <div className="mt-1 mr-1 flex items-center justify-between gap-2 text-right text-sm">
-              <p className="scale-125 text-slate-200">
-                {message.type === "pending" ? (
-                  <RiLoader5Fill className="animate-spin" />
-                ) : (
-                  <RiCheckDoubleFill
-                    color={`${message.seen ? "#0284c7" : "#fff"}`}
-                  />
-                )}
-              </p>
+              <p></p>
               <p className="text-slate-500 dark:text-slate-400">
                 {formatDateToStatus(message.createdAt)}
               </p>
             </div>
           </div>
           {message.reacts && message.reacts.length > 0 && (
-            <div className="absolute end-2 bottom-1 z-10 flex translate-y-full items-center justify-center gap-1 rounded-full bg-site-foreground px-2 py-1 text-sm select-none">
+            <div className="absolute start-2 bottom-1 z-10 flex translate-y-full items-center justify-center gap-1 rounded-full bg-site-foreground px-2 py-1 text-xs select-none">
               <div className="flex gap-0.5">{reactsElements}</div>
               {message.reacts.length}
             </div>
@@ -125,70 +194,7 @@ const ConversationMessage = ({
         </motion.div>
         <MessageMenu message={message} />
       </div>
-    );
-  }
-  return (
-    <div
-      className={clsx(
-        "message mb-[1px] flex items-center break-words break-all",
-        isFirstMessage && "mt-3",
-      )}
-    >
-      {isFirstMessage ? (
-        <motion.div
-          initial={{ opacity: 0, x: -100 }}
-          animate={{ opacity: 1, x: 0 }}
-          className="h-full items-start self-stretch"
-        >
-          <div className="relative flex h-10 w-10 rounded-full border-2 border-white dark:border-slate-800">
-            <Image
-              className="rounded-full object-cover"
-              src={otherSide.userProfileImage || "/imgs/user.jpg"}
-              alt="avatar"
-              fill
-            />
-          </div>
-        </motion.div>
-      ) : (
-        <div className="h-10 w-10 flex-shrink-0"></div>
-      )}
-      <motion.div
-        initial={{ opacity: 0, x: -100 }}
-        animate={{ opacity: 1, x: 0 }}
-        className={clsx(
-          "peer relative ms-2 max-w-4/5 pe-1",
-          message.reacts && message.reacts.length > 0 && "mb-[22px]",
-          message.mediaUrl && "max-w-[240px]",
-        )}
-      >
-        <div className="rounded-sm bg-white px-2 py-2 shadow-sm dark:bg-slate-600">
-          {message.mediaType === "image" && message.mediaUrl && (
-            <MessageImg message={message} />
-          )}
-          {message.mediaType === "video" && message.mediaUrl && (
-            <MessageVid message={message} />
-          )}
-          <div className="mt-1 ml-1 flex items-end justify-between gap-2 text-xs">
-            <pre className="text-sm">
-              <Linkify>{message.text}</Linkify>
-            </pre>
-          </div>
-          <div className="mt-1 mr-1 flex items-center justify-between gap-2 text-right text-sm">
-            <p></p>
-            <p className="text-slate-500 dark:text-slate-400">
-              {formatDateToStatus(message.createdAt)}
-            </p>
-          </div>
-        </div>
-        {message.reacts && message.reacts.length > 0 && (
-          <div className="absolute start-2 bottom-1 z-10 flex translate-y-full items-center justify-center gap-1 rounded-full bg-site-foreground px-2 py-1 text-xs select-none">
-            <div className="flex gap-0.5">{reactsElements}</div>
-            {message.reacts.length}
-          </div>
-        )}
-      </motion.div>
-      <MessageMenu message={message} />
-    </div>
+    </MessageContextMenu>
   );
 };
 
