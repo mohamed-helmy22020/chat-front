@@ -14,15 +14,21 @@ const useSocketConnection = () => {
       changeFriendsOnlineStatus: state.changeFriendsOnlineStatus,
     })),
   );
-  const { changeIsConnected, addMessage, changeIsTyping, seeAllMessages } =
-    useChatStore(
-      useShallow((state) => ({
-        changeIsConnected: state.changeIsConnected,
-        addMessage: state.addMessage,
-        changeIsTyping: state.changeIsTyping,
-        seeAllMessages: state.seeAllMessages,
-      })),
-    );
+  const {
+    changeIsConnected,
+    addMessage,
+    changeIsTyping,
+    seeAllMessages,
+    addReaction,
+  } = useChatStore(
+    useShallow((state) => ({
+      changeIsConnected: state.changeIsConnected,
+      addMessage: state.addMessage,
+      changeIsTyping: state.changeIsTyping,
+      seeAllMessages: state.seeAllMessages,
+      addReaction: state.addReaction,
+    })),
+  );
   const {
     friendsList,
     receivedRequests,
@@ -79,11 +85,26 @@ const useSocketConnection = () => {
     const onReceiveMessage = (res: ReceiveMessageType) => {
       if (res.success) {
         if (res.message.from !== user?._id) {
+          const otherSide = res.conversation.participants.find(
+            (p: MiniUserType) => p._id !== user?._id,
+          );
           addMessage(res.message, res.conversation);
+          new Notification(otherSide?.name as string, {
+            body: res.message.text,
+            icon: otherSide?.userProfileImage || "/imgs/user.jpg",
+            tag: "New-Message",
+          });
         }
       } else {
         console.log("Error receiving message");
       }
+    };
+
+    const onMessageReaction = (data: {
+      messageId: string;
+      react: ReactType;
+    }) => {
+      addReaction(data.messageId, data.react.user._id, data.react);
     };
 
     const onMessagesSeen = () => {
@@ -140,6 +161,7 @@ const useSocketConnection = () => {
     };
 
     chatSocket.on("receiveMessage", onReceiveMessage);
+    chatSocket.on("messageReaction", onMessageReaction);
     chatSocket.on("messagesSeen", onMessagesSeen);
     chatSocket.on("typing", onTyping);
     chatSocket.on("friendDeleted", onFriendDeleted);
@@ -156,6 +178,7 @@ const useSocketConnection = () => {
     chatSocket.on("disconnect", onDisconnect);
     return () => {
       chatSocket.off("receiveMessage", onReceiveMessage);
+      chatSocket.off("messageReaction", onMessageReaction);
       chatSocket.off("messagesSeen", onMessagesSeen);
       chatSocket.off("typing", onTyping);
       chatSocket.off("friendDeleted", onFriendDeleted);
@@ -188,6 +211,7 @@ const useSocketConnection = () => {
     seeAllMessages,
     changeFriendsOnlineStatus,
     incomingCall,
+    addReaction,
   ]);
 };
 

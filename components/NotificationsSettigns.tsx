@@ -1,4 +1,6 @@
+import useNotifications from "@/hooks/useNotifications";
 import { motion } from "motion/react";
+import { useEffect, useRef } from "react";
 import { FaArrowLeft } from "react-icons/fa6";
 
 type Props = {
@@ -6,6 +8,17 @@ type Props = {
 };
 
 const NotificationsSettigns = ({ setCurrentSettings }: Props) => {
+  const initialized = useRef(false);
+  const { getNotificationsPermission } = useNotifications();
+  useEffect(() => {
+    if (initialized.current) return;
+    initialized.current = true;
+
+    (async () => {
+      getNotificationsPermission();
+    })();
+  }, [getNotificationsPermission, initialized]);
+
   return (
     <motion.div
       initial={{ opacity: 0, x: 100 }}

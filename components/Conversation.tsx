@@ -13,7 +13,7 @@ const Conversation = () => {
     <>
       {currentSelectedMediaMessage && <ShowMessageMedia />}
       <motion.div
-        initial={{ opacity: 0, x: 100 }}
+        initial={{ opacity: 0, x: 500 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ type: "tween", duration: 0.1, ease: "easeOut" }}
         className="relative flex max-h-svh w-full flex-col overflow-hidden sm:w-6/12 md:w-7/12 lg:w-8/12"

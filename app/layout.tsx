@@ -1,4 +1,5 @@
 import { Toaster } from "@/components/ui/sonner";
+import { MotionConfig } from "motion/react";
 import type { Metadata, Viewport } from "next";
 import { NextIntlClientProvider } from "next-intl";
 import { getLocale, getMessages } from "next-intl/server";
@@ -56,7 +57,7 @@ export default async function RootLayout({
             enableSystem
             disableTransitionOnChange
           >
-            {children}
+            <MotionConfig reducedMotion="user">{children}</MotionConfig>
           </ThemeProvider>
         </NextIntlClientProvider>
         <Toaster richColors visibleToasts={1} closeButton />

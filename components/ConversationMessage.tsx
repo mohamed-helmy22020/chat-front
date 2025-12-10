@@ -34,7 +34,10 @@ const ConversationMessage = ({
 }: Props) => {
   const reactsElements: React.JSX.Element[] = [];
   [...message.reacts]
-    .sort((a, b) => a.react.toLowerCase().localeCompare(b.react.toLowerCase()))
+    .sort(
+      (a, b) =>
+        REACTS[a.react.toLowerCase()].id - REACTS[b.react.toLowerCase()].id,
+    )
     .forEach((react, i, arr) => {
       if (i !== 0 && arr[i - 1].react === react.react) {
         return;
