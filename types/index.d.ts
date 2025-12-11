@@ -132,3 +132,11 @@ type PrivacySettingsType = {
   online: "Everyone" | "Friends" | "None";
   readReceipts: "Enable" | "Disable";
 };
+type NotificationsSettingsType = {
+  messages: "Enable" | "Disable";
+  previews: "Enable" | "Disable";
+  reactions: "Enable" | "Disable";
+  incomingCalls: "Enable" | "Disable";
+  incomingMessagesSound: "Enable" | "Disable";
+  incomingCallsSound: "Enable" | "Disable";
+};

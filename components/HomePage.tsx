@@ -9,6 +9,10 @@ const HomePage = async () => {
     <div className="flex min-h-svh overflow-hidden">
       <HomeSideBar userProp={getUserRes?.userData} />
       <RenderPage />
+      <audio
+        src="/newmessage.mp3"
+        className="message-sound invisible fixed top-0 left-0"
+      />
     </div>
   );
 };

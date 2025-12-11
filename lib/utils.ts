@@ -307,3 +307,30 @@ export function objShallowEqual(
 
   return keys1.every((key) => obj1[key] === obj2[key]);
 }
+export const showNotification = (
+  title: string,
+  options: NotificationOptions,
+) => {
+  if (!document.hidden || Notification.permission !== "granted") return;
+  try {
+    new Notification(title, options);
+  } catch (err) {
+    console.warn("Failed to show notification:", err);
+  }
+};
+
+export const getNotificationsPermission = async () => {
+  if (Notification.permission === "granted") {
+    return true;
+  }
+  if (Notification.permission === "default") {
+    return await Notification.requestPermission().then((permission) => {
+      if (permission === "granted") {
+        return true;
+      } else {
+        return false;
+      }
+    });
+  }
+  return false;
+};

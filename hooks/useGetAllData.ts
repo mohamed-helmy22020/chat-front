@@ -102,7 +102,6 @@ const useGetAllData = () => {
         setBlockedList(getBlockedListRes.blockedUsers);
         changeUserStatuses(userStatusesRes.statuses);
         changeFriendsStatuses(friendsStatusesRes.statuses);
-        changeIsLoadingData(false);
       } catch (e: any) {
         console.log("Error getting data", e);
       }

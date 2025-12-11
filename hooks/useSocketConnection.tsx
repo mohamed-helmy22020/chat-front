@@ -1,6 +1,8 @@
+import { showNotification } from "@/lib/utils";
 import { chatSocket } from "@/src/socket";
 import { useCallStore } from "@/store/callStore";
 import { useChatStore } from "@/store/chatStore";
+import { useSettingsStore } from "@/store/settingsStore";
 import { useStatusStore } from "@/store/statusStore";
 import { useUserStore } from "@/store/userStore";
 import { useEffect } from "react";
@@ -58,6 +60,11 @@ const useSocketConnection = () => {
       incomingCall: state.incomingCall,
     })),
   );
+  const { notifcationsSettings } = useSettingsStore(
+    useShallow((state) => ({
+      notifcationsSettings: state.notifcationsSettings,
+    })),
+  );
   useEffect(() => {
     if (chatSocket.connected) {
       changeIsConnected(true);
@@ -80,20 +87,50 @@ const useSocketConnection = () => {
       callType: "voice" | "video";
     }) => {
       incomingCall(data.from, data.callId, data.callType);
+
+      if (notifcationsSettings.messages === "Enable" && document.hidden) {
+        showNotification(data.from.name as string, {
+          body: "Incoming call",
+          icon: data.from.userProfileImage || "/imgs/user.jpg",
+          tag: `Incoming-call${data.callId}`,
+        });
+      }
     };
 
     const onReceiveMessage = (res: ReceiveMessageType) => {
       if (res.success) {
         if (res.message.from !== user?._id) {
+          addMessage(res.message, res.conversation);
+          const audioElement =
+            document.querySelector<HTMLAudioElement>(".message-sound");
+          if (
+            audioElement &&
+            notifcationsSettings.incomingMessagesSound === "Enable"
+          ) {
+            audioElement.currentTime = 0;
+            audioElement.play();
+          }
           const otherSide = res.conversation.participants.find(
             (p: MiniUserType) => p._id !== user?._id,
           );
-          addMessage(res.message, res.conversation);
-          new Notification(otherSide?.name as string, {
-            body: res.message.text,
-            icon: otherSide?.userProfileImage || "/imgs/user.jpg",
-            tag: "New-Message",
-          });
+          if (notifcationsSettings.messages === "Enable" && document.hidden) {
+            showNotification(
+              notifcationsSettings.previews === "Enable"
+                ? (otherSide?.name as string)
+                : "New Message",
+              {
+                body:
+                  notifcationsSettings.previews === "Enable"
+                    ? res.message.text
+                    : "New Message",
+                icon:
+                  (notifcationsSettings.previews === "Enable" &&
+                    otherSide?.userProfileImage) ||
+                  "/imgs/user.jpg",
+                tag: `New-Message${res.message.id}`,
+              },
+            );
+          }
         }
       } else {
         console.log("Error receiving message");
@@ -105,6 +142,25 @@ const useSocketConnection = () => {
       react: ReactType;
     }) => {
       addReaction(data.messageId, data.react.user._id, data.react);
+      const otherSide = data.react.user;
+      if (notifcationsSettings.messages === "Enable") {
+        showNotification(
+          notifcationsSettings.previews === "Enable"
+            ? (otherSide.name as string)
+            : "New Reaction",
+          {
+            body:
+              notifcationsSettings.previews === "Enable"
+                ? data.react.react
+                : "New Reaction",
+            icon:
+              (notifcationsSettings.previews === "Enable" &&
+                otherSide.userProfileImage) ||
+              "/imgs/user.jpg",
+            tag: `New-Reaction${data.messageId}`,
+          },
+        );
+      }
     };
 
     const onMessagesSeen = () => {
@@ -212,6 +268,7 @@ const useSocketConnection = () => {
     changeFriendsOnlineStatus,
     incomingCall,
     addReaction,
+    notifcationsSettings,
   ]);
 };
 

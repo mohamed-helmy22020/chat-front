@@ -6,7 +6,7 @@ import { IoIosNotifications } from "react-icons/io";
 import { LuMessageSquareText, LuSettings } from "react-icons/lu";
 import { MdOutlineLogout, MdOutlinePrivacyTip } from "react-icons/md";
 import ChatsSettings from "./ChatsSettings";
-import NotificationsSettigns from "./NotificationsSettigns";
+import NotificationsSettings from "./NotificationsSettings";
 import PrivacySettings from "./PrivacySettings";
 import SettingsCard from "./SettingsCard";
 import SettingsProfile from "./SettingsProfile";
@@ -26,7 +26,7 @@ const Settings = () => {
   const { logOut } = useLogout();
   return (
     <div className="flex flex-1">
-      <div className="flex h-full w-full flex-col overflow-x-hidden border-e-2 md:w-5/12">
+      <div className="flex h-full w-full flex-col overflow-x-hidden border-e-2 md:w-7/12 lg:w-5/12">
         {!currentSettings && (
           <div>
             <div className="flex items-center justify-between p-5 select-none">
@@ -116,14 +116,14 @@ const Settings = () => {
           <ChatsSettings setCurrentSettings={setCurrentSettings} />
         )}
         {currentSettings === "notifications" && (
-          <NotificationsSettigns setCurrentSettings={setCurrentSettings} />
+          <NotificationsSettings setCurrentSettings={setCurrentSettings} />
         )}
       </div>
       <motion.div
         initial={{ opacity: 0, x: 100 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ type: "tween", duration: 0.1, ease: "easeOut" }}
-        className="hidden w-7/12 flex-col items-center justify-center select-none md:flex"
+        className="hidden w-5/12 flex-col items-center justify-center select-none md:flex lg:w-7/12"
       >
         <LuSettings size={100} />
         <p className="mt-5 text-center text-xl">Settings</p>

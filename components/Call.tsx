@@ -1,11 +1,13 @@
 import { formatVideoTime } from "@/lib/utils";
 import { chatSocket } from "@/src/socket";
 import { useCallStore } from "@/store/callStore";
+import { useSettingsStore } from "@/store/settingsStore";
 import { useUserStore } from "@/store/userStore";
 import clsx from "clsx";
 import { motion } from "motion/react";
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
+import { toast } from "sonner";
 import { useShallow } from "zustand/react/shallow";
 import CallingFooter from "./CallingFooter";
 import IncomingCallFooter from "./IncomingCallFooter";
@@ -19,17 +21,28 @@ const Call = () => {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const [mediaTime, setMediaTime] = useState(0);
-  const { caller, callee, isIncomingCall, changeCallId, callType, callState } =
-    useCallStore(
-      useShallow((state) => ({
-        caller: state.caller,
-        callee: state.callee,
-        isIncomingCall: state.isIncomingCall,
-        changeCallId: state.changeCallId,
-        callType: state.callType,
-        callState: state.callState,
-      })),
-    );
+  const incomingCallsSoundSetting = useSettingsStore(
+    (state) => state.notifcationsSettings.incomingCallsSound,
+  );
+  const {
+    caller,
+    callee,
+    isIncomingCall,
+    changeCallId,
+    callType,
+    callState,
+    endCall,
+  } = useCallStore(
+    useShallow((state) => ({
+      caller: state.caller,
+      callee: state.callee,
+      isIncomingCall: state.isIncomingCall,
+      changeCallId: state.changeCallId,
+      callType: state.callType,
+      callState: state.callState,
+      endCall: state.endCall,
+    })),
+  );
   const otherSide = caller?._id === userId ? callee : caller;
   useEffect(() => {
     if (initialized.current) {
@@ -42,16 +55,19 @@ const Call = () => {
         "call",
         callee?._id,
         callType,
-        (data: { success: boolean; callId: string }) => {
+        (data: { success: boolean; callId: string; error?: string }) => {
           if (data.success) {
             changeCallId(data.callId);
+          } else {
+            toast.error(data.error);
+            endCall();
           }
         },
       );
     } catch (error) {
       console.log(error);
     }
-  }, [callee, isIncomingCall, changeCallId, callType]);
+  }, [callee, isIncomingCall, changeCallId, callType, endCall]);
 
   useEffect(() => {
     const audioElement = audioRef.current;
@@ -156,9 +172,11 @@ const Call = () => {
           handleToggleMuteSound={handleToggleMuteSound}
         />
       )}
-      {isIncomingCall && callState === "Waiting" && false && (
-        <audio src="/ringtone.mp3" autoPlay className="invisible fixed" />
-      )}
+      {isIncomingCall &&
+        callState === "Waiting" &&
+        incomingCallsSoundSetting === "Enable" && (
+          <audio src="/ringtone.mp3" autoPlay className="invisible fixed" />
+        )}
     </motion.div>
   );
 };
