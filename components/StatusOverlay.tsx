@@ -104,7 +104,7 @@ const StatusOverlay = () => {
       initial={{ opacity: 0, scale: 0.5 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ type: "tween" }}
-      className="fixed top-0 left-0 z-50 h-full w-full bg-black"
+      className="fixed top-0 left-0 z-50 h-full w-full bg-black text-white"
     >
       {/* overlay content */}
       <div className="absolute top-0 left-0 z-20 flex h-full w-full flex-col">

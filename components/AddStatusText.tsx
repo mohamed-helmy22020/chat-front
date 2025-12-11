@@ -80,7 +80,7 @@ const AddStatusText = ({ setShowAddText }: Props) => {
       initial={{ opacity: 0, scale: 0.5 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ type: "tween" }}
-      className={`fixed top-0 left-0 z-50 flex h-svh w-screen flex-col ${color}`}
+      className={`fixed top-0 left-0 z-50 flex h-svh w-screen flex-col text-white ${color}`}
     >
       <div className="flex justify-between px-6 py-6">
         <Button

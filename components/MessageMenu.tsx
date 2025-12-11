@@ -43,6 +43,7 @@ const MessageMenu = ({ message }: Props) => {
         <Button
           variant="ghostFull"
           className={clsx(
+            "hover:bg-gray-400",
             "flex w-0 gap-0 overflow-hidden rounded-full bg-site-foreground !p-1.5 opacity-0 peer-hover:w-fit peer-hover:gap-2 peer-hover:opacity-100 hover:w-fit hover:gap-2 hover:opacity-80",
             isOpen && "w-fit gap-2 opacity-80",
           )}
@@ -70,7 +71,8 @@ const MessageMenu = ({ message }: Props) => {
             data-react={REACTS.like.id}
             title={REACTS.like.name}
             className={clsx(
-              userReact?.react === REACTS.like.name && "bg-accent",
+              userReact?.react === REACTS.like.name &&
+                "!bg-mainColor-600 dark:bg-accent",
             )}
           >
             <LikeEmoji />
@@ -79,7 +81,8 @@ const MessageMenu = ({ message }: Props) => {
             data-react={REACTS.dislike.id}
             title={REACTS.dislike.name}
             className={clsx(
-              userReact?.react === REACTS.dislike.name && "bg-accent",
+              userReact?.react === REACTS.dislike.name &&
+                "!bg-mainColor-600 dark:!bg-accent",
             )}
           >
             <DislikeEmoji />
@@ -88,7 +91,8 @@ const MessageMenu = ({ message }: Props) => {
             data-react={REACTS.love.id}
             title={REACTS.love.name}
             className={clsx(
-              userReact?.react === REACTS.love.name && "bg-accent",
+              userReact?.react === REACTS.love.name &&
+                "!bg-mainColor-600 dark:bg-accent",
             )}
           >
             <LoveEmoji />
@@ -97,7 +101,8 @@ const MessageMenu = ({ message }: Props) => {
             data-react={REACTS.laugh.id}
             title={REACTS.laugh.name}
             className={clsx(
-              userReact?.react === REACTS.laugh.name && "bg-accent",
+              userReact?.react === REACTS.laugh.name &&
+                "!bg-mainColor-600 dark:bg-accent",
             )}
           >
             <LaughEmoji color="#ffcc4d" />
@@ -106,7 +111,8 @@ const MessageMenu = ({ message }: Props) => {
             data-react={REACTS.wow.id}
             title={REACTS.wow.name}
             className={clsx(
-              userReact?.react === REACTS.wow.name && "bg-accent",
+              userReact?.react === REACTS.wow.name &&
+                "!bg-mainColor-600 dark:bg-accent",
             )}
           >
             <WowEmoji color="#ffcc4d" />
@@ -115,7 +121,8 @@ const MessageMenu = ({ message }: Props) => {
             data-react={REACTS.sad.id}
             title={REACTS.sad.name}
             className={clsx(
-              userReact?.react === REACTS.sad.name && "bg-accent",
+              userReact?.react === REACTS.sad.name &&
+                "!bg-mainColor-600 dark:bg-accent",
             )}
           >
             <SadEmoji color="#ffcc4d" />
@@ -124,7 +131,8 @@ const MessageMenu = ({ message }: Props) => {
             data-react={REACTS.angry.id}
             title={REACTS.angry.name}
             className={clsx(
-              userReact?.react === REACTS.angry.name && "bg-accent",
+              userReact?.react === REACTS.angry.name &&
+                "!bg-mainColor-600 dark:bg-accent",
             )}
           >
             <AngryEmoji color="#ffcc4d" />

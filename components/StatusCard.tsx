@@ -23,7 +23,7 @@ const StatusCard = ({
     <motion.div
       initial={{ opacity: 0, scale: 0.5 }}
       animate={{ opacity: 1, scale: 1 }}
-      className="rounded-sm select-none hover:bg-gray-800"
+      className="rounded-sm select-none hover:bg-site-foreground hover:dark:bg-gray-800"
     >
       <Button
         className="flex h-full w-full cursor-pointer gap-3 rounded-sm px-2 py-3"

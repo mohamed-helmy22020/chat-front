@@ -25,7 +25,7 @@ const MyStatus = () => {
     <motion.div
       initial={{ opacity: 0, scale: 0.5 }}
       animate={{ opacity: 1, scale: 1 }}
-      className="mx-3 flex cursor-pointer gap-3 rounded-sm select-none active:bg-gray-800"
+      className="mx-3 flex cursor-pointer gap-3 rounded-sm select-none active:bg-site-foreground active:dark:bg-gray-800"
     >
       <Button
         className="flex h-full w-full cursor-pointer gap-3 rounded-sm px-2 py-3"

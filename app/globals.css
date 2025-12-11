@@ -78,8 +78,8 @@
 }
 
 :root {
-  --site-background: rgb(249 250 251 / var(--tw-bg-opacity, 1));
-  --site-foreground: white;
+  --site-background: #ffffff;
+  --site-foreground: #efefef;
 
   --site-background-transparent: rgba(255, 255, 255, 0.2);
   --site-foreground-transparent: rgba(242, 244, 247, 0.2);

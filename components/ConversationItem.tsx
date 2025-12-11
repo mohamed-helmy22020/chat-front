@@ -47,8 +47,9 @@ const ConversationItem = ({ conversation }: Props) => {
   return (
     <motion.div
       className={clsx(
-        "rounded-sm select-none hover:bg-gray-800",
-        currentCOnversation?.id === conversation.id && "bg-gray-800",
+        "rounded-sm select-none hover:bg-site-foreground dark:hover:bg-gray-800",
+        currentCOnversation?.id === conversation.id &&
+          "bg-site-foreground dark:bg-gray-800",
       )}
       initial={{ opacity: 0, scale: 0.5 }}
       animate={{ opacity: 1, scale: 1 }}

@@ -39,7 +39,7 @@ const HomeSideBar = ({ userProp }: Props) => {
   useGetAllData();
 
   return (
-    <div className="flex flex-col overflow-hidden bg-site-foreground px-2 py-3.5">
+    <div className="flex flex-col overflow-hidden border-e border-slate-300 bg-site-foreground px-2 py-3.5 dark:border-slate-800">
       <div className="flex flex-col items-center justify-center">
         <SideBarButton Icon={LuMessageSquareText} page="chat" />
         <SideBarButton Icon={LuCircleDotDashed} page="status" />
@@ -76,9 +76,9 @@ const SideBarButton = ({
       <TooltipTrigger asChild>
         <button
           className={cn(
-            "mb-2 cursor-pointer rounded-full p-2 text-gray-400 hover:bg-site-background",
+            "mb-2 cursor-pointer rounded-full p-2 text-gray-700 dark:text-gray-400 dark:hover:bg-site-background",
             {
-              "text-white": isActive,
+              "text-black dark:text-white": isActive,
               "bg-site-background": isActive,
             },
           )}

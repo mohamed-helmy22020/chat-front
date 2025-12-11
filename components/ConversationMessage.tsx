@@ -94,7 +94,7 @@ const ConversationMessage = ({
               message.mediaUrl && "max-w-[240px]",
             )}
           >
-            <div className="self rounded-sm bg-mainColor-100 px-2 py-2 shadow-sm dark:bg-mainColor-900">
+            <div className="self rounded-sm bg-mainColor-900 px-2 py-2 text-white shadow-sm">
               {message.mediaType === "image" && message.mediaUrl && (
                 <MessageImg message={message} />
               )}
@@ -114,7 +114,7 @@ const ConversationMessage = ({
                     />
                   )}
                 </p>
-                <p className="text-slate-500 dark:text-slate-400">
+                <p className="text-gray-300 dark:text-slate-400">
                   {formatDateToStatus(message.createdAt)}
                 </p>
               </div>
@@ -166,7 +166,7 @@ const ConversationMessage = ({
             message.mediaUrl && "max-w-[240px]",
           )}
         >
-          <div className="rounded-sm bg-white px-2 py-2 shadow-sm dark:bg-slate-600">
+          <div className="rounded-sm bg-site-foreground px-2 py-2 shadow-sm dark:bg-slate-600">
             {message.mediaType === "image" && message.mediaUrl && (
               <MessageImg message={message} />
             )}

@@ -56,10 +56,10 @@ const RequestUserCard = ({ user, type = "friends" }: Props) => {
         )}
       </div>
       <div className="flex flex-1 flex-col items-start justify-center">
-        <h1 className="text-md font-bold capitalize">{name}</h1>
+        <h1 className="text-md capitalize dark:font-bold">{name}</h1>
         {bio && <p className="line-clamp-1 text-sm text-gray-500">{bio}</p>}
       </div>
-      <div className="flex items-center text-gray-300">
+      <div className="flex items-center text-gray-900 dark:text-gray-300">
         {(type === "friends" && <FriendsMenu userId={_id} />) ||
           (type === "blocks" && <BlocksMenu userId={_id} />) ||
           (type === "request" && <RequestsMenu userId={_id} />) ||

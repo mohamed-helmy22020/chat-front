@@ -106,7 +106,9 @@ const AddStatus = () => {
               onClick={handleAddMediaStatus}
             >
               <FaImages />
-              <span className="text-gray-400">Photos & Videos</span>
+              <span className="text-gray-700 dark:text-gray-400">
+                Photos & Videos
+              </span>
             </Button>
           </DropdownMenuItem>
           <DropdownMenuItem>
@@ -119,7 +121,7 @@ const AddStatus = () => {
               }}
             >
               <FaPencilAlt />
-              <span className="text-gray-400">Text</span>
+              <span className="text-gray-700 dark:text-gray-400">Text</span>
             </Button>
           </DropdownMenuItem>
         </DropdownMenuContent>

@@ -219,7 +219,7 @@ const ConversationMessages = () => {
       {!isAtBottom && (
         <Button
           variant="ghostFull"
-          className="absolute end-8 bottom-20 z-30 flex !h-10 w-10 cursor-pointer items-center justify-center rounded-full bg-site-foreground !p-0"
+          className="absolute end-8 bottom-20 z-30 flex !h-10 w-10 cursor-pointer items-center justify-center rounded-full border border-slate-950 bg-site-foreground !p-0"
           onClick={() => {
             scrollableDiv.current?.scrollTo(
               0,

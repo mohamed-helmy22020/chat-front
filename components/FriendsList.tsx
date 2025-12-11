@@ -43,7 +43,7 @@ const FriendsList = () => {
         initial={{ opacity: 0, x: 100 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ type: "tween", duration: 0.1, ease: "easeOut" }}
-        className="hidden w-7/12 flex-col items-center justify-center select-none md:flex"
+        className="hidden w-7/12 flex-col items-center justify-center bg-site-foreground select-none md:flex"
       >
         <LuUsers size={100} />
         <p className="mt-5 text-center text-xl">Friends List</p>

@@ -11,6 +11,7 @@ import { useUserStore } from "@/store/userStore";
 import { useLocalStorage } from "@uidotdev/usehooks";
 import EmojiPicker, { Theme } from "emoji-picker-react";
 import { MouseDownEvent } from "emoji-picker-react/dist/config/config";
+import { useTheme } from "next-themes";
 import { useEffect, useRef, useState } from "react";
 import { LuPaperclip, LuSend, LuSmile } from "react-icons/lu";
 import { toast } from "sonner";
@@ -32,7 +33,7 @@ const ConversationFooter = () => {
   const buttonRef = useRef<HTMLButtonElement>(null);
   const pickerRef = useRef<HTMLDivElement>(null);
   const isMobile = isMobileDevice();
-
+  const { theme } = useTheme();
   const {
     currentConversation,
     addMessage,
@@ -212,7 +213,7 @@ const ConversationFooter = () => {
             <div className="absolute bottom-16 left-0 z-10" ref={pickerRef}>
               <EmojiPicker
                 onEmojiClick={handleOnEmojiClick}
-                theme={"dark" as Theme}
+                theme={theme as Theme}
                 skinTonesDisabled={true}
                 hiddenEmojis={["1fac3", "1fac4"]}
               />
@@ -240,6 +241,7 @@ const ConversationFooter = () => {
           <Button
             className="cursor-pointer rounded-full bg-mainColor-600 p-2 text-white hover:bg-mainColor-700"
             onClick={sendMessage}
+            variant="ghostFull"
           >
             <LuSend className="h-5 w-5" />
           </Button>

@@ -123,7 +123,7 @@ const Settings = () => {
         initial={{ opacity: 0, x: 100 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ type: "tween", duration: 0.1, ease: "easeOut" }}
-        className="hidden w-5/12 flex-col items-center justify-center select-none md:flex lg:w-7/12"
+        className="hidden w-5/12 flex-col items-center justify-center bg-site-foreground select-none md:flex lg:w-7/12"
       >
         <LuSettings size={100} />
         <p className="mt-5 text-center text-xl">Settings</p>
@@ -147,7 +147,7 @@ export const SettingsItem = memo(
     handleChangeSettings: (name: string, value: string) => void;
   }) => {
     return (
-      <div className="mt-5 flex items-center justify-between text-gray-300">
+      <div className="mt-5 flex items-center justify-between text-slate-600 dark:text-gray-300">
         <p>{title}</p>
         <Select
           value={value}

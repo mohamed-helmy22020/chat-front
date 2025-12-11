@@ -139,7 +139,7 @@ const AddMessageMedia = ({
         <div className="flex w-xl justify-center">
           <div className="flex-1">
             <Input
-              className="w-full rounded-sm border-0 !bg-site-foreground ring-0 placeholder:text-white"
+              className="w-full rounded-sm border-0 !bg-site-foreground ring-0 placeholder:dark:text-white"
               placeholder="Add a caption"
               value={messageText}
               onChange={(e) => setMessageText(e.target.value)}
