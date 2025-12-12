@@ -3,13 +3,21 @@ import { Button } from "@/components/ui/button";
 import { CiCirclePlus } from "react-icons/ci";
 import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
 
-const NewConversation = () => {
+type Props = {
+  setIsNewConversationOpen: (value: boolean) => void;
+};
+
+const NewConversation = ({ setIsNewConversationOpen }: Props) => {
   return (
     <>
       <div>
         <Tooltip>
           <TooltipTrigger asChild>
-            <Button className="cursor-pointer" variant="ghostFull">
+            <Button
+              className="cursor-pointer"
+              variant="ghostFull"
+              onClick={() => setIsNewConversationOpen(true)}
+            >
               <CiCirclePlus />
             </Button>
           </TooltipTrigger>

@@ -31,16 +31,21 @@ import {
 import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
 type Props = {
   user: RequestUserType;
-  type?: "friends" | "blocks" | "request" | "sent" | "addFriend";
+  type?: "friends" | "blocks" | "request" | "sent" | "addFriend" | "newChat";
 };
 
 const RequestUserCard = ({ user, type = "friends" }: Props) => {
   const { _id, userProfileImage, name, bio } = user;
+  const chatWith = useChatWith();
   return (
     <motion.div
       initial={{ opacity: 0, scale: 0.5 }}
       animate={{ opacity: 1, scale: 1 }}
-      className="flex min-h-15 w-full cursor-pointer items-center gap-2 rounded-md px-3 py-1.5 hover:bg-site-foreground"
+      className="flex min-h-15 w-full cursor-pointer items-center gap-2 rounded-md px-3 py-1.5 select-none hover:bg-site-foreground"
+      role="button"
+      onClick={() => {
+        if (type === "newChat") chatWith(_id);
+      }}
     >
       <div className="relative flex h-9 w-9 items-center justify-center rounded-full border-2 border-white dark:border-slate-800">
         <Image
@@ -64,7 +69,8 @@ const RequestUserCard = ({ user, type = "friends" }: Props) => {
           (type === "blocks" && <BlocksMenu userId={_id} />) ||
           (type === "request" && <RequestsMenu userId={_id} />) ||
           (type === "sent" && <SentMenu userId={_id} />) ||
-          (type === "addFriend" && <AddFriendMenu userId={_id} />)}
+          (type === "addFriend" && <AddFriendMenu userId={_id} />) ||
+          (type === "newChat" && null)}
       </div>
     </motion.div>
   );

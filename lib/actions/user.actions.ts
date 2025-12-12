@@ -514,20 +514,27 @@ export const deleteMessage = async (messageId: string) => {
   }
 };
 
-export const getUserConversation = async (userId: string) => {
+export const getUserConversation = async (
+  user: string,
+  type: "id" | "email" = "id",
+) => {
   const cookieStore = await cookies();
   const accessToken = cookieStore.get("accessToken")?.value;
+  let url = `/chat/conversations/user/${user}`;
 
+  if (type === "email") {
+    url = `/chat/conversations/user/email/${user}`;
+  }
+  console.log({ user, type, url });
   try {
-    const res = await fetchWithErrorHandling(
-      `/chat/conversations/user/${userId}`,
-      {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
+    const res = await fetchWithErrorHandling(url, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
       },
-    );
+    });
+    console.log(res);
+    console.log(res.conversation.participants);
 
     return res;
   } catch (error: any) {

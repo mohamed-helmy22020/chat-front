@@ -6,9 +6,11 @@ import { useShallow } from "zustand/react/shallow";
 import ChatSearch from "./ChatSearch";
 import ConversationItem from "./ConversationItem";
 import NewConversation from "./NewConversation";
+import NewConversationMenu from "./NewConversationMenu";
 const ConversationItemMemo = memo(ConversationItem);
 
 const ConversationsList = () => {
+  const [isNewConversationOpen, setIsNewConversationOpen] = useState(false);
   const userId = useUserStore((state) => state.user?._id);
   const [search, setSearch] = useState("");
   const { conversations, currentConversation } = useChatStore(
@@ -17,6 +19,15 @@ const ConversationsList = () => {
       currentConversation: state.currentConversation,
     })),
   );
+
+  if (isNewConversationOpen) {
+    return (
+      <NewConversationMenu
+        setIsNewConversationOpen={setIsNewConversationOpen}
+      />
+    );
+  }
+
   const conversationsElements = [...conversations]
     .filter((c) => {
       if (c.lastMessage === null) return false;
@@ -45,7 +56,9 @@ const ConversationsList = () => {
       <div className="flex items-center justify-between p-5">
         <h1>Chats</h1>
         <div className="flex">
-          <NewConversation />
+          <NewConversation
+            setIsNewConversationOpen={setIsNewConversationOpen}
+          />
         </div>
       </div>
       <ChatSearch search={search} setSearch={setSearch} />
