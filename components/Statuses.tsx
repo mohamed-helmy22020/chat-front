@@ -1,9 +1,12 @@
 import { sortStatuses } from "@/lib/utils";
 import { useStatusStore } from "@/store/statusStore";
+import { useTranslations } from "next-intl";
 import { JSX } from "react";
 import StatusCard from "./StatusCard";
 
 const Statuses = () => {
+  const t = useTranslations("Status");
+
   const friendsStatuses = useStatusStore((state) => state.friendsStatuses);
   const sortedFriendsStatuses = sortStatuses(friendsStatuses);
   const ViewedStatusesElements: JSX.Element[] = [];
@@ -37,13 +40,13 @@ const Statuses = () => {
     <div className="flex flex-col px-3 select-none">
       {RecentStatusesElements.length > 0 && (
         <>
-          <p className="my-5 mt-5 px-4 text-gray-400">Recent</p>
+          <p className="my-5 mt-5 px-4 text-gray-400">{t("Recent")}</p>
           <div className="flex flex-col">{RecentStatusesElements}</div>
         </>
       )}
       {ViewedStatusesElements.length > 0 && (
         <>
-          <p className="my-5 mt-5 px-4 text-gray-400">Viewed</p>
+          <p className="my-5 mt-5 px-4 text-gray-400">{t("Recent")}</p>
           <div className="flex flex-col">{ViewedStatusesElements}</div>
         </>
       )}

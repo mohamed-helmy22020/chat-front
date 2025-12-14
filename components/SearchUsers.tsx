@@ -14,6 +14,7 @@ import { validateEmail } from "@/lib/utils";
 import { IoAlertCircleSharp } from "react-icons/io5";
 import { LuLoader } from "react-icons/lu";
 
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { CiCirclePlus } from "react-icons/ci";
 import RequestUserCard from "./RequestUserCard";
@@ -21,6 +22,7 @@ import { Alert, AlertTitle } from "./ui/alert";
 import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
 
 const SearchUsers = () => {
+  const t = useTranslations("Friends.SearchUsers");
   const [email, setEmail] = useState<string>("");
   const [isOpen, setIsOpen] = useState(false);
   const [isSearching, setIsSearching] = useState(false);
@@ -34,8 +36,8 @@ const SearchUsers = () => {
   const handleSearch = async () => {
     setIsSearching(true);
     try {
-      if (!email) throw new Error("Email is required.");
-      if (!validateEmail(email)) throw new Error("Invalid email.");
+      if (!email) throw new Error(t("EmailRequired"));
+      if (!validateEmail(email)) throw new Error(t("InvalidEmail"));
       const searchUserRes = await findUser(email);
       if (!searchUserRes.success) throw new Error(searchUserRes.msg);
       setSearchedUsers(searchUserRes.user);
@@ -60,21 +62,19 @@ const SearchUsers = () => {
               className="rounded-full"
               sideOffset={0}
             >
-              <p>Add Friend</p>
+              <p>{t("SearchForUser")}</p>
             </TooltipContent>
           </Tooltip>
         </div>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Search for user</DialogTitle>
-          <DialogDescription>
-            NOTE: You need to write the full email
-          </DialogDescription>
+          <DialogTitle>{t("SearchForUser")}</DialogTitle>
+          <DialogDescription>{t("desc")}</DialogDescription>
         </DialogHeader>
         <div className="grid gap-4">
           <div className="grid gap-3">
-            <Label htmlFor="email">Email</Label>
+            <Label htmlFor="email">{t("Email")}</Label>
             <Input
               id="email"
               name="email"
@@ -88,7 +88,11 @@ const SearchUsers = () => {
               disabled={isSearching}
               onClick={handleSearch}
             >
-              {isSearching ? <LuLoader className="animate-spin" /> : "Search"}
+              {isSearching ? (
+                <LuLoader className="animate-spin" />
+              ) : (
+                t("Search")
+              )}
             </Button>
           </div>
           <div>
@@ -108,7 +112,7 @@ const SearchUsers = () => {
             ) : searchedUsers === null && !isSearching ? (
               <Alert variant="destructive">
                 <IoAlertCircleSharp />
-                <AlertTitle>User with this email doesn&apos;t exist</AlertTitle>
+                <AlertTitle>{t("NoUserWithEmail")}</AlertTitle>
               </Alert>
             ) : null}
           </div>

@@ -10,11 +10,13 @@ import {
 import { RiUserShared2Line } from "react-icons/ri";
 
 import { useUserStore } from "@/store/userStore";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 import RequestUserCard from "./RequestUserCard";
 import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
 
 const SentRequestsList = () => {
+  const t = useTranslations("Friends.SentRequests");
   const [isOpen, setIsOpen] = useState(false);
   const sentRequestsList = useUserStore((state) => state.sentRequestsList);
   const fetchedUsersElements = sentRequestsList.map((user) => (
@@ -36,21 +38,21 @@ const SentRequestsList = () => {
               className="rounded-full"
               sideOffset={0}
             >
-              <p>Sent Requests</p>
+              <p>{t("SentRequests")}</p>
             </TooltipContent>
           </Tooltip>
         </div>
       </DialogTrigger>
       <DialogContent className="max-h-svh overflow-auto sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Sent Requests</DialogTitle>
-          <DialogDescription>The user requests you have sent</DialogDescription>
+          <DialogTitle>{t("SentRequests")}</DialogTitle>
+          <DialogDescription>{t("desc")}</DialogDescription>
         </DialogHeader>
         {fetchedUsersElements.length > 0 ? (
           <div className="flex flex-col">{fetchedUsersElements}</div>
         ) : (
           <div className="flex items-center justify-center p-5">
-            No Sent Requests
+            {t("NoSentRequests")}
           </div>
         )}
       </DialogContent>

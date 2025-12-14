@@ -2,6 +2,7 @@ import { fetchWithErrorHandling, objShallowEqual } from "@/lib/utils";
 import { useUserStore } from "@/store/userStore";
 import { Loader2 } from "lucide-react";
 import { motion } from "motion/react";
+import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import { FaArrowLeft } from "react-icons/fa6";
 import { useShallow } from "zustand/react/shallow";
@@ -14,6 +15,7 @@ type Props = {
 const PrivacySettings = ({
   setCurrentSettings: setCurrentSettingsPage,
 }: Props) => {
+  const t = useTranslations("Settings");
   const [isDataChanged, setIsDataChanged] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const { userSettings, changeUserSettings, accessToken } = useUserStore(
@@ -79,11 +81,11 @@ const PrivacySettings = ({
         >
           <FaArrowLeft className="transition hover:-translate-x-1" />
         </button>
-        <p>Privacy</p>
+        <p>{t("Privacy")}</p>
       </div>
       <div className="flex flex-1 flex-col overflow-y-auto px-5 py-2">
         <div className="text-sm text-gray-400">
-          Who can see my personal info
+          {t("WhoCanSeePersonalInfo")}
         </div>
         <SettingsItem
           handleChangeSettings={handleChangeSettings}
@@ -95,7 +97,7 @@ const PrivacySettings = ({
         <SettingsItem
           handleChangeSettings={handleChangeSettings}
           value={settings.readReceipts}
-          title="Read Receipts"
+          title="ReadReceipts"
           name="readReceipts"
           values={["Enable", "Disable"]}
         />

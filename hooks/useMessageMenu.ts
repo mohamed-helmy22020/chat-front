@@ -5,10 +5,12 @@ import {
 import { REACTS } from "@/lib/utils";
 import { useChatStore } from "@/store/chatStore";
 import { useUserStore } from "@/store/userStore";
+import { useTranslations } from "next-intl";
 import React from "react";
 import { toast } from "sonner";
 
 const useMessageMenu = (message: MessageType) => {
+  const t = useTranslations("Chat.Conversation.MessageMenu");
   const user = useUserStore((state) => state.user);
   const addReaction = useChatStore((state) => state.addReaction);
   const deleteMessage = useChatStore((state) => state.deleteMessage);
@@ -71,7 +73,7 @@ const useMessageMenu = (message: MessageType) => {
       await navigator.clipboard.writeText(message.text);
     } catch (error) {
       console.log("Failed to copy message text", error);
-      toast.error("Failed to copy message text");
+      toast.error(t("FailedCopyMessage"));
     }
   };
   return {

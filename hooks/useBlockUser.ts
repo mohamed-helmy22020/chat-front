@@ -1,9 +1,11 @@
 import { blockUser as blockUserAction } from "@/lib/actions/user.actions";
 import { useUserStore } from "@/store/userStore";
+import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { useShallow } from "zustand/react/shallow";
 
 const useBlockUser = () => {
+  const t = useTranslations("RequestUserCard.BlocksMenu");
   const { friendsList, blockedList, setFriendsList, setBlockedList } =
     useUserStore(
       useShallow((state) => ({
@@ -17,7 +19,7 @@ const useBlockUser = () => {
     const blockUserRes = blockUserAction(userId);
 
     toast.promise(blockUserRes, {
-      loading: "Blocking...",
+      loading: t("Blocking"),
       success: (data) => {
         setBlockedList([...blockedList, data.blockedUser]);
         if (friendsList.findIndex((f) => f._id === data.blockedUser._id) > -1) {
@@ -26,7 +28,7 @@ const useBlockUser = () => {
           );
         }
         return {
-          message: `User is blocked.`,
+          message: t("UserIsBlocked"),
           closeButton: true,
         };
       },

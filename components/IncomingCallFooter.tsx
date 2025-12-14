@@ -1,6 +1,7 @@
 import useCallHook from "@/hooks/useCallHook";
 import { chatSocket } from "@/src/socket";
 import { useCallStore } from "@/store/callStore";
+import { useTranslations } from "next-intl";
 import { useEffect } from "react";
 import { MdCall, MdCallEnd } from "react-icons/md";
 import { toast } from "sonner";
@@ -15,6 +16,7 @@ const IncomingCallFooter = ({
   setReceivedStream: React.Dispatch<React.SetStateAction<MediaStream | null>>;
   handleToggleMuteSound: () => void;
 }) => {
+  const t = useTranslations("Chat.Conversation.Call");
   const { callState, endCall, caller, callId, changeCallState, callType } =
     useCallStore(
       useShallow((state) => ({
@@ -37,7 +39,7 @@ const IncomingCallFooter = ({
 
     if (callType === "voice") {
       if (micPermission.state === "denied") {
-        toast.error("Please allow microphone access in your browser settings.");
+        toast.error(t("AllowMicrophone"));
         return;
       }
       if (micPermission.state === "prompt") {
@@ -51,16 +53,14 @@ const IncomingCallFooter = ({
           });
         } catch (error) {
           console.log(error);
-          toast.error(
-            "Please allow microphone access in your browser settings.",
-          );
+          toast.error(t("AllowMicrophone"));
           return;
         }
       }
     }
     if (callType === "video") {
       if (cameraPermission.state === "denied") {
-        toast.error("Please allow camera access in your browser settings.");
+        toast.error(t("AllowCamera"));
         return;
       }
       if (cameraPermission.state === "prompt") {
@@ -75,7 +75,7 @@ const IncomingCallFooter = ({
           });
         } catch (error) {
           console.log(error);
-          toast.error("Please allow camera access in your browser settings.");
+          toast.error(t("AllowCamera"));
           return;
         }
       }

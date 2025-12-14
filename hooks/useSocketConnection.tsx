@@ -5,11 +5,13 @@ import { useChatStore } from "@/store/chatStore";
 import { useSettingsStore } from "@/store/settingsStore";
 import { useStatusStore } from "@/store/statusStore";
 import { useUserStore } from "@/store/userStore";
+import { useTranslations } from "next-intl";
 import { useEffect } from "react";
 import { toast } from "sonner";
 import { useShallow } from "zustand/react/shallow";
 
 const useSocketConnection = () => {
+  const t = useTranslations("SocketConnection");
   const { user, changeFriendsOnlineStatus } = useUserStore(
     useShallow((state) => ({
       user: state.user,
@@ -90,7 +92,7 @@ const useSocketConnection = () => {
 
       if (notifcationsSettings.messages === "Enable" && document.hidden) {
         showNotification(data.from.name as string, {
-          body: "Incoming call",
+          body: t("IncomingCall"),
           icon: data.from.userProfileImage || "/imgs/user.jpg",
           tag: `Incoming-call${data.callId}`,
         });
@@ -117,12 +119,12 @@ const useSocketConnection = () => {
             showNotification(
               notifcationsSettings.previews === "Enable"
                 ? (otherSide?.name as string)
-                : "New Message",
+                : t("NewMessage"),
               {
                 body:
                   notifcationsSettings.previews === "Enable"
                     ? res.message.text
-                    : "New Message",
+                    : t("NewMessage"),
                 icon:
                   (notifcationsSettings.previews === "Enable" &&
                     otherSide?.userProfileImage) ||
@@ -147,12 +149,12 @@ const useSocketConnection = () => {
         showNotification(
           notifcationsSettings.previews === "Enable"
             ? (otherSide.name as string)
-            : "New Reaction",
+            : t("NewReaction"),
           {
             body:
               notifcationsSettings.previews === "Enable"
                 ? data.react.react
-                : "New Reaction",
+                : t("NewReaction"),
             icon:
               (notifcationsSettings.previews === "Enable" &&
                 otherSide.userProfileImage) ||
@@ -179,8 +181,8 @@ const useSocketConnection = () => {
       setReceivedRequestsList([...receivedRequests, res.user]);
       toast.info(
         <div className="text-md">
-          <span className="text-md font-extrabold">{res.user.name}</span> sent
-          you a friend request
+          <span className="text-md font-extrabold">{res.user.name}</span>{" "}
+          {t("SentFriendRequest")}
         </div>,
       );
     };
@@ -192,7 +194,7 @@ const useSocketConnection = () => {
       toast.success(
         <div className="text-md">
           <span className="text-md font-extrabold">{sentRequest.name}</span>{" "}
-          accept your friend request
+          {t("AcceptFriendRequest")}
         </div>,
       );
     };
@@ -269,6 +271,7 @@ const useSocketConnection = () => {
     incomingCall,
     addReaction,
     notifcationsSettings,
+    t,
   ]);
 };
 

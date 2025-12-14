@@ -2,8 +2,10 @@ import { seeStatus } from "@/lib/actions/user.actions";
 import { useSettingsStore } from "@/store/settingsStore";
 import { useStatusStore } from "@/store/statusStore";
 import { motion } from "motion/react";
+import { useLocale } from "next-intl";
 import { memo, useEffect } from "react";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa6";
+import { getLangDir } from "rtl-detect";
 import { useShallow } from "zustand/react/shallow";
 import StatusContent from "./StatusContent";
 import StatusReplay from "./StatusReplay";
@@ -13,6 +15,8 @@ import { Button } from "./ui/button";
 const StatusViewersMemo = memo(StatusViewers);
 
 const StatusOverlay = () => {
+  const locale = useLocale();
+  const dir = getLangDir(locale);
   const {
     currentStatus,
     currentStatusTime,
@@ -118,7 +122,7 @@ const StatusOverlay = () => {
                 variant="ghostFull"
                 onClick={previousStatus}
               >
-                <FaChevronLeft />
+                {dir === "ltr" ? <FaChevronLeft /> : <FaChevronRight />}
               </Button>
             )}
           </div>
@@ -128,7 +132,7 @@ const StatusOverlay = () => {
               variant="ghostFull"
               onClick={nextStatus}
             >
-              <FaChevronRight />
+              {dir === "ltr" ? <FaChevronRight /> : <FaChevronLeft />}
             </Button>
           </div>
         </div>

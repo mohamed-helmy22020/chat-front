@@ -5,6 +5,7 @@ import { useSettingsStore } from "@/store/settingsStore";
 import { useUserStore } from "@/store/userStore";
 import clsx from "clsx";
 import { motion } from "motion/react";
+import { useTranslations } from "next-intl";
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
@@ -13,6 +14,7 @@ import CallingFooter from "./CallingFooter";
 import IncomingCallFooter from "./IncomingCallFooter";
 
 const Call = () => {
+  const t = useTranslations("Chat.Conversation.Call");
   const userId = useUserStore((state) => state.user?._id);
   const initialized = useRef(false);
   const [receivedStream, setReceivedStream] = useState<MediaStream | null>(
@@ -137,8 +139,8 @@ const Call = () => {
           {receivedStream
             ? formatVideoTime(mediaTime)
             : callState === "Accepted"
-              ? "Connecting"
-              : "Calling..."}
+              ? t("Connecting")
+              : t("Calling")}
         </p>
 
         {receivedStream && callType === "voice" && (

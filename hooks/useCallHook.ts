@@ -1,12 +1,14 @@
 import { chatSocket } from "@/src/socket";
 import { useCallStore } from "@/store/callStore";
 import { useUserStore } from "@/store/userStore";
+import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import SimplePeer from "simple-peer";
 import { toast } from "sonner";
 import { useShallow } from "zustand/react/shallow";
 
 const useCallHook = (initiator: boolean) => {
+  const t = useTranslations("Chat.Conversation.Call");
   const userId = useUserStore((state) => state.user?._id);
   const [stream, setStream] = useState<MediaStream | null>(null);
   const [peer, setPeer] = useState<SimplePeer.Instance | null>(null);
@@ -40,7 +42,7 @@ const useCallHook = (initiator: boolean) => {
     };
     const onCallEnded = async () => {
       changeCallState("Rejected");
-      toast.info("Call Ended");
+      toast.info(t("CallEnded"));
       endCall();
     };
     const onSignal = (data: {
@@ -59,7 +61,7 @@ const useCallHook = (initiator: boolean) => {
       chatSocket.off("callEnded", onCallEnded);
       chatSocket.off("signal", onSignal);
     };
-  }, [changeCallState, endCall, callId, peer, initiator]);
+  }, [changeCallState, endCall, callId, peer, initiator, t]);
 
   useEffect(() => {
     if (callState !== "Accepted") return;
@@ -72,12 +74,12 @@ const useCallHook = (initiator: boolean) => {
         setStream(streamInstance);
       } catch (error) {
         console.log(error);
-        toast.error("Please allow microphone access in your browser settings.");
+        toast.error(t("AllowMicrophone"));
         endCall();
       }
     };
     connect();
-  }, [callState, callType, endCall]);
+  }, [callState, callType, endCall, t]);
 
   useEffect(() => {
     if (!stream) return;
@@ -114,7 +116,7 @@ const useCallHook = (initiator: boolean) => {
       console.log("Peer error:", err);
     };
     const onClose = () => {
-      toast.info("Call ended");
+      toast.info(t("CallEnded"));
       endCall();
     };
 
@@ -140,6 +142,7 @@ const useCallHook = (initiator: boolean) => {
     setReceivedStream,
     endCall,
     callType,
+    t,
   ]);
 
   useEffect(() => {

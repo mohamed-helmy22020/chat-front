@@ -1,5 +1,6 @@
 import useLogout from "@/hooks/useLogout";
 import { motion } from "motion/react";
+import { useTranslations } from "next-intl";
 import { memo, useState } from "react";
 import { FaArrowLeft } from "react-icons/fa6";
 import { IoIosNotifications } from "react-icons/io";
@@ -7,6 +8,7 @@ import { LuMessageSquareText, LuSettings } from "react-icons/lu";
 import { MdOutlineLogout, MdOutlinePrivacyTip } from "react-icons/md";
 import ChatsSettings from "./ChatsSettings";
 import NotificationsSettings from "./NotificationsSettings";
+import PageAbout from "./PageAbout";
 import PrivacySettings from "./PrivacySettings";
 import SettingsCard from "./SettingsCard";
 import SettingsProfile from "./SettingsProfile";
@@ -22,6 +24,7 @@ import { Separator } from "./ui/separator";
 
 const ICONS_SIZE = 20;
 const Settings = () => {
+  const t = useTranslations("Settings");
   const [currentSettings, setCurrentSettings] = useState<string>();
   const { logOut } = useLogout();
   return (
@@ -30,7 +33,7 @@ const Settings = () => {
         {!currentSettings && (
           <div>
             <div className="flex items-center justify-between p-5 select-none">
-              <h1>Settings</h1>
+              <h1>{t("Settings")}</h1>
             </div>
             {/** profile settings */}
             <div className="flex-1 overflow-x-hidden overflow-y-auto p-2">
@@ -46,8 +49,8 @@ const Settings = () => {
             </div>
             {/** privacy settings */}
             <SettingsCard
-              title="privacy"
-              desc="Manage your privacy and security"
+              title={t("Privacy")}
+              desc={t("PrivacyDesc")}
               animationDelay={0.05}
               onClick={() => {
                 setCurrentSettings("privacy");
@@ -57,8 +60,8 @@ const Settings = () => {
             </SettingsCard>
             {/** chats settings */}
             <SettingsCard
-              title="chats"
-              desc="Theme, chat settings"
+              title={t("Chats")}
+              desc={t("ChatsDesc")}
               animationDelay={0.1}
               onClick={() => {
                 setCurrentSettings("chats");
@@ -68,8 +71,8 @@ const Settings = () => {
             </SettingsCard>
             {/** notifications settings */}
             <SettingsCard
-              title="notifications"
-              desc="Message notifications"
+              title={t("Notifications")}
+              desc={t("NotificationsDesc")}
               animationDelay={0.15}
               onClick={() => {
                 setCurrentSettings("notifications");
@@ -80,7 +83,7 @@ const Settings = () => {
             {/** Logout settings */}
             <SettingsCard
               animationDelay={0.2}
-              title="Log out"
+              title={t("LogOut")}
               color="#cf3a3a"
               onClick={() => {
                 logOut();
@@ -104,7 +107,7 @@ const Settings = () => {
               >
                 <FaArrowLeft className="transition hover:-translate-x-1" />
               </button>
-              <p>Profile</p>
+              <p>{t("Profile.Title")}</p>
             </div>
             <SettingsProfile />
           </motion.div>
@@ -119,15 +122,9 @@ const Settings = () => {
           <NotificationsSettings setCurrentSettings={setCurrentSettings} />
         )}
       </div>
-      <motion.div
-        initial={{ opacity: 0, x: 100 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ type: "tween", duration: 0.1, ease: "easeOut" }}
-        className="hidden w-5/12 flex-col items-center justify-center bg-site-foreground select-none md:flex lg:w-7/12"
-      >
+      <PageAbout title={t("Settings")}>
         <LuSettings size={100} />
-        <p className="mt-5 text-center text-xl">Settings</p>
-      </motion.div>
+      </PageAbout>
     </div>
   );
 };
@@ -139,27 +136,32 @@ export const SettingsItem = memo(
     value,
     handleChangeSettings,
     values,
+    labels,
   }: {
     title: string;
     name: string;
     values: string[];
+    labels?: Record<string, string>;
     value: string;
     handleChangeSettings: (name: string, value: string) => void;
   }) => {
+    const t = useTranslations("Settings");
+    console.log("=================");
+    console.log({ values, labels, value, title, name });
     return (
       <div className="mt-5 flex items-center justify-between text-slate-600 dark:text-gray-300">
-        <p>{title}</p>
+        <p>{t(title)}</p>
         <Select
           value={value}
           onValueChange={(value) => handleChangeSettings(name, value)}
         >
           <SelectTrigger className="w-[180px]">
-            <SelectValue>{value}</SelectValue>
+            <SelectValue>{labels ? t(labels[value]) : t(value)}</SelectValue>
           </SelectTrigger>
           <SelectContent>
             {values.map((value) => (
               <SelectItem key={value} value={value} className="capitalize">
-                {value}
+                {labels ? t(labels[value]) : t(value)}
               </SelectItem>
             ))}
           </SelectContent>

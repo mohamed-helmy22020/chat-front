@@ -1,12 +1,19 @@
 import { fetchWithErrorHandling } from "@/lib/utils";
 import { useUserStore } from "@/store/userStore";
+import clsx from "clsx";
 import { Check, Loader, Pen } from "lucide-react";
+import { useLocale, useTranslations } from "next-intl";
 import { useState } from "react";
+import { getLangDir } from "rtl-detect";
 import { useShallow } from "zustand/react/shallow";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 
 const ProfileName = () => {
+  const t = useTranslations("Settings.Profile");
+  const locale = useLocale();
+  const dir = getLangDir(locale);
+
   const [isEditing, setIsEditing] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const NAME_LENGTH = 25;
@@ -58,7 +65,7 @@ const ProfileName = () => {
   };
   return (
     <div className="flex flex-col text-sm">
-      <p className="text-gray-400">Your name</p>
+      <p className="text-gray-400">{t("YourName")}</p>
       <div className="flex items-center justify-between">
         {!isEditing && (
           <>
@@ -89,7 +96,12 @@ const ProfileName = () => {
                   }
                 }}
               />
-              <div className="absolute right-0 -bottom-1 flex h-full items-center justify-center text-gray-400 select-none">
+              <div
+                className={clsx(
+                  "absolute -bottom-1 flex h-full items-center justify-center text-gray-400 select-none",
+                  dir === "ltr" ? "right-0" : "left-0",
+                )}
+              >
                 {NAME_LENGTH - parseInt(nameState?.length.toString() as string)}
               </div>
             </div>

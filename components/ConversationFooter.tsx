@@ -11,6 +11,7 @@ import { useUserStore } from "@/store/userStore";
 import { useLocalStorage } from "@uidotdev/usehooks";
 import EmojiPicker, { Theme } from "emoji-picker-react";
 import { MouseDownEvent } from "emoji-picker-react/dist/config/config";
+import { useTranslations } from "next-intl";
 import { useTheme } from "next-themes";
 import { useEffect, useRef, useState } from "react";
 import { LuPaperclip, LuSend, LuSmile } from "react-icons/lu";
@@ -21,6 +22,7 @@ import { Button } from "./ui/button";
 import { Textarea } from "./ui/textarea";
 
 const ConversationFooter = () => {
+  const t = useTranslations("Chat.Conversation");
   const [enterSend] = useLocalStorage("enterSend", "Enable");
   const textAreaRef = useRef<HTMLTextAreaElement | null>(null);
   const [messageText, setMessageText] = useState<string>("");
@@ -222,7 +224,7 @@ const ConversationFooter = () => {
 
           <Textarea
             className="no-scrollbar mx-2 max-h-[80px] min-h-6 flex-1 resize-none bg-site-background px-4 py-2 focus:outline-none focus-visible:ring-0"
-            placeholder="Type a message..."
+            placeholder={t("TypeMessage")}
             name="message"
             onChange={(e) => {
               setMessageText(e.target.value);

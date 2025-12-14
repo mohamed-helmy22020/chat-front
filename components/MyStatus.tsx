@@ -2,11 +2,14 @@ import { formatDateToStatus } from "@/lib/utils";
 import { useStatusStore } from "@/store/statusStore";
 import { useUserStore } from "@/store/userStore";
 import { motion } from "motion/react";
+import { useTranslations } from "next-intl";
 import Image from "next/image";
 import { useShallow } from "zustand/react/shallow";
 import { Button } from "./ui/button";
 
 const MyStatus = () => {
+  const t = useTranslations("Status");
+
   const { userId, userProfileImage } = useUserStore(
     useShallow((state) => ({
       userProfileImage: state.user?.userProfileImage,
@@ -41,7 +44,7 @@ const MyStatus = () => {
           />
         </div>
         <div className="flex flex-1 flex-col items-start justify-center">
-          <h1 className="text-sm capitalize">My status</h1>
+          <h1 className="text-sm capitalize">{t("MyStatus")}</h1>
           <p className="line-clamp-1 text-xs text-gray-500">
             {userStatuses.length > 0
               ? formatDateToStatus(
@@ -51,7 +54,7 @@ const MyStatus = () => {
                       new Date(a.createdAt).getTime(),
                   )[0]?.createdAt,
                 )
-              : "No status yet"}
+              : t("NoStatus")}
           </p>
         </div>
       </Button>

@@ -22,7 +22,6 @@ const RenderPage = () => {
       page: state.page,
     })),
   );
-  console.log({ isLoadingData });
 
   if (isLoadingData) {
     return <Loading />;

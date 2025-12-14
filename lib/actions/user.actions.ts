@@ -525,7 +525,6 @@ export const getUserConversation = async (
   if (type === "email") {
     url = `/chat/conversations/user/email/${user}`;
   }
-  console.log({ user, type, url });
   try {
     const res = await fetchWithErrorHandling(url, {
       method: "GET",
@@ -533,8 +532,6 @@ export const getUserConversation = async (
         Authorization: `Bearer ${accessToken}`,
       },
     });
-    console.log(res);
-    console.log(res.conversation.participants);
 
     return res;
   } catch (error: any) {

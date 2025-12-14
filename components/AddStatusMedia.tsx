@@ -5,11 +5,14 @@ import {
 } from "@/lib/utils";
 import { useStatusStore } from "@/store/statusStore";
 import { useUserStore } from "@/store/userStore";
+import clsx from "clsx";
 import { Loader2, X } from "lucide-react";
 import { motion } from "motion/react";
+import { useLocale, useTranslations } from "next-intl";
 import Image from "next/image";
 import { useMemo, useState } from "react";
 import { IoMdSend } from "react-icons/io";
+import { getLangDir } from "rtl-detect";
 import { toast } from "sonner";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
@@ -20,6 +23,9 @@ type Props = {
   setSelectedFile: React.Dispatch<React.SetStateAction<File | null>>;
 };
 const AddStatusMedia = ({ setShowAddMedia, setSelectedFile, file }: Props) => {
+  const t = useTranslations("Status.AddNewStatus");
+  const locale = useLocale();
+  const dir = getLangDir(locale);
   const mediaUrl = useMemo(() => {
     return URL.createObjectURL(file);
   }, [file]);
@@ -48,7 +54,7 @@ const AddStatusMedia = ({ setShowAddMedia, setSelectedFile, file }: Props) => {
       setSelectedFile(null);
       setCaption("");
       addUserStatus(response.status);
-      toast.success("Status added successfully!");
+      toast.success(t("StatusAddedSuccess"));
     } catch (error: any) {
       console.log(error);
       toast.error(error.msg);
@@ -106,7 +112,7 @@ const AddStatusMedia = ({ setShowAddMedia, setSelectedFile, file }: Props) => {
           <div className="flex-1">
             <Input
               className="w-full rounded-sm border-0 !bg-site-foreground ring-0 placeholder:dark:text-white"
-              placeholder="Add a caption"
+              placeholder={t("AddCaption")}
               value={caption}
               onChange={(e) => setCaption(e.target.value)}
               disabled={isSending}
@@ -115,7 +121,7 @@ const AddStatusMedia = ({ setShowAddMedia, setSelectedFile, file }: Props) => {
           <div>
             <Button
               variant="ghostFull"
-              className="cursor-pointer"
+              className={clsx("cursor-pointer", dir === "rtl" && "rotate-180")}
               onClick={handleSendStatus}
               disabled={isSending}
             >

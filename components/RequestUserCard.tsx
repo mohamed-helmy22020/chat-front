@@ -19,6 +19,7 @@ import useHandleFriendRequest from "@/hooks/useHandleFriendRequest";
 import useUnBlockUser from "@/hooks/useUnBlockUser";
 import useUnFriendUser from "@/hooks/useUnFriendUser";
 import { motion } from "motion/react";
+import { useTranslations } from "next-intl";
 import Image from "next/image";
 import { useState } from "react";
 import { Button } from "./ui/button";
@@ -77,6 +78,7 @@ const RequestUserCard = ({ user, type = "friends" }: Props) => {
 };
 
 const FriendsMenu = ({ userId }: { userId: string }) => {
+  const t = useTranslations("RequestUserCard.FriendsMenu");
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   const blockUser = useBlockUser();
@@ -95,7 +97,7 @@ const FriendsMenu = ({ userId }: { userId: string }) => {
             variant="ghostFull"
             onClick={() => chatWith(userId)}
           >
-            <LuMessageSquareMore /> Chat with
+            <LuMessageSquareMore /> {t("chatWith")}
           </Button>
         </DropdownMenuItem>
         <DropdownMenuItem asChild>
@@ -104,7 +106,7 @@ const FriendsMenu = ({ userId }: { userId: string }) => {
             className="w-full justify-start"
             variant="ghostFull"
           >
-            <LuBan /> Block user
+            <LuBan /> {t("BlockUser")}
           </Button>
         </DropdownMenuItem>
         <DropdownMenuItem asChild>
@@ -113,7 +115,7 @@ const FriendsMenu = ({ userId }: { userId: string }) => {
             className="w-full justify-start"
             variant="ghostFull"
           >
-            <LuUserRoundMinus /> Unfriend user
+            <LuUserRoundMinus /> {t("UnfriendUser")}
           </Button>
         </DropdownMenuItem>
       </DropdownMenuContent>
@@ -122,6 +124,7 @@ const FriendsMenu = ({ userId }: { userId: string }) => {
 };
 
 const BlocksMenu = ({ userId }: { userId: string }) => {
+  const t = useTranslations("RequestUserCard.BlocksMenu");
   const { unblockUser, isUnblocked, isUnblocking } = useUnBlockUser();
 
   return (
@@ -145,10 +148,10 @@ const BlocksMenu = ({ userId }: { userId: string }) => {
       <TooltipContent className="rounded-full" sideOffset={-5}>
         <p>
           {isUnblocking
-            ? "Unblocking..."
+            ? t("Unblocking")
             : isUnblocked
-              ? "Unblocked"
-              : "Unblock user"}
+              ? t("Unblocked")
+              : t("UnblockUser")}
         </p>
       </TooltipContent>
     </Tooltip>
@@ -156,6 +159,7 @@ const BlocksMenu = ({ userId }: { userId: string }) => {
 };
 
 const RequestsMenu = ({ userId }: { userId: string }) => {
+  const t = useTranslations("RequestUserCard.RequestsMenu");
   const { handleFriendRequest, isLoading, isDone } = useHandleFriendRequest();
 
   return (
@@ -178,7 +182,7 @@ const RequestsMenu = ({ userId }: { userId: string }) => {
           </Button>
         </TooltipTrigger>
         <TooltipContent className="rounded-full" sideOffset={-5}>
-          <p>Accept friend request</p>
+          <p>{t("AcceptFriendRequest")}</p>
         </TooltipContent>
       </Tooltip>
       {!isLoading && !isDone && (
@@ -200,7 +204,7 @@ const RequestsMenu = ({ userId }: { userId: string }) => {
             </Button>
           </TooltipTrigger>
           <TooltipContent className="rounded-full" sideOffset={-5}>
-            <p>Cancel friend request</p>
+            <p>{t("CancelFriendRequest")}</p>
           </TooltipContent>
         </Tooltip>
       )}
@@ -209,6 +213,7 @@ const RequestsMenu = ({ userId }: { userId: string }) => {
 };
 
 const SentMenu = ({ userId }: { userId: string }) => {
+  const t = useTranslations("RequestUserCard.SentMenu");
   const { cancelSentRequest, isCancelling, isCancelled } =
     useCancelSentRequest();
 
@@ -233,10 +238,10 @@ const SentMenu = ({ userId }: { userId: string }) => {
       <TooltipContent className="rounded-full" sideOffset={-5}>
         <p>
           {isCancelling
-            ? "Cancelling..."
+            ? t("Cancelling")
             : isCancelled
-              ? "Cancelled"
-              : "Cancel Request"}
+              ? t("Cancelled")
+              : t("CancelRequest")}
         </p>
       </TooltipContent>
     </Tooltip>
@@ -244,6 +249,7 @@ const SentMenu = ({ userId }: { userId: string }) => {
 };
 
 const AddFriendMenu = ({ userId }: { userId: string }) => {
+  const t = useTranslations("RequestUserCard.AddFriendMenu");
   const { addFriend, isSending, isSent } = useAddFriend();
 
   return (
@@ -265,7 +271,7 @@ const AddFriendMenu = ({ userId }: { userId: string }) => {
         </Button>
       </TooltipTrigger>
       <TooltipContent className="rounded-full" sideOffset={-5}>
-        <p>{isSending ? "Sending..." : isSent ? "Sent" : "Add Friend"}</p>
+        <p>{isSending ? t("Sending") : isSent ? t("Sent") : t("AddFriend")}</p>
       </TooltipContent>
     </Tooltip>
   );

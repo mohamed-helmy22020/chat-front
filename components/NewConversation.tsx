@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 
+import { useTranslations } from "next-intl";
 import { CiCirclePlus } from "react-icons/ci";
 import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
 
@@ -8,6 +9,7 @@ type Props = {
 };
 
 const NewConversation = ({ setIsNewConversationOpen }: Props) => {
+  const t = useTranslations("Chat.ConversationsList");
   return (
     <>
       <div>
@@ -22,7 +24,7 @@ const NewConversation = ({ setIsNewConversationOpen }: Props) => {
             </Button>
           </TooltipTrigger>
           <TooltipContent side="bottom" className="rounded-full" sideOffset={0}>
-            <p>New Chat</p>
+            <p>{t("NewChat")}</p>
           </TooltipContent>
         </Tooltip>
       </div>

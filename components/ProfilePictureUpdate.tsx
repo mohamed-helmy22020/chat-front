@@ -1,6 +1,7 @@
 import { fetchWithErrorHandling, MAX_FILE_SIZE } from "@/lib/utils";
 import { useUserStore } from "@/store/userStore";
 import { ImageUpIcon, Loader } from "lucide-react";
+import { useTranslations } from "next-intl";
 import Image from "next/image";
 import { useRef, useState } from "react";
 import { useShallow } from "zustand/react/shallow";
@@ -11,6 +12,7 @@ interface FileError {
   message: string;
 }
 const ProfilePictureUpdate = () => {
+  const t = useTranslations("Settings.Profile");
   const [image, setImage] = useState<string | ArrayBuffer | null>();
 
   const [isUploading, setIsUploading] = useState(false);
@@ -33,7 +35,7 @@ const ProfilePictureUpdate = () => {
     if (!file.type.startsWith("image/")) {
       setError({
         type: "file-type",
-        message: "Please select an image file (JPEG, PNG, GIF, etc.)",
+        message: t("OnlyImageError"),
       });
       return;
     }
@@ -42,7 +44,7 @@ const ProfilePictureUpdate = () => {
     if (file.size > MAX_FILE_SIZE) {
       setError({
         type: "file-size",
-        message: "File size should be less than 5MB",
+        message: t("FileSizeError"),
       });
       return;
     }
@@ -84,7 +86,7 @@ const ProfilePictureUpdate = () => {
       console.error("Error uploading image:", err);
       setError({
         type: "upload-failed",
-        message: "Failed to upload image. Please try again.",
+        message: t("UploadingImageError"),
       });
       // Revert to previous image on error
       setImage(undefined);
@@ -110,7 +112,7 @@ const ProfilePictureUpdate = () => {
         >
           {isUploading ? (
             <>
-              <Loader className="animate-spin" /> Uploading...
+              <Loader className="animate-spin" /> {t("Uploading")}
             </>
           ) : (
             <Button
@@ -118,7 +120,7 @@ const ProfilePictureUpdate = () => {
               variant="link"
               className="text-white"
             >
-              <ImageUpIcon /> Change Picture
+              <ImageUpIcon /> {t("ChangePicture")}
             </Button>
           )}
           <input

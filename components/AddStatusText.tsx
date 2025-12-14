@@ -1,11 +1,14 @@
 import { addTextStatus } from "@/lib/actions/user.actions";
 import { getFontSizeForText, isTextExceeded } from "@/lib/utils";
 import { useStatusStore } from "@/store/statusStore";
+import clsx from "clsx";
 import { Loader2, X } from "lucide-react";
 import { motion } from "motion/react";
+import { useLocale, useTranslations } from "next-intl";
 import { useEffect, useRef, useState } from "react";
 import { IoMdSend } from "react-icons/io";
 import { IoColorPaletteSharp } from "react-icons/io5";
+import { getLangDir } from "rtl-detect";
 import { toast } from "sonner";
 import { Button } from "./ui/button";
 
@@ -13,6 +16,9 @@ type Props = {
   setShowAddText: React.Dispatch<React.SetStateAction<boolean>>;
 };
 const AddStatusText = ({ setShowAddText }: Props) => {
+  const t = useTranslations("Status.AddNewStatus");
+  const locale = useLocale();
+  const dir = getLangDir(locale);
   const [color, setColor] = useState("bg-blue-500");
   const colorIndex = useRef(0);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -39,9 +45,7 @@ const AddStatusText = ({ setShowAddText }: Props) => {
 
   const handleChangeText = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     if (isTextExceeded(e.target.value)) {
-      toast.warning(
-        "Your status update cannot exceed 700 characters or 5 lines.",
-      );
+      toast.warning(t("StatusTextExceedError"));
       return;
     }
     setText(e.target.value);
@@ -62,7 +66,8 @@ const AddStatusText = ({ setShowAddText }: Props) => {
   const handleSendingStatus = async () => {
     setIsSending(true);
     if (!text.trim()) {
-      toast.error("Status cannot be empty.");
+      toast.error(t("StatusEmptyError"));
+      setIsSending(false);
       return;
     }
     const addTextStatusRes = await addTextStatus(text);
@@ -73,7 +78,7 @@ const AddStatusText = ({ setShowAddText }: Props) => {
     }
     setShowAddText(false);
     addUserStatus(addTextStatusRes.status);
-    toast.success("Status added successfully!");
+    toast.success(t("StatusAddedSuccess"));
   };
   return (
     <motion.div
@@ -101,7 +106,7 @@ const AddStatusText = ({ setShowAddText }: Props) => {
       <div className="flex flex-1 items-center justify-center">
         <textarea
           className={`w-12/12 resize-none rounded-lg p-4 text-center focus:outline-none`}
-          placeholder="What's on your mind?"
+          placeholder={t("StatusPlaceholder")}
           rows={1}
           ref={textareaRef}
           value={text}
@@ -113,7 +118,10 @@ const AddStatusText = ({ setShowAddText }: Props) => {
       </div>
       <div className="flex justify-end pe-9 pb-8">
         <Button
-          className="h-fit scale-200 cursor-pointer rounded-full bg-green-700 !p-2"
+          className={clsx(
+            "h-fit scale-200 cursor-pointer rounded-full bg-green-700 !p-2",
+            dir === "rtl" && "rotate-180",
+          )}
           variant="ghostFull"
           onClick={handleSendingStatus}
           disabled={isSending}

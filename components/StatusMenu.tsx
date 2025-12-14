@@ -1,6 +1,7 @@
 import { deleteStatus as deleteStatusAction } from "@/lib/actions/user.actions";
 import { useStatusStore } from "@/store/statusStore";
 import { useUserStore } from "@/store/userStore";
+import { useTranslations } from "next-intl";
 import { LuEllipsisVertical } from "react-icons/lu";
 import { MdDelete } from "react-icons/md";
 import { toast } from "sonner";
@@ -14,6 +15,8 @@ import {
 } from "./ui/dropdown-menu";
 
 const StatusMenu = () => {
+  const t = useTranslations("Status.Overlay");
+
   const userId = useUserStore((state) => state.user?._id);
   const { currentStatus, deleteUserStatus, changeCurrentStatus } =
     useStatusStore(
@@ -28,7 +31,7 @@ const StatusMenu = () => {
 
   const deleteStatus = async () => {
     try {
-      const toastId = toast.loading("Deleting Status...");
+      const toastId = toast.loading(t("DeletingStatus"));
       const deleteStatusRes = await deleteStatusAction(
         currentOpenedStatus?._id as string,
       );
@@ -38,7 +41,7 @@ const StatusMenu = () => {
       deleteUserStatus(currentOpenedStatus?._id as string);
       changeCurrentStatus(userId as string, true);
       toast.dismiss(toastId);
-      toast.success("Status deleted successfully.");
+      toast.success(t("StatusDeletedSuccess"));
     } catch (error: any) {
       console.log(error);
       toast.error(error.message);
@@ -57,7 +60,7 @@ const StatusMenu = () => {
       <DropdownMenuContent>
         <DropdownMenuItem onClick={deleteStatus}>
           <MdDelete />
-          Delete Status
+          {t("DeleteStatus")}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

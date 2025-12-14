@@ -1,9 +1,11 @@
 import { deleteFriend } from "@/lib/actions/user.actions";
 import { useUserStore } from "@/store/userStore";
+import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { useShallow } from "zustand/react/shallow";
 
 const useUnFriendUser = () => {
+  const t = useTranslations("RequestUserCard.FriendsMenu");
   const { friendsList, setFriendsList } = useUserStore(
     useShallow((state) => ({
       friendsList: state.friendsList,
@@ -15,15 +17,15 @@ const useUnFriendUser = () => {
     const unfriendUserRes = deleteFriend(userId);
 
     toast.promise(unfriendUserRes, {
-      loading: "Deleting...",
+      loading: t("Deleting"),
       success: () => {
         setFriendsList(friendsList.filter((f) => f._id !== userId));
         return {
-          message: `User is no longer a friend`,
+          message: t("UserIsNoLongerFriend"),
           closeButton: true,
         };
       },
-      error: "Error",
+      error: t("Error"),
     });
   };
   return unFriendUser;

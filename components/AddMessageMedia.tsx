@@ -4,6 +4,7 @@ import { useChatStore } from "@/store/chatStore";
 import { useUserStore } from "@/store/userStore";
 import { Loader2, X } from "lucide-react";
 import { motion } from "motion/react";
+import { useTranslations } from "next-intl";
 import Image from "next/image";
 import { useMemo, useState } from "react";
 import { IoMdSend } from "react-icons/io";
@@ -23,6 +24,7 @@ const AddMessageMedia = ({
   oldMessageText,
   to,
 }: Props) => {
+  const t = useTranslations("Chat.Conversation.AddMedia");
   const isAllowedImage = allowedPictureTypes.includes(file.type);
   const mediaUrl = useMemo(() => {
     return URL.createObjectURL(file);
@@ -140,7 +142,7 @@ const AddMessageMedia = ({
           <div className="flex-1">
             <Input
               className="w-full rounded-sm border-0 !bg-site-foreground ring-0 placeholder:dark:text-white"
-              placeholder="Add a caption"
+              placeholder={t("AddCaption")}
               value={messageText}
               onChange={(e) => setMessageText(e.target.value)}
               disabled={isSending}

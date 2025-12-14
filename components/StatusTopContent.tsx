@@ -1,15 +1,20 @@
 import { formatDateToStatus } from "@/lib/utils";
 import { useStatusStore } from "@/store/statusStore";
 import { useUserStore } from "@/store/userStore";
+import clsx from "clsx";
+import { useLocale } from "next-intl";
 import Image from "next/image";
 import { FaArrowLeft } from "react-icons/fa6";
 import { HiMiniSpeakerWave, HiMiniSpeakerXMark } from "react-icons/hi2";
 import { IoIosPause, IoIosPlay } from "react-icons/io";
+import { getLangDir } from "rtl-detect";
 import { useShallow } from "zustand/react/shallow";
 import StatusMenu from "./StatusMenu";
 import { Button } from "./ui/button";
 
 const StatusTopContent = () => {
+  const locale = useLocale();
+  const dir = getLangDir(locale);
   const user = useUserStore((state) => state.user);
   const {
     currentStatus,
@@ -41,7 +46,12 @@ const StatusTopContent = () => {
       <Button
         onClick={closeStatus}
         variant="ghostFull"
-        className="mx-4 cursor-pointer p-1"
+        className={clsx(
+          "mx-4 cursor-pointer p-1 transition",
+          dir === "rtl"
+            ? "rotate-180 hover:translate-x-1"
+            : "hover:-translate-x-1",
+        )}
       >
         <FaArrowLeft />
       </Button>

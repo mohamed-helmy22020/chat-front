@@ -1,5 +1,6 @@
 import useCallHook from "@/hooks/useCallHook";
 import { useCallStore } from "@/store/callStore";
+import { useTranslations } from "next-intl";
 import { useEffect } from "react";
 import { toast } from "sonner";
 import { useShallow } from "zustand/react/shallow";
@@ -12,6 +13,7 @@ const CallingFooter = ({
   setReceivedStream: React.Dispatch<React.SetStateAction<MediaStream | null>>;
   handleToggleMuteSound: () => void;
 }) => {
+  const t = useTranslations("Chat.Conversation.Call");
   const { callState, endCall } = useCallStore(
     useShallow((state) => ({
       callState: state.callState,
@@ -27,13 +29,13 @@ const CallingFooter = ({
   useEffect(() => {
     const timeoutId = setTimeout(() => {
       if (callState === "Waiting") {
-        toast.info("No answer");
+        toast.info(t("NoAnswer"));
         endCall();
       }
     }, 30000);
     const timeoutId2 = setTimeout(() => {
       if (!isConnected && callState === "Accepted") {
-        toast.error("Error happened when connecting");
+        toast.error(t("ErrorWhenConnecting"));
         endCall();
       }
     }, 5000);
@@ -42,7 +44,7 @@ const CallingFooter = ({
       clearTimeout(timeoutId);
       clearTimeout(timeoutId2);
     };
-  }, [callState, endCall, isConnected]);
+  }, [callState, endCall, isConnected, t]);
 
   return (
     <div className="flex h-1/6 items-center justify-center gap-10 bg-site-foreground p-2">

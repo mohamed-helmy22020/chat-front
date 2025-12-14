@@ -7,6 +7,7 @@ import {
   MAX_PHOTO_SIZE,
   MAX_VIDEO_SIZE,
 } from "@/lib/utils";
+import { useTranslations } from "next-intl";
 import { useRef, useState } from "react";
 import { CiCirclePlus } from "react-icons/ci";
 import { toast } from "sonner";
@@ -21,6 +22,7 @@ import {
 import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
 
 const AddStatus = () => {
+  const t = useTranslations("Status");
   const [showAddText, setShowAddText] = useState(false);
   const [showAddMedia, setShowAddMedia] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -39,19 +41,17 @@ const AddStatus = () => {
     const isAllowedVideo = allowedVideoTypes.includes(type);
 
     if (!isAllowedImage && !isAllowedVideo) {
-      toast.error(
-        "Unsupported file type. Please select a JPEG, PNG, GIF, MP4, MOV, AVI, MKV, or WebM file.",
-      );
+      toast.error(t("UnsupportedFileTypeError"));
       return;
     }
 
     if (isAllowedImage && size > MAX_PHOTO_SIZE) {
-      toast.error("Image must be under 5 MB.");
+      toast.error(t("MaxImageSizeError"));
       return;
     }
 
     if (isAllowedVideo && size > MAX_VIDEO_SIZE) {
-      toast.error("Video must be under 100 MB.");
+      toast.error(t("MaxVideoSizeError"));
       return;
     }
 
@@ -93,7 +93,7 @@ const AddStatus = () => {
                 className="rounded-full"
                 sideOffset={0}
               >
-                <p>Add Status</p>
+                <p>{t("AddStatus")}</p>
               </TooltipContent>
             </Tooltip>
           </div>
@@ -107,7 +107,7 @@ const AddStatus = () => {
             >
               <FaImages />
               <span className="text-gray-700 dark:text-gray-400">
-                Photos & Videos
+                {t("PhotosVideos")}
               </span>
             </Button>
           </DropdownMenuItem>
@@ -121,7 +121,9 @@ const AddStatus = () => {
               }}
             >
               <FaPencilAlt />
-              <span className="text-gray-700 dark:text-gray-400">Text</span>
+              <span className="text-gray-700 dark:text-gray-400">
+                {t("Text")}
+              </span>
             </Button>
           </DropdownMenuItem>
         </DropdownMenuContent>

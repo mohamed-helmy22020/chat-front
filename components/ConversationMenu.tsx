@@ -7,6 +7,7 @@ import useUnFriendUser from "@/hooks/useUnFriendUser";
 import { deleteConversation as deleteConversationAction } from "@/lib/actions/user.actions";
 import { useChatStore } from "@/store/chatStore";
 import { useUserStore } from "@/store/userStore";
+import { useTranslations } from "next-intl";
 import { CgUnblock } from "react-icons/cg";
 import { FaUserMinus, FaUserPlus } from "react-icons/fa6";
 import { IoMdClose } from "react-icons/io";
@@ -23,6 +24,7 @@ import {
 } from "./ui/dropdown-menu";
 
 const ConversationMenu = () => {
+  const t = useTranslations("Chat.Conversation.Menu");
   const {
     currentUserId,
     blockedList,
@@ -70,7 +72,7 @@ const ConversationMenu = () => {
   };
   const deleteConversation = async () => {
     try {
-      const toastId = toast.loading("Deleting Conversation...");
+      const toastId = toast.loading(t("DeletingConversation"));
       const deleteConversationRes = await deleteConversationAction(
         conversation?.id as string,
       );
@@ -98,20 +100,20 @@ const ConversationMenu = () => {
       <DropdownMenuContent>
         <DropdownMenuItem onClick={deleteConversation}>
           <MdDelete />
-          Delete Chat
+          {t("DeleteChat")}
         </DropdownMenuItem>
 
         <DropdownMenuItem
           onClick={async () => {
             if (isBlocked) {
               toast.promise(unblockUser(otherSide!._id), {
-                loading: "Unlocking...",
+                loading: t("Unblocking"),
                 success: () => {
                   return {
-                    message: `User Unblocked`,
+                    message: t("UserUnblocked"),
                   };
                 },
-                error: "Error",
+                error: t("Error"),
               });
             } else {
               blockUser(otherSide!._id);
@@ -119,54 +121,54 @@ const ConversationMenu = () => {
           }}
         >
           {isBlocked ? <CgUnblock /> : <MdBlockFlipped />}
-          {isBlocked ? "Unblock User" : "Block User"}
+          {isBlocked ? t("UnblockUser") : t("BlockUser")}
         </DropdownMenuItem>
         {!isBlocked && !isSentRequest && !isReceivedRequest && (
           <DropdownMenuItem
             onClick={async () => {
               if (isFriend) {
                 toast.promise(unFriendUser(otherSide!._id), {
-                  loading: "Unfriending...",
+                  loading: t("Unfriending"),
                   success: () => {
                     return {
-                      message: `User is no longer a friend`,
+                      message: t("UserNoLongerFriend"),
                     };
                   },
-                  error: "Error",
+                  error: t("Error"),
                 });
               } else {
                 toast.promise(addFriend(otherSide!._id), {
-                  loading: "Sending friend request...",
+                  loading: t("SendingFriendRequest"),
                   success: () => {
                     return {
-                      message: `Friend request is sent`,
+                      message: t("FriendRequestSent"),
                     };
                   },
-                  error: "Error",
+                  error: t("Error"),
                 });
               }
             }}
           >
             {isFriend ? <FaUserMinus /> : <FaUserPlus />}
-            {isFriend ? "Unfriend User" : "Add Friend"}
+            {isFriend ? t("UnfriendUser") : t("AddFriend")}
           </DropdownMenuItem>
         )}
         {isSentRequest && (
           <DropdownMenuItem
             onClick={async () => {
               toast.promise(cancelSentRequest(otherSide!._id), {
-                loading: "Cancelling sent request...",
+                loading: t("CancellingSentRequest"),
                 success: () => {
                   return {
-                    message: `Request is cancelled`,
+                    message: t("RequestCancelled"),
                   };
                 },
-                error: "Error",
+                error: t("Error"),
               });
             }}
           >
             <LuUserX />
-            Cancel Sent Request
+            {t("CancelSentRequest")}
           </DropdownMenuItem>
         )}
         {isReceivedRequest && (
@@ -176,45 +178,45 @@ const ConversationMenu = () => {
                 toast.promise(
                   handleFriendRequest(otherSide!._id, "accept-request"),
                   {
-                    loading: "Accepting friend request...",
+                    loading: t("AcceptingFriendRequest"),
                     success: () => {
                       return {
-                        message: `User is now a friend`,
+                        message: t("UserIsFriend"),
                       };
                     },
-                    error: "Error",
+                    error: t("Error"),
                   },
                 );
               }}
             >
               <LuCheck />
-              Accept Friend Request
+              {t("AcceptFriendRequest")}
             </DropdownMenuItem>
             <DropdownMenuItem
               onClick={async () => {
                 toast.promise(
                   handleFriendRequest(otherSide!._id, "cancel-request"),
                   {
-                    loading: "Rejecting friend request...",
+                    loading: t("RejectingFriendRequest"),
                     success: () => {
                       return {
-                        message: `User is cancelled`,
+                        message: t("UserIsCancelled"),
                       };
                     },
-                    error: "Error",
+                    error: t("Error"),
                   },
                 );
               }}
             >
               <LuX />
-              Reject Friend Request
+              {t("RejectFriendRequest")}
             </DropdownMenuItem>
           </>
         )}
 
         <DropdownMenuItem onClick={closeChat}>
           <IoMdClose />
-          Close Chat
+          {t("CloseChat")}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

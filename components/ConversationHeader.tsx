@@ -2,6 +2,7 @@ import { useCallStore } from "@/store/callStore";
 import { useChatStore } from "@/store/chatStore";
 import { useUserStore } from "@/store/userStore";
 import clsx from "clsx";
+import { useTranslations } from "next-intl";
 import Image from "next/image";
 import { useCallback } from "react";
 import { LuPhone, LuVideo } from "react-icons/lu";
@@ -10,6 +11,7 @@ import { useShallow } from "zustand/react/shallow";
 import ConversationMenu from "./ConversationMenu";
 
 const ConversationHeader = () => {
+  const t = useTranslations("Chat.Conversation");
   const { call, isCalling, isInCall, isIncomingCall } = useCallStore(
     useShallow((state) => ({
       isCalling: state.isCalling,
@@ -30,15 +32,15 @@ const ConversationHeader = () => {
   )?.isOnline;
   const canCall = useCallback(() => {
     if (isOtherUserOnline !== undefined && !isOtherUserOnline) {
-      toast.error("User is offline. Cannot make a call.");
+      toast.error(t("UserOfflineCannotMakeCallError"));
       return false;
     }
     if (isInCall || isIncomingCall || isCalling) {
-      toast.error("You are already in a call.");
+      toast.error(t("YouAreInCallError"));
       return false;
     }
     return true;
-  }, [isCalling, isInCall, isIncomingCall, isOtherUserOnline]);
+  }, [isCalling, isInCall, isIncomingCall, isOtherUserOnline, t]);
 
   const handelVoiceCall = async () => {
     if (!canCall()) {
@@ -46,7 +48,7 @@ const ConversationHeader = () => {
     }
     const mic = await navigator.permissions.query({ name: "microphone" });
     if (mic.state === "denied") {
-      toast.error("Please allow microphone access in your browser settings.");
+      toast.error(t("AllowMicrophoneError"));
       return;
     }
     if (mic.state === "granted") {
@@ -72,9 +74,7 @@ const ConversationHeader = () => {
     const camera = await navigator.permissions.query({ name: "camera" });
     const mic = await navigator.permissions.query({ name: "microphone" });
     if (camera.state === "denied" || mic.state === "denied") {
-      toast.error(
-        "Please allow camera and microphone access in your browser settings.",
-      );
+      toast.error(t("AllowCameraAndMicrophoneError"));
       return;
     }
     if (camera.state === "granted" && mic.state === "granted") {
@@ -97,11 +97,11 @@ const ConversationHeader = () => {
   const isOnlineElement =
     isOtherUserOnline === undefined ? null : isOtherUserOnline ? (
       <>
-        <div className="h-2 w-2 rounded-full bg-green-500"></div> Online
+        <div className="h-2 w-2 rounded-full bg-green-500"></div> {t("Online")}
       </>
     ) : (
       <>
-        <div className="h-2 w-2 rounded-full bg-red-500"></div> Offline
+        <div className="h-2 w-2 rounded-full bg-red-500"></div> {t("Offline")}
       </>
     );
 
@@ -124,7 +124,7 @@ const ConversationHeader = () => {
               isTyping && "animate-pulse",
             )}
           >
-            {isTyping ? "Typing..." : isOnlineElement}
+            {isTyping ? t("Typing") : isOnlineElement}
           </div>
         </div>
       </div>

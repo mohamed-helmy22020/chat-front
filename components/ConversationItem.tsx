@@ -3,6 +3,7 @@ import { useChatStore } from "@/store/chatStore";
 import { useUserStore } from "@/store/userStore";
 import clsx from "clsx";
 import { motion } from "motion/react";
+import { useTranslations } from "next-intl";
 import Image from "next/image";
 import { FaImage, FaVideo } from "react-icons/fa";
 import { useShallow } from "zustand/react/shallow";
@@ -11,6 +12,7 @@ type Props = {
   conversation: ConversationType;
 };
 const ConversationItem = ({ conversation }: Props) => {
+  const t = useTranslations("Chat.Conversation");
   const { lastMessage, participants } = conversation;
   const userId = useUserStore((state) => state.user?._id);
   const otherSide = participants.find((p) => p._id !== userId);
@@ -81,7 +83,7 @@ const ConversationItem = ({ conversation }: Props) => {
               conversation.isTyping && "animate-pulse",
             )}
           >
-            {conversation.isTyping ? "Typing..." : content}
+            {conversation.isTyping ? t("Typing") : content}
           </div>
         </div>
       </Button>

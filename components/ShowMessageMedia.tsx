@@ -3,7 +3,6 @@ import { useChatStore } from "@/store/chatStore";
 import clsx from "clsx";
 import { ArrowBigLeft, ArrowBigRight } from "lucide-react";
 import Image from "next/image";
-import { FaRegSmile } from "react-icons/fa";
 import { IoMdClose, IoMdDownload } from "react-icons/io";
 import { useShallow } from "zustand/react/shallow";
 import AllConversationMedia from "./AllConversationMedia";
@@ -76,12 +75,6 @@ const ShowMessageMedia = () => {
             variant="ghostFull"
             className="scale-110 cursor-pointer rounded-full !p-2 hover:bg-site-foreground"
           >
-            <FaRegSmile />
-          </Button>
-          <Button
-            variant="ghostFull"
-            className="scale-110 cursor-pointer rounded-full !p-2 hover:bg-site-foreground"
-          >
             <IoMdDownload />
           </Button>
           <Button
@@ -128,7 +121,6 @@ const ShowMessageMedia = () => {
           {mediaType === "image" && (
             <div className="relative flex h-full w-full items-center justify-center">
               <Image
-                unoptimized
                 src={mediaUrl!}
                 alt="status"
                 fill

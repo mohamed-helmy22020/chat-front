@@ -1,11 +1,231 @@
 {
-  "LocaleSwitcher": {
-    "ar": "العربية",
-    "en": "English",
-    "label": "Select Langage"
+  "SideBar": {
+    "chat": "Chat",
+    "status": "Status",
+    "friends": "Friends",
+    "blocks": "Blocks",
+    "settings": "Settings",
+    "profile": "Profile"
   },
-  "HomePage": {
-    "title": "Hello world!"
+  "Chat": {
+    "Name": "Chat App",
+    "About1": "Send and receive messages Seamlessly.",
+    "About2": "Select a conversation to start messaging.",
+    "ConversationsList": {
+      "Title": "Chats",
+      "Search": "Search by user name.",
+      "NewChat": "New Chat"
+    },
+    "NewConversationMenu": {
+      "NewChat": "New Chat",
+      "ChatWithEmail": "Chat with email",
+      "EnterUserEmail": "Enter user email.",
+      "FriendsList": "Friends List",
+      "Chat": "Chat"
+    },
+    "Conversation": {
+      "TypeMessage": "Type a message...",
+      "Offline": "Offline",
+      "Online": "Online",
+      "AddMedia": {
+        "AddCaption": "Add a caption"
+      },
+      "UserOfflineCannotMakeCallError": "User is offline. Cannot make a call",
+      "YouAreInCallError": "You are already in a call",
+      "AllowMicrophoneError": "Please allow microphone access in your browser settings.",
+      "AllowCameraAndMicrophoneError": "Please allow camera and microphone access in your browser settings.",
+      "Typing": "Typing...",
+      "Menu": {
+        "DeleteChat": "Delete Chat",
+        "DeletingConversation": "Deleting Conversation...",
+        "BlockUser": "Block User",
+        "UnblockUser": "Unblock User",
+        "Unblocking": "Unblocking...",
+        "UserUnblocked": "User Unblocked",
+        "UserNoLongerFriend": "User is no longer a friend",
+        "AddFriend": "Add Friend",
+        "UnfriendUser": "Unfriend User",
+        "Unfriending": "Unfriending...",
+        "SendingFriendRequest": "Sending Friend Request...",
+        "FriendRequestSent": "Friend request is sent",
+        "CancelSentRequest": "Cancel Sent Request",
+        "CancellingSentRequest": "Cancelling sent request...",
+        "RequestCancelled": "Request is cancelled",
+        "AcceptFriendRequest": "Accept Friend Request",
+        "AcceptingFriendRequest": "Accepting friend request...",
+        "UserIsFriend": "User is now a friend",
+        "RejectFriendRequest": "Reject Friend Request",
+        "RejectingFriendRequest": "Rejecting friend request...",
+        "UserIsCancelled": "User is cancelled",
+        "CloseChat": "Close Chat",
+        "Error": "Error"
+      },
+      "MessageMenu": {
+        "Copy": "Copy",
+        "Star": "Star",
+        "Delete": "Delete",
+        "FailedCopyMessage": "Failed to copy message text"
+      },
+      "Call": {
+        "CallEnded": "Call Ended",
+        "AllowMicrophone": "Please allow microphone access in your browser settings.",
+        "Connecting": "Connecting",
+        "Calling": "Calling...",
+        "AllowCamera": "Please allow camera access in your browser settings.",
+        "NoAnswer": "No answer",
+        "ErrorWhenConnecting": "Error happened when connecting"
+      }
+    }
+  },
+  "Status": {
+    "Status": "Status",
+    "Title": "Share status updates",
+    "About": "Share photos, videos and text that disappear after 24 hours.",
+    "MyStatus": "My Status",
+    "NoStatus": "No status yet",
+    "AddStatus": "Add Status",
+    "UnsupportedFileTypeError": "Unsupported file type. Please select a JPEG, PNG, GIF, MP4, MOV, AVI, MKV, or WebM file.",
+    "MaxImageSizeError": "Image must be under 5 MB.",
+    "MaxVideoSizeError": "Video must be under 100 MB.",
+    "PhotosVideos": "Photos & Videos",
+    "Text": "Text",
+    "Recent": "Recent",
+    "Viewed": "Viewed",
+    "AddNewStatus": {
+      "StatusTextExceedError": "Your status update cannot exceed 700 characters or 5 lines.",
+      "StatusEmptyError": "Status cannot be empty.",
+      "StatusAddedSuccess": "Status added successfully!",
+      "StatusPlaceholder": "What's on your mind?",
+      "AddCaption": "Add a caption"
+    },
+    "Overlay": {
+      "DeleteStatus": "Delete Status",
+      "DeletingStatus": "Deleting Status...",
+      "StatusDeletedSuccess": "Status deleted successfully.",
+      "TypeReply": "Type a reply...",
+      "Viewers": {
+        "ViewedBy": "Viewed by {viewers}",
+        "NoViews": "No views yet"
+      }
+    }
+  },
+  "Friends": {
+    "FriendsList": "Friends List",
+    "About1": "See friends list, sent requests, and received requests.",
+    "About2": "You can also unfriend, or block someone.",
+    "NoFriends": "You dont have any friends",
+    "SearchUsers": {
+      "EmailRequired": "Email is required.",
+      "InvalidEmail": "Invalid email.",
+      "SearchForUser": "Search For User",
+      "desc": "NOTE: You need to write the full email",
+      "Email": "Email",
+      "Search": "Search",
+      "NoUserWithEmail": "User with this email doesn't exist"
+    },
+    "ReceivedRequests": {
+      "FriendsRequests": "Friends Requests",
+      "desc": "The friends requests that have sent to you",
+      "NoFriendsRequests": "No Friends Requests"
+    },
+    "SentRequests": {
+      "SentRequests": "Sent Requests",
+      "desc": "The user requests you have sent",
+      "NoSentRequests": "No Sent Requests"
+    }
+  },
+  "BlockedList": {
+    "About1": "See the people you've blocked.",
+    "About2": "You can also unblock them.",
+    "BlockedList": "Blocked List",
+    "NoBlocks": "You dont have any blocks"
+  },
+  "Settings": {
+    "Profile": {
+      "Title": "Profile",
+      "OnlyImageError": "Please select an image file (JPEG, PNG, GIF, etc.)",
+      "FileSizeError": "File size should be less than 5MB",
+      "UploadingImageError": "Failed to upload image. Please try again.",
+      "Uploading": "Uploading...",
+      "ChangePicture": "Change Picture",
+      "YourName": "Your Name",
+      "About": "About"
+    },
+    "Settings": "Settings",
+    "Privacy": "Privacy",
+    "PrivacyDesc": "Manage your privacy and security",
+    "WhoCanSeePersonalInfo": "Who can see my personal info",
+    "Chats": "Chats",
+    "ChatsDesc": "Theme, Localization, Chat settings",
+    "ChatsNote": "NOTE: Data here is not persistent across devices",
+    "Notifications": "Notifications",
+    "NotificationsDesc": "Message notifications",
+    "Messages": "Messages",
+    "NotificationsTones": "Notifications Tones",
+    "LogOut": "Log Out",
+    "LocaleSwitcher": {
+      "ar": "العربية",
+      "en": "English",
+      "label": "Select Langage"
+    },
+    "Theme": "Theme",
+    "EnterSend": "Enter to send",
+    "Online": "Online",
+    "ReadReceipts": "Read Receipts",
+    "Enable": "Enable",
+    "Disable": "Disable",
+    "None": "None",
+    "Friends": "Friends",
+    "Everyone": "Everyone",
+    "dark": "Dark",
+    "light": "Light",
+    "system": "System",
+    "MessagesNotifications": "Messages notifications",
+    "IncomingCallsNotifications": "Incoming calls notifications",
+    "ShowPreviews": "Show previews",
+    "ShowReactionNotifications": "Show reaction notifications",
+    "IncomingMessagesSound": "Incoming messages sound",
+    "IncomingCallsSound": "Incoming calls sound"
+  },
+  "RequestUserCard": {
+    "FriendsMenu": {
+      "chatWith": "Chat with",
+      "BlockUser": "Block user",
+      "UnfriendUser": "Unfriend user",
+      "LoadingConversation": "Loading conversation...",
+      "ErrorGettingConversation": "Error getting conversation",
+      "Deleting": "Deleting...",
+      "UserIsNoLongerFriend": "User is no longer a friend",
+      "Error": "Error"
+    },
+    "BlocksMenu": {
+      "Unblocking": "Unblocking...",
+      "Unblocked": "Unblocked",
+      "UnblockUser": "Unblock user",
+      "Blocking": "Blocking...",
+      "UserIsBlocked": "User is blocked."
+    },
+    "RequestsMenu": {
+      "AcceptFriendRequest": "Accept friend request",
+      "CancelFriendRequest": "Cancel friend request"
+    },
+    "SentMenu": {
+      "Cancelling": "Cancelling...",
+      "Cancelled": "Cancelled",
+      "CancelRequest": "Cancel Request"
+    },
+    "AddFriendMenu": {
+      "Sending": "Sending...",
+      "Sent": "Sent",
+      "AddFriend": "Add Friend"
+    }
+  },
+  "SocketConnection": {
+    "IncomingCall": "Incoming Call",
+    "NewMessage": "New Message",
+    "NewReaction": "New Reaction",
+    "SentFriendRequest": "sent you a friend request",
+    "AcceptFriendRequest": "accept your friend request"
   },
   "Auth": {
     "SignIn": "LOGIN",

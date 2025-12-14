@@ -1,6 +1,7 @@
 import { getNotificationsPermission } from "@/lib/utils";
 import { useSettingsStore } from "@/store/settingsStore";
 import { motion } from "motion/react";
+import { useTranslations } from "next-intl";
 import { useEffect, useRef } from "react";
 import { FaArrowLeft } from "react-icons/fa6";
 import { useShallow } from "zustand/react/shallow";
@@ -11,6 +12,7 @@ type Props = {
 };
 
 const NotificationsSettings = ({ setCurrentSettings }: Props) => {
+  const t = useTranslations("Settings");
   const initialized = useRef(false);
   const { changeNotificationsSettings, notificationsSettings } =
     useSettingsStore(
@@ -45,53 +47,53 @@ const NotificationsSettings = ({ setCurrentSettings }: Props) => {
         >
           <FaArrowLeft className="transition hover:-translate-x-1" />
         </button>
-        <p>Notifications</p>
+        <p>{t("Notifications")}</p>
       </div>
       <div className="flex flex-1 flex-col overflow-y-auto px-5 py-2">
-        <div className="text-xs text-gray-400">Messages</div>
+        <div className="text-xs text-gray-400">{t("Messages")}</div>
         <SettingsItem
           handleChangeSettings={handleChangeSettings}
           value={notificationsSettings.messages}
-          title="Messages notifications"
+          title="MessagesNotifications"
           name="messages"
           values={["Enable", "Disable"]}
         />
         <SettingsItem
           handleChangeSettings={handleChangeSettings}
           value={notificationsSettings.incomingCalls}
-          title="Incoming calls Notifications"
+          title="IncomingCallsNotifications"
           name="incomingCalls"
           values={["Enable", "Disable"]}
         />
         <SettingsItem
           handleChangeSettings={handleChangeSettings}
           value={notificationsSettings.previews}
-          title="Show previews"
+          title="ShowPreviews"
           name="previews"
           values={["Enable", "Disable"]}
         />
         <SettingsItem
           handleChangeSettings={handleChangeSettings}
           value={notificationsSettings.reactions}
-          title="Show reaction notifications"
+          title="ShowReactionNotifications"
           name="reactions"
           values={["Enable", "Disable"]}
         />
       </div>
       <div className="mt-10 flex flex-1 flex-col overflow-y-auto px-5 py-2">
-        <div className="text-xs text-gray-400">Notifications tones</div>
+        <div className="text-xs text-gray-400">{t("NotificationsTones")}</div>
 
         <SettingsItem
           handleChangeSettings={handleChangeSettings}
           value={notificationsSettings.incomingMessagesSound}
-          title="Incoming messages sound"
+          title="IncomingMessagesSound"
           name="incomingMessagesSound"
           values={["Enable", "Disable"]}
         />
         <SettingsItem
           handleChangeSettings={handleChangeSettings}
           value={notificationsSettings.incomingCallsSound}
-          title="Incoming calls sound"
+          title="IncomingCallsSound"
           name="incomingCallsSound"
           values={["Enable", "Disable"]}
         />

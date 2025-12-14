@@ -2,6 +2,7 @@ import useMessageMenu from "@/hooks/useMessageMenu";
 import { REACTS } from "@/lib/utils";
 import { useUserStore } from "@/store/userStore";
 import clsx from "clsx";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 import {
   AiTwotoneDislike as DislikeEmoji,
@@ -30,6 +31,7 @@ type Props = {
 };
 
 const MessageMenu = ({ message }: Props) => {
+  const t = useTranslations("Chat.Conversation.MessageMenu");
   const user = useUserStore((state) => state.user);
   const [isOpen, setIsOpen] = useState(false);
   const userReact = message.reacts.find(
@@ -54,15 +56,15 @@ const MessageMenu = ({ message }: Props) => {
       </DropdownMenuTrigger>
       <DropdownMenuContent>
         <DropdownMenuItem onClick={handleCopyMessage}>
-          <IoCopy /> Copy
+          <IoCopy /> {t("Copy")}
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem>
-          <CiStar /> Star
+          <CiStar /> {t("Star")}
         </DropdownMenuItem>
         {message.from === user?._id && (
           <DropdownMenuItem onClick={handleDeleteMessage}>
-            <MdDeleteForever /> Delete
+            <MdDeleteForever /> {t("Delete")}
           </DropdownMenuItem>
         )}
         <DropdownMenuSeparator />

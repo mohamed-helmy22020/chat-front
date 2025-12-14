@@ -15,6 +15,7 @@ import usePageFocus from "@/hooks/usePageFocus";
 import useSocketConnection from "@/hooks/useSocketConnection";
 import { PageType, usePageStore } from "@/store/pageStore";
 import { useUserStore } from "@/store/userStore";
+import { useTranslations } from "next-intl";
 import { useEffect } from "react";
 import { useShallow } from "zustand/react/shallow";
 import { Separator } from "./ui/separator";
@@ -64,6 +65,7 @@ const SideBarButton = ({
   Icon: React.ComponentType<{ size?: number }>;
   page: PageType;
 }) => {
+  const t = useTranslations("SideBar");
   const { currentPage, setPage } = usePageStore(
     useShallow((state) => ({
       currentPage: state.page,
@@ -88,7 +90,7 @@ const SideBarButton = ({
         </button>
       </TooltipTrigger>
       <TooltipContent className="rounded-full" side="left" sideOffset={5}>
-        <p className="capitalize select-none">{page}</p>
+        <p className="capitalize select-none">{t(page)}</p>
       </TooltipContent>
     </Tooltip>
   );

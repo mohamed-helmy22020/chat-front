@@ -1,7 +1,10 @@
+import { Locale } from "@/i18n/config";
+import { setUserLocale } from "@/src/services/locale";
 import { useLocalStorage } from "@uidotdev/usehooks";
 import { motion } from "motion/react";
+import { useLocale, useTranslations } from "next-intl";
 import { useTheme } from "next-themes";
-import { useState } from "react";
+import { useState, useTransition } from "react";
 import { FaArrowLeft } from "react-icons/fa6";
 import { SettingsItem } from "./Settings";
 
@@ -11,12 +14,16 @@ type Props = {
 const ChatsSettings = ({
   setCurrentSettings: setCurrentSettingsPage,
 }: Props) => {
+  const t = useTranslations("Settings");
   const [enterSend, saveEnterSend] = useLocalStorage("enterSend", "Enable");
+  const locale = useLocale();
+  const startTransition = useTransition()[1];
 
   const { setTheme, theme } = useTheme();
   const defaultChatSettings = {
     theme: theme,
     enterSend,
+    locale,
   };
 
   const [settings, setSettings] = useState(defaultChatSettings);
@@ -31,13 +38,21 @@ const ChatsSettings = ({
       return;
     }
     if (name === "enterSend") {
-      console.log(enterSend);
       setSettings((prev) => ({
         ...prev,
         enterSend: value,
       }));
       saveEnterSend(value);
       return;
+    }
+    if (name === "locale") {
+      startTransition(() => {
+        setUserLocale(value as Locale);
+        setSettings((prev) => ({
+          ...prev,
+          locale: value,
+        }));
+      });
     }
   };
   return (
@@ -53,23 +68,29 @@ const ChatsSettings = ({
         >
           <FaArrowLeft className="transition hover:-translate-x-1" />
         </button>
-        <p>Chats</p>
+        <p>{t("Chats")}</p>
       </div>
       <div className="flex flex-1 flex-col overflow-y-auto px-5 py-2">
-        <div className="text-xs text-gray-400">
-          NOTE: Data here is not persistent across devices
-        </div>
+        <div className="text-xs text-gray-400">{t("ChatsNote")}</div>
         <SettingsItem
           handleChangeSettings={handleChangeSettings}
           value={settings.theme || "System"}
           title="Theme"
           name="theme"
-          values={["Dark", "Light", "System"]}
+          values={["dark", "light", "system"]}
+        />
+        <SettingsItem
+          handleChangeSettings={handleChangeSettings}
+          value={settings.locale}
+          title="LocaleSwitcher.label"
+          name="locale"
+          values={["en", "ar"]}
+          labels={{ en: "LocaleSwitcher.en", ar: "LocaleSwitcher.ar" }}
         />
         <SettingsItem
           handleChangeSettings={handleChangeSettings}
           value={settings.enterSend}
-          title="Enter is send"
+          title="EnterSend"
           name="enterSend"
           values={["Enable", "Disable"]}
         />
