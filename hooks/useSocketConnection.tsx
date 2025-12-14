@@ -24,6 +24,7 @@ const useSocketConnection = () => {
     changeIsTyping,
     seeAllMessages,
     addReaction,
+    deleteMessage,
   } = useChatStore(
     useShallow((state) => ({
       changeIsConnected: state.changeIsConnected,
@@ -31,6 +32,7 @@ const useSocketConnection = () => {
       changeIsTyping: state.changeIsTyping,
       seeAllMessages: state.seeAllMessages,
       addReaction: state.addReaction,
+      deleteMessage: state.deleteMessage,
     })),
   );
   const {
@@ -141,9 +143,15 @@ const useSocketConnection = () => {
 
     const onMessageReaction = (data: {
       messageId: string;
+      conversationId: string;
       react: ReactType;
     }) => {
-      addReaction(data.messageId, data.react.user._id, data.react);
+      addReaction(
+        data.messageId,
+        data.conversationId,
+        data.react.user._id,
+        data.react,
+      );
       const otherSide = data.react.user;
       if (notifcationsSettings.messages === "Enable") {
         showNotification(
@@ -167,6 +175,13 @@ const useSocketConnection = () => {
 
     const onMessagesSeen = () => {
       seeAllMessages();
+    };
+
+    const onMessageDeleted = (data: {
+      messageId: string;
+      conversationId: string;
+    }) => {
+      deleteMessage(data.messageId, data.conversationId);
     };
 
     const onTyping = (res: OnTypingRes) => {
@@ -221,6 +236,7 @@ const useSocketConnection = () => {
     chatSocket.on("receiveMessage", onReceiveMessage);
     chatSocket.on("messageReaction", onMessageReaction);
     chatSocket.on("messagesSeen", onMessagesSeen);
+    chatSocket.on("messageDeleted", onMessageDeleted);
     chatSocket.on("typing", onTyping);
     chatSocket.on("friendDeleted", onFriendDeleted);
     chatSocket.on("newFriendRequest", onNewFriendRequest);
@@ -238,6 +254,7 @@ const useSocketConnection = () => {
       chatSocket.off("receiveMessage", onReceiveMessage);
       chatSocket.off("messageReaction", onMessageReaction);
       chatSocket.off("messagesSeen", onMessagesSeen);
+      chatSocket.off("messageDeleted", onMessageDeleted);
       chatSocket.off("typing", onTyping);
       chatSocket.off("friendDeleted", onFriendDeleted);
       chatSocket.off("newFriendRequest", onNewFriendRequest);
@@ -272,6 +289,7 @@ const useSocketConnection = () => {
     addReaction,
     notifcationsSettings,
     t,
+    deleteMessage,
   ]);
 };
 

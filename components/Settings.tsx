@@ -146,8 +146,6 @@ export const SettingsItem = memo(
     handleChangeSettings: (name: string, value: string) => void;
   }) => {
     const t = useTranslations("Settings");
-    console.log("=================");
-    console.log({ values, labels, value, title, name });
     return (
       <div className="mt-5 flex items-center justify-between text-slate-600 dark:text-gray-300">
         <p>{t(title)}</p>

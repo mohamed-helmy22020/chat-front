@@ -43,7 +43,7 @@ const useMessageMenu = (message: MessageType) => {
     } else if (selectedReact === REACTS.angry.id) {
       react.react = REACTS.angry.name;
     }
-    addReaction(message.id, user!._id, react);
+    addReaction(message.id, message.conversationId, user!._id, react);
 
     try {
       const addReactionRes = await addReactionAction(message.id, react.react);

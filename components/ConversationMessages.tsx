@@ -20,33 +20,28 @@ import { Button } from "./ui/button";
 const ConversationMessageMemo = memo(ConversationMessage);
 
 const ConversationMessages = () => {
+  const initialized = useRef(false);
   const oldScrollHeight = useRef(0);
   const oldScrollTop = useRef(0);
   const user = useUserStore((state) => state.user);
   const [lastMessage, setLastMessage] = useState<MessageType | null>(null);
   const isFocus = useSettingsStore((state) => state.isFocus);
 
-  const {
-    currentConversationMessages,
-    changeCurrentConversationMessages,
-    currentConversation,
-    addMoreMessages,
-  } = useChatStore(
-    useShallow((state) => ({
-      currentConversationMessages: state.currentConversationMessages,
-      changeCurrentConversationMessages:
-        state.changeCurrentConversationMessages,
-      currentConversation: state.currentConversation,
-      addMoreMessages: state.addMoreMessages,
-    })),
-  );
+  const { currentConversationMessages, currentConversation, addMoreMessages } =
+    useChatStore(
+      useShallow((state) => ({
+        currentConversationMessages: state.currentConversationMessages,
+        currentConversation: state.currentConversation,
+        addMoreMessages: state.addMoreMessages,
+      })),
+    );
   const otherSide = currentConversation?.participants.find(
     (p) => p._id !== user?._id,
   );
   const scrollableDiv = useRef<HTMLDivElement>(null);
   const [isGettingMessages, setIsGettingMessages] = useState(false);
   const wasAtBottomRef = useRef<boolean | undefined>(true);
-  const [hasMore, setHasMore] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
   const [newMessagesCount, setNewMessagesCount] = useState(0);
   const prevScrollHeightRef = useRef(0);
   const isPrependingRef = useRef(false);
@@ -142,16 +137,33 @@ const ConversationMessages = () => {
   );
 
   useEffect(() => {
-    changeCurrentConversationMessages([]);
+    if (
+      currentConversationMessages.length >= 20 ||
+      isGettingMessages ||
+      !hasMore ||
+      initialized.current
+    )
+      return;
+    initialized.current = true;
 
     (async function () {
-      const messages: MessageType[] = await getMessages();
+      const messages: MessageType[] = await getMessages(
+        currentConversationMessages[0]?.createdAt,
+      );
       if (user?.settings.privacy.readReceipts === "Enable") {
         chatSocket.emit("seeAllMessages", otherSide?._id);
       }
-      changeCurrentConversationMessages(messages);
+      addMoreMessages(messages);
     })();
-  }, [getMessages, changeCurrentConversationMessages, otherSide, user]);
+  }, [
+    getMessages,
+    addMoreMessages,
+    otherSide,
+    user,
+    currentConversationMessages,
+    isGettingMessages,
+    hasMore,
+  ]);
 
   useEffect(() => {
     const container = scrollableDiv.current;

@@ -14,6 +14,7 @@ type State = {
     user: MiniUserType;
   } | null;
   currentConversationMessages: MessageType[];
+  allMessages: Record<string, MessageType[]>;
   isConnected: boolean;
 };
 
@@ -24,14 +25,20 @@ type Actions = {
   changeCurrentConversation: (conversation: ConversationType | null) => void;
   addConversation: (conversation: ConversationType) => void;
   changeCurrentConversationMessages: (messages: MessageType[]) => void;
+
   addMoreMessages: (messages: MessageType[]) => void;
   addMessage: (message: MessageType, conversation: ConversationType) => void;
   updateMessage: (messageId: string, message: MessageType) => void;
-  deleteMessage: (messageId: string) => void;
+  deleteMessage: (messageId: string, conversationId?: string) => void;
   seeAllMessages: () => void;
   changeIsConnected: (isConnected: boolean) => void;
   changeIsTyping: (conversationId: string, isTyping: boolean) => void;
-  addReaction: (messageId: string, userId: string, react: ReactType) => void;
+  addReaction: (
+    messageId: string,
+    conversationId: string,
+    userId: string,
+    react: ReactType,
+  ) => void;
   changeCurrentSelectedMediaMessage: (message: MessageType | null) => void;
   changeLastMessage: (
     conversation: ConversationType,
@@ -46,6 +53,7 @@ const initialState: State = {
   currentConversation: null,
   currentSelectedMediaMessage: null,
   currentConversationMessages: [],
+  allMessages: {},
   isConnected: false,
 };
 export const useChatStore = create<State & Actions>()(
@@ -71,12 +79,19 @@ export const useChatStore = create<State & Actions>()(
             state.conversations = state.conversations.filter(
               (c) => c.id !== conversationId,
             );
+            delete state.allMessages[conversationId];
           }),
         ),
 
       changeCurrentConversation: (conversation: ConversationType | null) =>
         set(
           produce((state: State & Actions) => {
+            if (conversation) {
+              state.currentConversationMessages =
+                state.allMessages[conversation.id] || [];
+            } else {
+              state.currentConversationMessages = [];
+            }
             state.currentConversation = conversation;
           }),
         ),
@@ -89,18 +104,23 @@ export const useChatStore = create<State & Actions>()(
       changeCurrentConversationMessages: (messages: MessageType[]) =>
         set(
           produce((state: State & Actions) => {
-            state.currentConversationMessages = messages.sort((a, b) => {
+            if (!state.currentConversation) return;
+            const sortedMessages = messages.sort((a, b) => {
               return (
                 new Date(a.createdAt).getTime() -
                 new Date(b.createdAt).getTime()
               );
             });
+            state.currentConversationMessages = sortedMessages;
+            state.allMessages[state.currentConversation.id] = sortedMessages;
           }),
         ),
+
       addMoreMessages: (messages: MessageType[]) =>
         set(
           produce((state: State & Actions) => {
-            state.currentConversationMessages = [
+            if (!state.currentConversation) return;
+            const sortedMessages = [
               ...messages,
               ...state.currentConversationMessages,
             ].sort((a, b) => {
@@ -109,6 +129,8 @@ export const useChatStore = create<State & Actions>()(
                 new Date(b.createdAt).getTime()
               );
             });
+            state.currentConversationMessages = sortedMessages;
+            state.allMessages[state.currentConversation.id] = sortedMessages;
           }),
         ),
       addMessage: (message: MessageType, conversation: ConversationType) =>
@@ -132,20 +154,28 @@ export const useChatStore = create<State & Actions>()(
             } else {
               state.conversations.push(conversation);
             }
+            if (state.allMessages[conversation.id]) {
+              state.allMessages[conversation.id].push(message);
+            } else {
+              state.allMessages[conversation.id] = [message];
+            }
           }),
         ),
       updateMessage: (messageId: string, message: MessageType) =>
         set(
           produce((state: State & Actions) => {
+            if (!state.currentConversation) return;
             const messageIndex = state.currentConversationMessages.findIndex(
               (m) => m.id === messageId,
             );
             if (messageIndex > -1) {
               state.currentConversationMessages[messageIndex] = message;
+              state.allMessages[state.currentConversation.id][messageIndex] =
+                message;
             }
           }),
         ),
-      deleteMessage: (messageId: string) =>
+      deleteMessage: (messageId: string, conversationId?: string) =>
         set(
           produce((state: State & Actions) => {
             const messageIndex = state.currentConversationMessages.findIndex(
@@ -167,6 +197,11 @@ export const useChatStore = create<State & Actions>()(
                 state.conversations[conversationIndex].lastMessage.text = "";
               }
             }
+            state.allMessages[
+              conversationId || state.currentConversation?.id || ""
+            ] = state.allMessages[
+              conversationId || state.currentConversation?.id || ""
+            ]?.filter((m) => m.id !== messageId);
           }),
         ),
       seeAllMessages: () =>
@@ -174,6 +209,11 @@ export const useChatStore = create<State & Actions>()(
           produce((state: State & Actions) => {
             state.currentConversationMessages
               .filter((m) => !m.seen && m.from === user?._id)
+              .map((m) => {
+                m.seen = true;
+              });
+            state.allMessages[state.currentConversation?.id || ""]
+              ?.filter((m) => !m.seen && m.from === user?._id)
               .map((m) => {
                 m.seen = true;
               });
@@ -200,13 +240,42 @@ export const useChatStore = create<State & Actions>()(
             }
           }),
         ),
-      addReaction: (messageId: string, userId: string, react: ReactType) =>
+      addReaction: (
+        messageId: string,
+        conversationId: string,
+        userId: string,
+        react: ReactType,
+      ) =>
         set(
           produce((state: State & Actions) => {
             const messageIndex = state.currentConversationMessages.findIndex(
               (m) => m.id === messageId,
             );
-            if (messageIndex <= -1) return;
+            if (messageIndex <= -1) {
+              const cachedMessages = state.allMessages[conversationId];
+              const messageIndex = cachedMessages.findIndex(
+                (m) => m.id === messageId,
+              );
+              if (messageIndex <= -1) return;
+              const reactIndex = cachedMessages[messageIndex].reacts.findIndex(
+                (r) => r.user._id === userId,
+              );
+              if (reactIndex <= -1) {
+                cachedMessages[messageIndex].reacts.push(react);
+
+                return;
+              }
+              if (
+                cachedMessages[messageIndex].reacts[reactIndex].react ===
+                react.react
+              ) {
+                cachedMessages[messageIndex].reacts.splice(reactIndex, 1);
+              } else {
+                cachedMessages[messageIndex].reacts[reactIndex].react =
+                  react.react;
+              }
+              return;
+            }
             const reactIndex = state.currentConversationMessages[
               messageIndex
             ].reacts.findIndex((r) => r.user._id === userId);
@@ -214,6 +283,10 @@ export const useChatStore = create<State & Actions>()(
               state.currentConversationMessages[messageIndex].reacts.push(
                 react,
               );
+              state.allMessages[conversationId][messageIndex].reacts.push(
+                react,
+              );
+
               return;
             }
 
@@ -225,8 +298,15 @@ export const useChatStore = create<State & Actions>()(
                 reactIndex,
                 1,
               );
+              state.allMessages[conversationId][messageIndex].reacts.splice(
+                reactIndex,
+                1,
+              );
             } else {
               state.currentConversationMessages[messageIndex].reacts[
+                reactIndex
+              ].react = react.react;
+              state.allMessages[conversationId][messageIndex].reacts[
                 reactIndex
               ].react = react.react;
             }
