@@ -78,13 +78,12 @@ export const validateEmail = (email: string) => {
       /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
     );
 };
-export function formatDateToStatus(dateString: string) {
+export function formateDateWithLabel(dateString: string) {
   const inputDate = new Date(dateString);
   const today = new Date();
   const yesterday = new Date();
   yesterday.setDate(yesterday.getDate() - 1);
 
-  // Reset time to 00:00:00 to compare dates only
   const inputDateOnly = new Date(
     inputDate.getFullYear(),
     inputDate.getMonth(),
@@ -107,8 +106,41 @@ export function formatDateToStatus(dateString: string) {
   } else if (inputDateOnly.getTime() === yesterdayOnly.getTime()) {
     label = "Yesterday";
   } else {
-    return inputDate.toLocaleDateString();
+    label = inputDate.toLocaleDateString();
   }
+  return label;
+}
+export function formatDateToStatus(dateString: string) {
+  const inputDate = new Date(dateString);
+  const today = new Date();
+  const yesterday = new Date();
+  yesterday.setDate(yesterday.getDate() - 1);
+
+  const inputDateOnly = new Date(
+    inputDate.getFullYear(),
+    inputDate.getMonth(),
+    inputDate.getDate(),
+  );
+  const todayOnly = new Date(
+    today.getFullYear(),
+    today.getMonth(),
+    today.getDate(),
+  );
+  const yesterdayOnly = new Date(
+    yesterday.getFullYear(),
+    yesterday.getMonth(),
+    yesterday.getDate(),
+  );
+
+  let label;
+  if (inputDateOnly.getTime() === todayOnly.getTime()) {
+    label = "Today";
+  } else if (inputDateOnly.getTime() === yesterdayOnly.getTime()) {
+    label = "Yesterday";
+  } else {
+    label = inputDate.toLocaleDateString();
+  }
+  return label;
 
   // Format time: 6:06 AM (no seconds, with AM/PM)
   const timeStr = inputDate.toLocaleTimeString("en-US", {

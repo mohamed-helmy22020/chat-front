@@ -223,6 +223,12 @@ const ConversationMessages = () => {
       isMine={message.from === user?._id}
       message={message}
       otherSide={otherSide!}
+      isNewDay={
+        index === 0 ||
+        new Date(message.createdAt).getDay() -
+          new Date(currentConversationMessages[index - 1].createdAt).getDay() >
+          0
+      }
     />
   ));
 
