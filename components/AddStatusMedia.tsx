@@ -1,6 +1,7 @@
 import {
   allowedPictureTypes,
   allowedVideoTypes,
+  convertErrors,
   fetchWithErrorHandling,
 } from "@/lib/utils";
 import { useStatusStore } from "@/store/statusStore";
@@ -23,6 +24,7 @@ type Props = {
   setSelectedFile: React.Dispatch<React.SetStateAction<File | null>>;
 };
 const AddStatusMedia = ({ setShowAddMedia, setSelectedFile, file }: Props) => {
+  const tError = useTranslations("Errors");
   const t = useTranslations("Status.AddNewStatus");
   const locale = useLocale();
   const dir = getLangDir(locale);
@@ -57,7 +59,7 @@ const AddStatusMedia = ({ setShowAddMedia, setSelectedFile, file }: Props) => {
       toast.success(t("StatusAddedSuccess"));
     } catch (error: any) {
       console.log(error);
-      toast.error(error.msg);
+      toast.error(tError(convertErrors(error.msg)));
     }
     setIsSending(false);
   };

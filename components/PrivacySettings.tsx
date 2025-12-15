@@ -1,10 +1,12 @@
 import { fetchWithErrorHandling, objShallowEqual } from "@/lib/utils";
 import { useUserStore } from "@/store/userStore";
+import clsx from "clsx";
 import { Loader2 } from "lucide-react";
 import { motion } from "motion/react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import { FaArrowLeft } from "react-icons/fa6";
+import { getLangDir } from "rtl-detect";
 import { useShallow } from "zustand/react/shallow";
 import { SettingsItem } from "./Settings";
 import { Button } from "./ui/button";
@@ -15,6 +17,8 @@ type Props = {
 const PrivacySettings = ({
   setCurrentSettings: setCurrentSettingsPage,
 }: Props) => {
+  const locale = useLocale();
+  const dir = getLangDir(locale);
   const t = useTranslations("Settings");
   const [isDataChanged, setIsDataChanged] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -70,7 +74,7 @@ const PrivacySettings = ({
   };
   return (
     <motion.div
-      initial={{ x: 400 }}
+      initial={dir === "ltr" ? { x: 400 } : { x: -400 }}
       animate={{ x: 0 }}
       transition={{ type: "tween", duration: 0.2, ease: "easeOut" }}
     >
@@ -79,7 +83,14 @@ const PrivacySettings = ({
           onClick={() => setCurrentSettingsPage(undefined)}
           className="cursor-pointer pe-2"
         >
-          <FaArrowLeft className="transition hover:-translate-x-1" />
+          <FaArrowLeft
+            className={clsx(
+              "transition",
+              dir === "ltr"
+                ? "hover:-translate-x-1"
+                : "rotate-180 hover:translate-x-1",
+            )}
+          />
         </button>
         <p>{t("Privacy")}</p>
       </div>

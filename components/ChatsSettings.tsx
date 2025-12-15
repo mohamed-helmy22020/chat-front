@@ -1,11 +1,13 @@
 import { Locale } from "@/i18n/config";
 import { setUserLocale } from "@/src/services/locale";
 import { useLocalStorage } from "@uidotdev/usehooks";
+import clsx from "clsx";
 import { motion } from "motion/react";
 import { useLocale, useTranslations } from "next-intl";
 import { useTheme } from "next-themes";
 import { useState, useTransition } from "react";
 import { FaArrowLeft } from "react-icons/fa6";
+import { getLangDir } from "rtl-detect";
 import { SettingsItem } from "./Settings";
 
 type Props = {
@@ -17,6 +19,7 @@ const ChatsSettings = ({
   const t = useTranslations("Settings");
   const [enterSend, saveEnterSend] = useLocalStorage("enterSend", "Enable");
   const locale = useLocale();
+  const dir = getLangDir(locale);
   const startTransition = useTransition()[1];
 
   const { setTheme, theme } = useTheme();
@@ -57,8 +60,8 @@ const ChatsSettings = ({
   };
   return (
     <motion.div
-      initial={{ opacity: 0, x: 100 }}
-      animate={{ opacity: 1, x: 0 }}
+      initial={dir === "ltr" ? { x: 400 } : { x: -400 }}
+      animate={{ x: 0 }}
       transition={{ type: "tween", duration: 0.2, ease: "easeOut" }}
     >
       <div className="flex items-center p-5 select-none">
@@ -66,7 +69,14 @@ const ChatsSettings = ({
           onClick={() => setCurrentSettingsPage(undefined)}
           className="cursor-pointer pe-2"
         >
-          <FaArrowLeft className="transition hover:-translate-x-1" />
+          <FaArrowLeft
+            className={clsx(
+              "transition",
+              dir === "ltr"
+                ? "hover:-translate-x-1"
+                : "rotate-180 hover:translate-x-1",
+            )}
+          />
         </button>
         <p>{t("Chats")}</p>
       </div>

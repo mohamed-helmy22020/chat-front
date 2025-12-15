@@ -92,19 +92,17 @@ const ConversationFooter = () => {
     const isAllowedVideo = allowedVideoTypes.includes(type);
 
     if (!isAllowedImage && !isAllowedVideo) {
-      toast.error(
-        "Unsupported file type. Please select a JPEG, PNG, GIF, MP4, MOV, AVI, MKV, or WebM file.",
-      );
+      toast.error(t("InvalidFileType"));
       return;
     }
 
     if (isAllowedImage && size > MAX_PHOTO_SIZE) {
-      toast.error("Image must be under 5 MB.");
+      toast.error(t("MaxPhotoSizeError"));
       return;
     }
 
     if (isAllowedVideo && size > MAX_VIDEO_SIZE) {
-      toast.error("Video must be under 100 MB.");
+      toast.error(t("MaxVideoSizeError"));
       return;
     }
 

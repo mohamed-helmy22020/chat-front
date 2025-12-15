@@ -1,9 +1,11 @@
 import { getNotificationsPermission } from "@/lib/utils";
 import { useSettingsStore } from "@/store/settingsStore";
+import clsx from "clsx";
 import { motion } from "motion/react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { useEffect, useRef } from "react";
 import { FaArrowLeft } from "react-icons/fa6";
+import { getLangDir } from "rtl-detect";
 import { useShallow } from "zustand/react/shallow";
 import { SettingsItem } from "./Settings";
 
@@ -12,6 +14,8 @@ type Props = {
 };
 
 const NotificationsSettings = ({ setCurrentSettings }: Props) => {
+  const locale = useLocale();
+  const dir = getLangDir(locale);
   const t = useTranslations("Settings");
   const initialized = useRef(false);
   const { changeNotificationsSettings, notificationsSettings } =
@@ -36,8 +40,8 @@ const NotificationsSettings = ({ setCurrentSettings }: Props) => {
 
   return (
     <motion.div
-      initial={{ opacity: 0, x: 100 }}
-      animate={{ opacity: 1, x: 0 }}
+      initial={dir === "ltr" ? { x: 400 } : { x: -400 }}
+      animate={{ x: 0 }}
       transition={{ type: "tween", duration: 0.2, ease: "easeOut" }}
     >
       <div className="flex items-center p-5 select-none">
@@ -45,7 +49,14 @@ const NotificationsSettings = ({ setCurrentSettings }: Props) => {
           onClick={() => setCurrentSettings(undefined)}
           className="cursor-pointer pe-2"
         >
-          <FaArrowLeft className="transition hover:-translate-x-1" />
+          <FaArrowLeft
+            className={clsx(
+              "transition",
+              dir === "ltr"
+                ? "hover:-translate-x-1"
+                : "rotate-180 hover:translate-x-1",
+            )}
+          />
         </button>
         <p>{t("Notifications")}</p>
       </div>

@@ -1,4 +1,6 @@
 import { motion } from "motion/react";
+import { useLocale } from "next-intl";
+import { getLangDir } from "rtl-detect";
 
 type Props = {
   title: string;
@@ -17,13 +19,17 @@ const SettingsCard = ({
   onClick,
   animationDelay = 0.1,
 }: Props) => {
+  const locale = useLocale();
+  const dir = getLangDir(locale);
   return (
     <div
       className="flex-1 overflow-x-hidden overflow-y-auto p-2 pt-0"
       style={{ color: color }}
     >
       <motion.button
-        initial={{ opacity: 0, x: 100 }}
+        initial={
+          dir === "ltr" ? { opacity: 0, x: 100 } : { opacity: 0, x: -100 }
+        }
         animate={{ opacity: 1, x: 0 }}
         transition={{ type: "tween", delay: animationDelay }}
         onClick={onClick}

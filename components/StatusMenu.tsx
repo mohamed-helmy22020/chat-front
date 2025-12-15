@@ -1,4 +1,5 @@
 import { deleteStatus as deleteStatusAction } from "@/lib/actions/user.actions";
+import { convertErrors } from "@/lib/utils";
 import { useStatusStore } from "@/store/statusStore";
 import { useUserStore } from "@/store/userStore";
 import { useTranslations } from "next-intl";
@@ -15,6 +16,7 @@ import {
 } from "./ui/dropdown-menu";
 
 const StatusMenu = () => {
+  const tError = useTranslations("Errors");
   const t = useTranslations("Status.Overlay");
 
   const userId = useUserStore((state) => state.user?._id);
@@ -44,7 +46,7 @@ const StatusMenu = () => {
       toast.success(t("StatusDeletedSuccess"));
     } catch (error: any) {
       console.log(error);
-      toast.error(error.message);
+      toast.error(tError(convertErrors(error.message)));
     }
   };
   return (

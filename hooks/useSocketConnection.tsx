@@ -1,4 +1,4 @@
-import { showNotification } from "@/lib/utils";
+import { convertErrors, showNotification } from "@/lib/utils";
 import { chatSocket } from "@/src/socket";
 import { useCallStore } from "@/store/callStore";
 import { useChatStore } from "@/store/chatStore";
@@ -11,6 +11,7 @@ import { toast } from "sonner";
 import { useShallow } from "zustand/react/shallow";
 
 const useSocketConnection = () => {
+  const tError = useTranslations("Errors");
   const t = useTranslations("SocketConnection");
   const { user, changeFriendsOnlineStatus } = useUserStore(
     useShallow((state) => ({
@@ -82,7 +83,7 @@ const useSocketConnection = () => {
       changeIsConnected(false);
     };
     const onErrors = (error: any) => {
-      toast.error(error);
+      toast.error(tError(convertErrors(error)));
     };
 
     const onIncomingCall = (data: {
@@ -290,6 +291,7 @@ const useSocketConnection = () => {
     notifcationsSettings,
     t,
     deleteMessage,
+    tError,
   ]);
 };
 

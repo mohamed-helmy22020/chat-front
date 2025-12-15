@@ -173,7 +173,7 @@ const ConversationMessages = () => {
     const handleScroll = () => {
       oldScrollHeight.current = container.scrollHeight;
       oldScrollTop.current = container.scrollTop;
-      if (container.scrollTop <= 0 && hasMore && !isGettingMessages) {
+      if (container.scrollTop <= 400 && hasMore && !isGettingMessages) {
         prevScrollHeightRef.current = container.scrollHeight;
         isPrependingRef.current = true;
 

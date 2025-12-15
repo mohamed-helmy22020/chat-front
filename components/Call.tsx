@@ -14,6 +14,7 @@ import CallingFooter from "./CallingFooter";
 import IncomingCallFooter from "./IncomingCallFooter";
 
 const Call = () => {
+  const tError = useTranslations("Errors");
   const t = useTranslations("Chat.Conversation.Call");
   const userId = useUserStore((state) => state.user?._id);
   const initialized = useRef(false);
@@ -61,7 +62,7 @@ const Call = () => {
           if (data.success) {
             changeCallId(data.callId);
           } else {
-            toast.error(data.error);
+            toast.error(tError(data.error as string));
             endCall();
           }
         },
@@ -69,7 +70,7 @@ const Call = () => {
     } catch (error) {
       console.log(error);
     }
-  }, [callee, isIncomingCall, changeCallId, callType, endCall]);
+  }, [callee, isIncomingCall, changeCallId, callType, endCall, tError]);
 
   useEffect(() => {
     const audioElement = audioRef.current;

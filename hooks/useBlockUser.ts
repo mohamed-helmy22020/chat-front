@@ -32,7 +32,7 @@ const useBlockUser = () => {
           closeButton: true,
         };
       },
-      error: "Error",
+      error: t("Error"),
     });
   };
   return blockUser;

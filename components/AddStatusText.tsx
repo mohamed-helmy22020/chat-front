@@ -1,5 +1,5 @@
 import { addTextStatus } from "@/lib/actions/user.actions";
-import { getFontSizeForText, isTextExceeded } from "@/lib/utils";
+import { convertErrors, getFontSizeForText, isTextExceeded } from "@/lib/utils";
 import { useStatusStore } from "@/store/statusStore";
 import clsx from "clsx";
 import { Loader2, X } from "lucide-react";
@@ -16,6 +16,7 @@ type Props = {
   setShowAddText: React.Dispatch<React.SetStateAction<boolean>>;
 };
 const AddStatusText = ({ setShowAddText }: Props) => {
+  const tError = useTranslations("Errors");
   const t = useTranslations("Status.AddNewStatus");
   const locale = useLocale();
   const dir = getLangDir(locale);
@@ -73,7 +74,7 @@ const AddStatusText = ({ setShowAddText }: Props) => {
     const addTextStatusRes = await addTextStatus(text);
     setIsSending(false);
     if (!addTextStatusRes.success) {
-      toast.error(addTextStatusRes.msg);
+      toast.error(tError(convertErrors(addTextStatusRes.msg)));
       return;
     }
     setShowAddText(false);

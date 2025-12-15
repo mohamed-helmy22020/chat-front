@@ -64,7 +64,8 @@ const ConversationHeader = () => {
       });
       call("voice", { _id, name, userProfileImage });
     } catch (error: any) {
-      toast.error(error.message);
+      console.log(error);
+      toast.error(t("AllowMicrophoneError"));
     }
   };
   const handelVedioCall = async () => {
@@ -91,7 +92,8 @@ const ConversationHeader = () => {
       });
       call("video", { _id, name, userProfileImage });
     } catch (error: any) {
-      toast.error(error.message);
+      console.log(error);
+      toast.error(t("AllowCameraAndMicrophoneError"));
     }
   };
   const isOnlineElement =

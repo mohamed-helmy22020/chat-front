@@ -74,7 +74,10 @@
         "AllowCamera": "Please allow camera access in your browser settings.",
         "NoAnswer": "No answer",
         "ErrorWhenConnecting": "Error happened when connecting"
-      }
+      },
+      "InvalidFileType": "Unsupported file type. Please select a JPEG, PNG, GIF, MP4, MOV, AVI, MKV, or WebM file.",
+      "MaxPhotoSizeError": "Image must be under 5 MB.",
+      "MaxVideoSizeError": "Video must be under 100 MB."
     }
   },
   "Status": {
@@ -203,7 +206,8 @@
       "Unblocked": "Unblocked",
       "UnblockUser": "Unblock user",
       "Blocking": "Blocking...",
-      "UserIsBlocked": "User is blocked."
+      "UserIsBlocked": "User is blocked.",
+      "Error": "Error"
     },
     "RequestsMenu": {
       "AcceptFriendRequest": "Accept friend request",
@@ -273,43 +277,24 @@
     "SendVerificationCodeFailed": "Failed to send verification code",
     "SendResetCodeSuccess": "Reset password code sent to your email",
     "PasswordResetSuccessfully": "Password reset successfully",
-    "NoCourseWithId": "No course with this id",
-    "NoLectureWithId": "No lecture with this id",
-    "NoNoteWithId": "No note with this id",
-    "ChangeOnlyYourCourses": "You can change only your courses",
-    "ProvideValidCourseId": "Please provide valid course id",
-    "ProvideValidLectureId": "Please provide valid lecture id",
-    "ProvideValidNoteId": "Please provide valid note id",
-    "CourseNotFound": "Course not found",
-    "InstructorNotFound": "Instructor not found",
-    "CoursePictureIsRequired": "Course picture is required",
     "MaxPhotoSize": "File size must be less than 5MB.",
     "PictureSupportedFormats": "Only JPEG and PNG files are allowed.",
     "Required": "Required",
-    "CourseViewIsRequired": "courseOverview is required",
     "MaxVideoSize": "File size must be less than 100MB.",
     "VideoSupportedFormats": "Only videos files are allowed.",
-    "AlreadyBought": "You've already bought this course",
-    "CouponExpired": "This is coupon is expired",
-    "CouponReachedLimit": "This coupon has reached the users limit",
     "EmailIsUsed": "This email is used",
     "EmailAlreadyVerified": "Email is already verified",
     "InvalidVerificationCode": "Invalid verification code",
-    "CouponAtLeastChars": "Coupon must contain at least 4 characters",
-    "DiscountPercentageShouldBeNumber": "Discount Percentage should be number",
-    "DiscountPercentageRange": "Discount Percentage should be between 1 and 100",
-    "UserLimitShouldBeNumber": "User Limit should be number",
-    "UserLimitNotZero": "User Limit cannot be 0",
-    "DateIsNotValid": "Date is not valid.",
-    "ExpiryDateCannotBeInPast": "Expiry date cannot be in past",
-    "LecturePictureIsRequired": "Lecture picture is required",
-    "LectureVideoIsRequired": "Lecture video is required",
     "InvalidEmail": "Invalid email",
     "ShortPassword": "Password must contain at least 10 characters",
-    "OnlyOneNoteForSameVideoSeconds": "You can add only one note for the same video second",
-    "EditOnlyYourNotes": "You can only edit your notes",
-    "DeleteOnlyYourNotes": "You can only delete your notes",
-    "NoteCannotBeEmpty": "Note Cannot Be Empty",
-    "NolectureWithId": "No lecture with this id"
+    "AddYourselfFriendError": "Can't add yourself as a friend",
+    "StatusContentRequired": "Content or media is required",
+    "ErrorUploadingMedia": "Error uploading media",
+    "StatusNotFound": "Status not found",
+    "MessageContentRequired": "Message text or media is required.",
+    "InvalidCallType": "Invalid call type",
+    "UserNotOnline": "User is not online",
+    "NoUserWithId": "No user with this id",
+    "CantCallUser": "Can't call this user"
   }
 }

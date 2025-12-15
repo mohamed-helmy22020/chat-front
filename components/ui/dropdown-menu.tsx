@@ -5,11 +5,21 @@ import { CheckIcon, ChevronRightIcon, CircleIcon } from "lucide-react";
 import * as React from "react";
 
 import { cn } from "@/lib/utils";
+import { useLocale } from "next-intl";
+import { getLangDir } from "rtl-detect";
 
 function DropdownMenu({
   ...props
 }: React.ComponentProps<typeof DropdownMenuPrimitive.Root>) {
-  return <DropdownMenuPrimitive.Root data-slot="dropdown-menu" {...props} />;
+  const locale = useLocale();
+  const dir = getLangDir(locale);
+  return (
+    <DropdownMenuPrimitive.Root
+      dir={dir}
+      data-slot="dropdown-menu"
+      {...props}
+    />
+  );
 }
 
 function DropdownMenuPortal({
