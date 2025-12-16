@@ -44,6 +44,7 @@ const MessageMenu = ({ message }: Props) => {
     handleDeleteMessage,
     handleReact,
     handleForwardMessage,
+    handleReplyMessage,
   } = useMessageMenu(message);
   return (
     <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
@@ -65,7 +66,7 @@ const MessageMenu = ({ message }: Props) => {
           <IoCopy /> {t("Copy")}
         </DropdownMenuItem>
         <DropdownMenuSeparator />
-        <DropdownMenuItem>
+        <DropdownMenuItem onClick={handleReplyMessage}>
           <FaReply /> {t("Reply")}
         </DropdownMenuItem>
         <DropdownMenuItem>

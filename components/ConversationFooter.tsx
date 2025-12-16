@@ -13,7 +13,10 @@ import EmojiPicker, { Theme } from "emoji-picker-react";
 import { MouseDownEvent } from "emoji-picker-react/dist/config/config";
 import { useTranslations } from "next-intl";
 import { useTheme } from "next-themes";
-import { useEffect, useRef, useState } from "react";
+import Image from "next/image";
+import { memo, useEffect, useRef, useState } from "react";
+import { CgClose } from "react-icons/cg";
+import { FaImage, FaVideo } from "react-icons/fa6";
 import { LuPaperclip, LuSend, LuSmile } from "react-icons/lu";
 import { toast } from "sonner";
 import { useShallow } from "zustand/react/shallow";
@@ -42,6 +45,8 @@ const ConversationFooter = () => {
     updateMessage,
     changeLastMessage,
     deleteMessage,
+    replyMessage,
+    changeReplyMessage,
   } = useChatStore(
     useShallow((state) => ({
       currentConversation: state.currentConversation,
@@ -49,6 +54,8 @@ const ConversationFooter = () => {
       updateMessage: state.updateMessage,
       changeLastMessage: state.changeLastMessage,
       deleteMessage: state.deleteMessage,
+      replyMessage: state.replyMessage,
+      changeReplyMessage: state.changeReplyMessage,
     })),
   );
   const otherSide = currentConversation?.participants.find(
@@ -126,6 +133,7 @@ const ConversationFooter = () => {
       text: messageText.trim(),
       seen: false,
       reacts: [],
+      replyMessage: replyMessage!,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
       type: "pending",
@@ -135,11 +143,10 @@ const ConversationFooter = () => {
     addMessage(newMessage, currentConversation!);
 
     changeLastMessage(currentConversation!, newMessage);
+    changeReplyMessage(null);
     chatSocket.emit(
       "sendPrivateMessage",
-      to,
-      messageText.trim(),
-      undefined,
+      { to, text: messageText.trim(), replyMessage: replyMessage?.id },
       (res: ReceiveMessageType) => {
         if (res.success) {
           updateMessage(id, res.message);
@@ -182,6 +189,9 @@ const ConversationFooter = () => {
         />
       )}
       <div className="border-t border-slate-200 bg-site-foreground p-3 dark:border-slate-700">
+        {replyMessage && (
+          <MessageReply replyMessage={replyMessage} otherSide={otherSide!} />
+        )}
         <div className="flex items-center">
           <input
             type="file"
@@ -250,5 +260,71 @@ const ConversationFooter = () => {
     </>
   );
 };
+
+const MessageReply = memo(
+  ({
+    replyMessage,
+    otherSide,
+  }: {
+    replyMessage: MessageType;
+    otherSide: participant;
+  }) => {
+    const { changeReplyMessage } = useChatStore(
+      useShallow((state) => ({
+        changeReplyMessage: state.changeReplyMessage,
+      })),
+    );
+    return (
+      <div className="relative z-40 mb-1 flex h-16 w-full items-center gap-1 overflow-hidden rounded-sm bg-site-background ps-3 select-none">
+        <div className="absolute start-0 top-0 h-full w-1 bg-mainColor-600"></div>
+        <div className="flex h-full flex-1 flex-col justify-between py-2">
+          <p className="text-md truncate font-bold text-mainColor-500">
+            {otherSide._id === replyMessage.from ? otherSide.name : "You"}
+          </p>
+          <p className="flex items-center gap-2 truncate text-sm text-slate-500 dark:text-slate-400">
+            {replyMessage.mediaType === "image" ? (
+              <FaImage size={15} />
+            ) : replyMessage.mediaType === "video" ? (
+              <FaVideo size={15} />
+            ) : null}
+            {replyMessage.text ? replyMessage.text : replyMessage.mediaType}
+          </p>
+        </div>
+        {replyMessage.mediaType === "image" && replyMessage.mediaUrl && (
+          <div className="relative flex h-16 w-1/3 max-w-16 items-center justify-center">
+            <Image
+              src={replyMessage.mediaUrl}
+              fill
+              objectFit="cover"
+              alt="fs"
+            />
+          </div>
+        )}
+        {replyMessage.mediaType === "video" && replyMessage.mediaUrl && (
+          <div className="relative flex h-16 w-1/3 max-w-16 items-center justify-center">
+            <video
+              src={replyMessage.mediaUrl}
+              className="absolute object-cover"
+              muted
+              autoPlay={false}
+              controlsList="nodownload"
+              preload="metadata"
+            />
+          </div>
+        )}
+        <div className="flex h-full items-start justify-center">
+          <Button
+            variant="ghostFull"
+            className="cursor-pointer !p-1"
+            onClick={() => changeReplyMessage(null)}
+          >
+            <CgClose />
+          </Button>
+        </div>
+      </div>
+    );
+  },
+);
+MessageReply.displayName = "MessageReply";
 
 export default ConversationFooter;

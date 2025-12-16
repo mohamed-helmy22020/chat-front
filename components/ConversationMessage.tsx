@@ -12,6 +12,8 @@ import {
 import { BsFillEmojiSurpriseFill as WowEmoji } from "react-icons/bs";
 import { FaAngry as AngryEmoji, FaPlay } from "react-icons/fa";
 import {
+  FaImage,
+  FaVideo,
   FaFaceLaughBeam as LaughEmoji,
   FaFaceSadTear as SadEmoji,
 } from "react-icons/fa6";
@@ -38,6 +40,7 @@ const ConversationMessage = ({
 }: Props) => {
   const isMobile = isMobileDevice();
   const reactsElements: React.JSX.Element[] = [];
+  const changeReplyMessage = useChatStore((state) => state.changeReplyMessage);
   [...message.reacts]
     .sort(
       (a, b) =>
@@ -81,6 +84,7 @@ const ConversationMessage = ({
         {isNewDay && <MessageDateSeparator date={message.createdAt} />}
         <MessageContextMenu message={message}>
           <div
+            onDoubleClick={() => changeReplyMessage(message)}
             className={clsx(
               "message mb-[1px] flex flex-row-reverse items-center justify-start break-words break-all",
               isFirstMessage && "mt-3",
@@ -98,8 +102,15 @@ const ConversationMessage = ({
                 message.reacts && message.reacts.length > 0 && "mb-[22px]",
                 message.mediaUrl && "max-w-[240px]",
               )}
+              onDoubleClick={(e) => e.stopPropagation()}
             >
               <div className="self rounded-sm bg-mainColor-900 px-2 py-2 text-white shadow-sm">
+                {message.replyMessage && (
+                  <MessageReply
+                    replyMessage={message.replyMessage}
+                    otherSide={otherSide}
+                  />
+                )}
                 {message.mediaType === "image" && message.mediaUrl && (
                   <MessageImg message={message} />
                 )}
@@ -150,6 +161,7 @@ const ConversationMessage = ({
             "message mb-[1px] flex items-center break-words break-all",
             isFirstMessage && "mt-3",
           )}
+          onDoubleClick={() => changeReplyMessage(message)}
         >
           {isFirstMessage ? (
             <motion.div
@@ -177,8 +189,15 @@ const ConversationMessage = ({
               message.reacts && message.reacts.length > 0 && "mb-[22px]",
               message.mediaUrl && "max-w-[240px]",
             )}
+            onDoubleClick={(e) => e.stopPropagation()}
           >
             <div className="rounded-sm bg-site-foreground px-2 py-2 shadow-sm dark:bg-slate-600">
+              {message.replyMessage && (
+                <MessageReply
+                  replyMessage={message.replyMessage}
+                  otherSide={otherSide}
+                />
+              )}
               {message.mediaType === "image" && message.mediaUrl && (
                 <MessageImg message={message} />
               )}
@@ -214,6 +233,59 @@ const ConversationMessage = ({
     </>
   );
 };
+
+const MessageReply = memo(
+  ({
+    replyMessage,
+    otherSide,
+  }: {
+    replyMessage: ReplyMessage;
+    otherSide: participant;
+  }) => {
+    console.log(replyMessage);
+    return (
+      <div className="relative mb-1 flex h-16 min-w-48 items-center gap-1 overflow-hidden rounded-sm ps-3 select-none">
+        <div className="absolute start-0 top-0 h-full w-1 bg-mainColor-600"></div>
+        <div className="flex h-full w-2/3 flex-col justify-between py-2">
+          <p className="text-md truncate font-bold text-mainColor-500">
+            {otherSide._id === replyMessage.from ? otherSide.name : "You"}
+          </p>
+          <p className="flex items-center gap-2 truncate text-sm text-slate-500 dark:text-slate-400">
+            {replyMessage.mediaType === "image" ? (
+              <FaImage size={15} />
+            ) : replyMessage.mediaType === "video" ? (
+              <FaVideo size={15} />
+            ) : null}
+            {replyMessage.text ? replyMessage.text : replyMessage.mediaType}
+          </p>
+        </div>
+        {replyMessage.mediaType === "image" && replyMessage.mediaUrl && (
+          <div className="relative flex h-16 w-1/3 items-center justify-center">
+            <Image
+              src={replyMessage.mediaUrl}
+              fill
+              objectFit="cover"
+              alt="fs"
+            />
+          </div>
+        )}
+        {replyMessage.mediaType === "video" && replyMessage.mediaUrl && (
+          <div className="relative flex h-16 w-1/3 items-center justify-center">
+            <video
+              src={replyMessage.mediaUrl}
+              className="absolute object-cover"
+              muted
+              autoPlay={false}
+              controlsList="nodownload"
+              preload="metadata"
+            />
+          </div>
+        )}
+      </div>
+    );
+  },
+);
+MessageReply.displayName = "MessageReply";
 
 const MessageImg = memo(({ message }: { message: MessageType }) => {
   const changeCurrentSelectedMediaMessage = useChatStore(

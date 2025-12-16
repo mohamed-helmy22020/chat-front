@@ -18,6 +18,7 @@ type State = {
   isConnected: boolean;
   isForwardingMessage: boolean;
   forwardMessage: MessageType | null;
+  replyMessage: MessageType | null;
 };
 
 const initialState: State = {
@@ -30,6 +31,7 @@ const initialState: State = {
   isConnected: false,
   isForwardingMessage: false,
   forwardMessage: null,
+  replyMessage: null,
 };
 
 type Actions = {
@@ -58,6 +60,7 @@ type Actions = {
     conversation: ConversationType,
     lastMessage: MessageType,
   ) => void;
+  changeReplyMessage: (message: MessageType | null) => void;
   resetChats: () => void;
 };
 
@@ -91,6 +94,7 @@ export const useChatStore = create<State & Actions>()(
       changeCurrentConversation: (conversation: ConversationType | null) =>
         set(
           produce((state: State & Actions) => {
+            state.replyMessage = null;
             if (conversation) {
               state.currentConversationMessages =
                 state.allMessages[conversation.id] || [];
@@ -353,6 +357,12 @@ export const useChatStore = create<State & Actions>()(
             );
             if (!user) return;
             state.currentSelectedMediaMessage = { message, user };
+          }),
+        ),
+      changeReplyMessage: (message: MessageType | null) =>
+        set(
+          produce((state: State & Actions) => {
+            state.replyMessage = message;
           }),
         ),
 

@@ -150,6 +150,7 @@ const ConversationMessages = () => {
       const messages: MessageType[] = await getMessages(
         currentConversationMessages[0]?.createdAt,
       );
+      console.log({ messages });
       if (user?.settings.privacy.readReceipts === "Enable") {
         chatSocket.emit("seeAllMessages", otherSide?._id);
       }

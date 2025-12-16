@@ -76,7 +76,17 @@ type MessageType = {
   updatedAt: string;
   mediaUrl?: string;
   mediaType?: "image" | "video" | "";
+  replyMessage?: ReplyMessage;
   type?: "pending" | "received";
+};
+type ReplyMessage = {
+  _id?: string;
+  from: string;
+  text: string;
+  createdAt: string;
+  updatedAt: string;
+  mediaUrl?: string;
+  mediaType?: "image" | "video" | "";
 };
 type ReactsType = Record<
   string,

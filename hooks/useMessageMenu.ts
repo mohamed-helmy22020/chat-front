@@ -17,6 +17,7 @@ const useMessageMenu = (message: MessageType) => {
   const changeForwardMessage = useChatStore(
     (state) => state.changeForwardMessage,
   );
+  const changeReplyMessage = useChatStore((state) => state.changeReplyMessage);
 
   const handleReact = async (e: React.MouseEvent<HTMLDivElement>) => {
     const selectedReact = parseInt(
@@ -83,11 +84,16 @@ const useMessageMenu = (message: MessageType) => {
   const handleForwardMessage = () => {
     changeForwardMessage(message);
   };
+
+  const handleReplyMessage = () => {
+    changeReplyMessage(message);
+  };
   return {
     handleReact,
     handleDeleteMessage,
     handleCopyMessage,
     handleForwardMessage,
+    handleReplyMessage,
   };
 };
 

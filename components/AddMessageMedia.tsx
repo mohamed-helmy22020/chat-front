@@ -37,6 +37,8 @@ const AddMessageMedia = ({
     changeLastMessage,
     updateMessage,
     deleteMessage,
+    replyMessage,
+    changeReplyMessage,
   } = useChatStore(
     useShallow((state) => ({
       currentConversation: state.currentConversation,
@@ -44,6 +46,8 @@ const AddMessageMedia = ({
       updateMessage: state.updateMessage,
       changeLastMessage: state.changeLastMessage,
       deleteMessage: state.deleteMessage,
+      replyMessage: state.replyMessage,
+      changeReplyMessage: state.changeReplyMessage,
     })),
   );
   const [isSending, setIsSending] = useState(false);
@@ -69,13 +73,17 @@ const AddMessageMedia = ({
     addMessage(newMessage, currentConversation!);
 
     changeLastMessage(currentConversation!, newMessage);
+    changeReplyMessage(null);
     chatSocket.emit(
       "sendPrivateMessage",
-      to,
-      messageText.trim(),
       {
-        buffer: file,
-        mimetype: file.type,
+        to,
+        text: messageText.trim(),
+        media: {
+          buffer: file,
+          mimetype: file.type,
+        },
+        replyMessage: replyMessage?.id,
       },
       (res: ReceiveMessageType) => {
         setMessageText("");
