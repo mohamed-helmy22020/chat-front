@@ -15,9 +15,11 @@ import {
   AiTwotoneLike as LikeEmoji,
 } from "react-icons/ai";
 import { BsFillEmojiSurpriseFill as WowEmoji } from "react-icons/bs";
+import { CgMailForward } from "react-icons/cg";
 import { CiStar } from "react-icons/ci";
 import { FaAngry as AngryEmoji } from "react-icons/fa";
 import {
+  FaReply,
   FaFaceLaughBeam as LaughEmoji,
   FaFaceSadTear as SadEmoji,
 } from "react-icons/fa6";
@@ -36,8 +38,12 @@ const MessageContextMenu = ({ children, message }: Props) => {
   const userReact = message.reacts.find(
     (react) => react.user._id === user?._id,
   );
-  const { handleCopyMessage, handleDeleteMessage, handleReact } =
-    useMessageMenu(message);
+  const {
+    handleCopyMessage,
+    handleDeleteMessage,
+    handleReact,
+    handleForwardMessage,
+  } = useMessageMenu(message);
   return (
     <ContextMenu>
       <ContextMenuTrigger asChild>{children}</ContextMenuTrigger>
@@ -47,7 +53,13 @@ const MessageContextMenu = ({ children, message }: Props) => {
         </ContextMenuItem>
         <DropdownMenuSeparator />
         <ContextMenuItem>
+          <FaReply /> {t("Reply")}
+        </ContextMenuItem>
+        <ContextMenuItem>
           <CiStar /> {t("Star")}
+        </ContextMenuItem>
+        <ContextMenuItem onClick={handleForwardMessage}>
+          <CgMailForward /> {t("Forward")}
         </ContextMenuItem>
         {message.from === user?._id && (
           <ContextMenuItem onClick={handleDeleteMessage}>

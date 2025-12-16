@@ -16,6 +16,20 @@ type State = {
   currentConversationMessages: MessageType[];
   allMessages: Record<string, MessageType[]>;
   isConnected: boolean;
+  isForwardingMessage: boolean;
+  forwardMessage: MessageType | null;
+};
+
+const initialState: State = {
+  search: "",
+  conversations: [],
+  currentConversation: null,
+  currentSelectedMediaMessage: null,
+  currentConversationMessages: [],
+  allMessages: {},
+  isConnected: false,
+  isForwardingMessage: false,
+  forwardMessage: null,
 };
 
 type Actions = {
@@ -25,7 +39,7 @@ type Actions = {
   changeCurrentConversation: (conversation: ConversationType | null) => void;
   addConversation: (conversation: ConversationType) => void;
   changeCurrentConversationMessages: (messages: MessageType[]) => void;
-
+  changeForwardMessage: (message: MessageType | null) => void;
   addMoreMessages: (messages: MessageType[]) => void;
   addMessage: (message: MessageType, conversation: ConversationType) => void;
   updateMessage: (messageId: string, message: MessageType) => void;
@@ -47,15 +61,6 @@ type Actions = {
   resetChats: () => void;
 };
 
-const initialState: State = {
-  search: "",
-  conversations: [],
-  currentConversation: null,
-  currentSelectedMediaMessage: null,
-  currentConversationMessages: [],
-  allMessages: {},
-  isConnected: false,
-};
 export const useChatStore = create<State & Actions>()(
   devtools(
     (set) => ({
@@ -115,7 +120,13 @@ export const useChatStore = create<State & Actions>()(
             state.allMessages[state.currentConversation.id] = sortedMessages;
           }),
         ),
-
+      changeForwardMessage: (message: MessageType | null) =>
+        set(
+          produce((state: State & Actions) => {
+            state.forwardMessage = message;
+            state.isForwardingMessage = !!message;
+          }),
+        ),
       addMoreMessages: (messages: MessageType[]) =>
         set(
           produce((state: State & Actions) => {

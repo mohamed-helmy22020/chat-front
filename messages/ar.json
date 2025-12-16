@@ -64,7 +64,9 @@
         "Copy": "نسخ",
         "Star": "تثبيت",
         "Delete": "حذف",
-        "FailedCopyMessage": "فشل في نسخ نص الرسالة"
+        "FailedCopyMessage": "فشل في نسخ نص الرسالة",
+        "Forward": "إلى الأمام",
+        "Reply": "رد"
       },
       "Call": {
         "CallEnded": "انتهت المكالمة",
@@ -77,7 +79,11 @@
       },
       "InvalidFileType": "نوع الملف غير معتمد. \nالرجاء تحديد ملف JPEG، PNG، GIF، MP4، MOV، AVI، MKV، أو WebM.",
       "MaxPhotoSizeError": "يجب أن يكون حجم الصورة أقل من 5 ميغابايت.",
-      "MaxVideoSizeError": "يجب أن يكون حجم الفيديو أقل من 100 ميجابايت."
+      "MaxVideoSizeError": "يجب أن يكون حجم الفيديو أقل من 100 ميجابايت.",
+      "ForwardMenu": {
+        "Search": "البحث بالاسم",
+        "ForwardTo": "إعادة توجيه الرسالة إلى"
+      }
     }
   },
   "Status": {
@@ -246,6 +252,11 @@
       "CancelRequest": "إلغاء الطلب",
       "Cancelled": "تم الإلغاء",
       "Cancelling": "جارٍ الإلغاء..."
+    },
+    "ForwardMenu": {
+      "Error": "خطأ",
+      "ForwardingMessage": "إعادة توجيه الرسالة...",
+      "MessageForwardedSuccess": "تم إعادة توجيه الرسالة بنجاح"
     }
   },
   "SocketConnection": {
@@ -295,6 +306,10 @@
     "StatusNotFound": "لم يتم العثور على الحالة",
     "UserNotOnline": "المستخدم غير متصل",
     "CantCallUser": "لا يمكن الاتصال بهذا المستخدم",
-    "InvalidCallType": "نوع المكالمة غير صالح"
+    "InvalidCallType": "نوع المكالمة غير صالح",
+    "CantForwardMessage": "لا يمكنك إعادة توجيه هذه الرسالة",
+    "CantForwardMessageToUser": "لا يمكنك إعادة توجيه هذه الرسالة إلى هذا المستخدم",
+    "ProvideMessageIdAndPerson": "يرجى تقديم معرف الرسالة والشخص",
+    "NoMessageWithId": "لا توجد رسالة بهذا المعرف"
   }
 }

@@ -15,6 +15,7 @@ import useAddFriend from "@/hooks/useAddFriend";
 import useBlockUser from "@/hooks/useBlockUser";
 import useCancelSentRequest from "@/hooks/useCancelSentRequest";
 import useChatWith from "@/hooks/useChatWith";
+import useForwardMessage from "@/hooks/useForwardMessage";
 import useHandleFriendRequest from "@/hooks/useHandleFriendRequest";
 import useUnBlockUser from "@/hooks/useUnBlockUser";
 import useUnFriendUser from "@/hooks/useUnFriendUser";
@@ -32,12 +33,20 @@ import {
 import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
 type Props = {
   user: RequestUserType;
-  type?: "friends" | "blocks" | "request" | "sent" | "addFriend" | "newChat";
+  type?:
+    | "friends"
+    | "blocks"
+    | "request"
+    | "sent"
+    | "addFriend"
+    | "newChat"
+    | "forward";
 };
 
 const RequestUserCard = ({ user, type = "friends" }: Props) => {
   const { _id, userProfileImage, name, bio } = user;
   const chatWith = useChatWith();
+  const { forwardMessage } = useForwardMessage();
   return (
     <motion.div
       initial={{ opacity: 0, scale: 0.5 }}
@@ -46,6 +55,7 @@ const RequestUserCard = ({ user, type = "friends" }: Props) => {
       role="button"
       onClick={() => {
         if (type === "newChat") chatWith(_id);
+        if (type === "forward") forwardMessage(_id);
       }}
     >
       <div className="relative flex h-9 w-9 items-center justify-center rounded-full border-2 border-white dark:border-slate-800">

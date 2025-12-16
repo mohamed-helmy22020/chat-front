@@ -5,6 +5,7 @@ import { getLangDir } from "rtl-detect";
 import ConversationFooter from "./ConversationFooter";
 import ConversationHeader from "./ConversationHeader";
 import ConversationMessages from "./ConversationMessages";
+import ForwardMenu from "./ForwardMenu";
 import ShowMessageMedia from "./ShowMessageMedia";
 
 const Conversation = () => {
@@ -16,6 +17,7 @@ const Conversation = () => {
   return (
     <>
       {currentSelectedMediaMessage && <ShowMessageMedia />}
+      <ForwardMenu />
       <motion.div
         initial={
           dir === "ltr" ? { opacity: 0, x: 500 } : { opacity: 0, x: -500 }

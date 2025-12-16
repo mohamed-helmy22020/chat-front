@@ -38,6 +38,10 @@ export const convertErrors = (error: string) => {
     "User is not online": "UserNotOnline",
     "No user with this id": "NoUserWithId",
     "Can't call this user": "CantCallUser",
+    "Please provide messageId and the person": "ProvideMessageIdAndPerson",
+    "No message with this id": "NoMessageWithId",
+    "You can't forward this message": "CantForwardMessage",
+    "You can't forward this message to this user": "CantForwardMessageToUser",
   };
   console.log(error, errors[error as keyof typeof errors]);
   return errors[error as keyof typeof errors] || "UnknownError";

@@ -64,7 +64,9 @@
         "Copy": "Copy",
         "Star": "Star",
         "Delete": "Delete",
-        "FailedCopyMessage": "Failed to copy message text"
+        "FailedCopyMessage": "Failed to copy message text",
+        "Forward": "Forward",
+        "Reply": "Reply"
       },
       "Call": {
         "CallEnded": "Call Ended",
@@ -77,7 +79,11 @@
       },
       "InvalidFileType": "Unsupported file type. Please select a JPEG, PNG, GIF, MP4, MOV, AVI, MKV, or WebM file.",
       "MaxPhotoSizeError": "Image must be under 5 MB.",
-      "MaxVideoSizeError": "Video must be under 100 MB."
+      "MaxVideoSizeError": "Video must be under 100 MB.",
+      "ForwardMenu": {
+        "ForwardTo": "Forward message to",
+        "Search": "Search by name"
+      }
     }
   },
   "Status": {
@@ -222,6 +228,11 @@
       "Sending": "Sending...",
       "Sent": "Sent",
       "AddFriend": "Add Friend"
+    },
+    "ForwardMenu": {
+      "ForwardingMessage": "Forwarding message...",
+      "MessageForwardedSuccess": "Message forwarded successfully",
+      "Error": "Error"
     }
   },
   "SocketConnection": {
@@ -295,6 +306,10 @@
     "InvalidCallType": "Invalid call type",
     "UserNotOnline": "User is not online",
     "NoUserWithId": "No user with this id",
-    "CantCallUser": "Can't call this user"
+    "CantCallUser": "Can't call this user",
+    "ProvideMessageIdAndPerson": "Please provide messageId and the person",
+    "NoMessageWithId": "No message with this id",
+    "CantForwardMessage": "You can't forward this message",
+    "CantForwardMessageToUser": "You can't forward this message to this user"
   }
 }

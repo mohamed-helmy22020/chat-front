@@ -591,3 +591,26 @@ export const seeStatus = async (statusId: string) => {
     return { success: false, ...error };
   }
 };
+
+export const forwardMessage = async (messageId: string, to: string) => {
+  const cookieStore = await cookies();
+  const accessToken = cookieStore.get("accessToken")?.value;
+  try {
+    const res = await fetchWithErrorHandling(
+      `/chat/message/forward/${messageId}`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${accessToken}`,
+        },
+        body: JSON.stringify({
+          to,
+        }),
+      },
+    );
+    return res;
+  } catch (error: any) {
+    return { success: false, ...error };
+  }
+};

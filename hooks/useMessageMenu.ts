@@ -14,6 +14,9 @@ const useMessageMenu = (message: MessageType) => {
   const user = useUserStore((state) => state.user);
   const addReaction = useChatStore((state) => state.addReaction);
   const deleteMessage = useChatStore((state) => state.deleteMessage);
+  const changeForwardMessage = useChatStore(
+    (state) => state.changeForwardMessage,
+  );
 
   const handleReact = async (e: React.MouseEvent<HTMLDivElement>) => {
     const selectedReact = parseInt(
@@ -76,10 +79,15 @@ const useMessageMenu = (message: MessageType) => {
       toast.error(t("FailedCopyMessage"));
     }
   };
+
+  const handleForwardMessage = () => {
+    changeForwardMessage(message);
+  };
   return {
     handleReact,
     handleDeleteMessage,
     handleCopyMessage,
+    handleForwardMessage,
   };
 };
 

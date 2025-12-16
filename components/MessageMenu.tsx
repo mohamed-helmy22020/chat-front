@@ -9,9 +9,11 @@ import {
   AiTwotoneLike as LikeEmoji,
 } from "react-icons/ai";
 import { BsFillEmojiSurpriseFill as WowEmoji } from "react-icons/bs";
+import { CgMailForward } from "react-icons/cg";
 import { CiStar } from "react-icons/ci";
 import { FaAngry as AngryEmoji, FaRegSmile } from "react-icons/fa";
 import {
+  FaReply,
   FaFaceLaughBeam as LaughEmoji,
   FaFaceSadTear as SadEmoji,
 } from "react-icons/fa6";
@@ -37,8 +39,12 @@ const MessageMenu = ({ message }: Props) => {
   const userReact = message.reacts.find(
     (react) => react.user._id === user?._id,
   );
-  const { handleCopyMessage, handleDeleteMessage, handleReact } =
-    useMessageMenu(message);
+  const {
+    handleCopyMessage,
+    handleDeleteMessage,
+    handleReact,
+    handleForwardMessage,
+  } = useMessageMenu(message);
   return (
     <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
       <DropdownMenuTrigger asChild>
@@ -60,8 +66,15 @@ const MessageMenu = ({ message }: Props) => {
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem>
+          <FaReply /> {t("Reply")}
+        </DropdownMenuItem>
+        <DropdownMenuItem>
           <CiStar /> {t("Star")}
         </DropdownMenuItem>
+        <DropdownMenuItem onClick={handleForwardMessage}>
+          <CgMailForward /> {t("Forward")}
+        </DropdownMenuItem>
+
         {message.from === user?._id && (
           <DropdownMenuItem onClick={handleDeleteMessage}>
             <MdDeleteForever /> {t("Delete")}
