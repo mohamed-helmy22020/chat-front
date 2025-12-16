@@ -264,7 +264,11 @@
     "Code": "Code",
     "EnterCode": "Enter verification code",
     "PasswordsNotMatch": "Passwords do not match",
-    "Loading": "Loading..."
+    "Loading": "Loading...",
+    "ForgotPasswordTitle": "Forgot Password",
+    "EnterResetCode": "Enter Reset Code",
+    "CodeSent": "Code has been sent",
+    "PasswordChanged": "Password has been changed"
   },
   "Errors": {
     "EmailExist": "Email is already exist",
@@ -310,6 +314,8 @@
     "ProvideMessageIdAndPerson": "Please provide messageId and the person",
     "NoMessageWithId": "No message with this id",
     "CantForwardMessage": "You can't forward this message",
-    "CantForwardMessageToUser": "You can't forward this message to this user"
+    "CantForwardMessageToUser": "You can't forward this message to this user",
+    "ShortCode": "The code is too short",
+    "PleaseProvideEmail": "Please provide email"
   }
 }

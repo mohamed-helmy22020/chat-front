@@ -218,7 +218,11 @@
     "Code": "الرمز",
     "EnterCode": "أدخل رمز التحقق",
     "PasswordsNotMatch": "كلمتا المرور غير متطابقتين",
-    "Loading": "جارٍ التحميل..."
+    "Loading": "جارٍ التحميل...",
+    "CodeSent": "تم إرسال الرمز",
+    "EnterResetCode": "أدخل رمز إعادة الضبط",
+    "ForgotPasswordTitle": "هل نسيت كلمة السر",
+    "PasswordChanged": "تم تغيير كلمة المرور"
   },
   "RequestUserCard": {
     "FriendsMenu": {
@@ -310,6 +314,8 @@
     "CantForwardMessage": "لا يمكنك إعادة توجيه هذه الرسالة",
     "CantForwardMessageToUser": "لا يمكنك إعادة توجيه هذه الرسالة إلى هذا المستخدم",
     "ProvideMessageIdAndPerson": "يرجى تقديم معرف الرسالة والشخص",
-    "NoMessageWithId": "لا توجد رسالة بهذا المعرف"
+    "NoMessageWithId": "لا توجد رسالة بهذا المعرف",
+    "PleaseProvideEmail": "يرجى تقديم البريد الإلكتروني",
+    "ShortCode": "الرمز قصير جدًا"
   }
 }

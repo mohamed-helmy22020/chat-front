@@ -20,7 +20,7 @@ const CustomInput = React.forwardRef<HTMLInputElement, CustomInputType>(
         control={control}
         name={name}
         render={({ field }) => (
-          <div className="form-item min-w-[50%]">
+          <div className="form-item min-w-[50%] flex-1">
             <FormLabel
               htmlFor={name}
               className="block text-sm font-medium text-gray-700 dark:text-gray-300"

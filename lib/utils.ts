@@ -42,6 +42,7 @@ export const convertErrors = (error: string) => {
     "No message with this id": "NoMessageWithId",
     "You can't forward this message": "CantForwardMessage",
     "You can't forward this message to this user": "CantForwardMessageToUser",
+    "Please provide email": "PleaseProvideEmail",
   };
   console.log(error, errors[error as keyof typeof errors]);
   return errors[error as keyof typeof errors] || "UnknownError";
