@@ -49,7 +49,7 @@ A modern, responsive, and real-time chat application built with **Next.js 15**, 
 
 ```bash
 # Clone the repo (if not already)
-git clone https://github.com/your-username/chat-app-front.git
+git clone https://github.com/mohamed-helmy22020/chat-front.git
 cd chat-app-front
 
 # Install dependencies
