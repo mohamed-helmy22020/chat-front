@@ -1,7 +1,8 @@
 {
-  "name": "front",
+  "name": "chat-app-front",
   "version": "0.1.0",
   "private": true,
+  "license": "ISC",
   "scripts": {
     "dev": "next dev --turbopack --experimental-https",
     "build": "next build",

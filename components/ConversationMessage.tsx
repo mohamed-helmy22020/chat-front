@@ -84,7 +84,10 @@ const ConversationMessage = ({
         {isNewDay && <MessageDateSeparator date={message.createdAt} />}
         <MessageContextMenu message={message}>
           <div
-            onDoubleClick={() => changeReplyMessage(message)}
+            onDoubleClick={(e) => {
+              e.preventDefault();
+              changeReplyMessage(message);
+            }}
             className={clsx(
               "message mb-[1px] flex flex-row-reverse items-center justify-start break-words break-all",
               isFirstMessage && "mt-3",
@@ -161,7 +164,10 @@ const ConversationMessage = ({
             "message mb-[1px] flex items-center break-words break-all",
             isFirstMessage && "mt-3",
           )}
-          onDoubleClick={() => changeReplyMessage(message)}
+          onDoubleClick={(e) => {
+            e.preventDefault();
+            changeReplyMessage(message);
+          }}
         >
           {isFirstMessage ? (
             <motion.div
@@ -242,7 +248,6 @@ const MessageReply = memo(
     replyMessage: ReplyMessage;
     otherSide: participant;
   }) => {
-    console.log(replyMessage);
     return (
       <div className="relative mb-1 flex h-16 min-w-48 items-center gap-1 overflow-hidden rounded-sm ps-3 select-none">
         <div className="absolute start-0 top-0 h-full w-1 bg-mainColor-600"></div>

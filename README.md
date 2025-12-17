@@ -1,36 +1,119 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 📬 Chat App – Frontend
 
-## Getting Started
+A modern, responsive, and real-time chat application built with **Next.js 15**, **React 19**, and **Tailwind CSS**. Designed for seamless messaging with support for emojis, rich links, dark mode, and internationalization.
 
-First, run the development server:
+---
+
+## ✨ Features
+
+- **Real-time messaging** via Socket.IO
+- **Responsive UI** for mobile & desktop
+- **Dark/light mode** with `next-themes`
+- **Emoji picker** integration (`emoji-picker-react`)
+- **Auto-link detection** in messages (`linkifyjs` + `linkify-react`)
+- **Form validation** with `react-hook-form` + `zod`
+- **Global state management** using `zustand`
+- **Animations & transitions** powered by `motion` (Framer Motion)
+- **Internationalization (i18n)** with `next-intl`
+- **RTL support** detection (`rtl-detect`)
+- **Reusable UI components** built with Shadcn/ui + Radix UI + Tailwind
+- **Toast notifications** via `sonner`
+- **Lottie animations** for enhanced UX
+
+---
+
+## 🛠️ Tech Stack
+
+| Layer      | Technologies                                                       |
+| ---------- | ------------------------------------------------------------------ |
+| Framework  | Next.js 15 (App Router) + Turbopack (dev)                          |
+| UI         | React 19, Tailwind CSS v4, Radix UI, Lucide React, React Icons     |
+| Styling    | Tailwind CSS, `clsx`, `tailwind-merge`, `class-variance-authority` |
+| State      | Zustand                                                            |
+| Forms      | React Hook Form + Zod + `@hookform/resolvers`                      |
+| Realtime   | `socket.io-client`                                                 |
+| Animations | Framer Motion (`motion`), Lottie React, `tw-animate-css`           |
+| i18n & UX  | `next-intl`, `next-themes`, `rtl-detect`                           |
+| Utils      | `immer`, `@uidotdev/usehooks`                                      |
+
+---
+
+## 🚀 Getting Started
+
+### Prerequisites
+
+- Node.js ≥ v18
+- npm or pnpm (this project uses npm by default)
+
+### Installation
+
+```bash
+# Clone the repo (if not already)
+git clone https://github.com/your-username/chat-app-front.git
+cd chat-app-front
+
+# Install dependencies
+npm install
+```
+
+### Environment Variables
+
+Create a .env.local file in the root directory:
+
+```bash
+NEXT_PUBLIC_BASE_URL=https://localhost:5000/api
+```
+
+To download backend also
+[Chat-App Backend](https://github.com/mohamed-helmy22020/chat-back)
+
+### Development
+
+Run this command
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Runs the app in development mode with Turbopack and HTTPS support.
+Open https://localhost:3000 in your browser.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Build & Production
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+# Build the app
+npm run build
 
-## Learn More
+# Start the production server
+npm run start
+```
 
-To learn more about Next.js, take a look at the following resources:
+## 🌍Internationalization
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Translations are managed via `next-intl`. Add new languages under the `messages/` directory.
+Example:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```bash
+/messages
+  ├── en.json
+  └── ar.json
+```
 
-## Deploy on Vercel
+RTL languages (like Arabic) are auto-detected and handled via `rtl-detect`.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## 🧩 UI Components
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Built with Shadcn/ui on top of Radix UI Primitives for accessibility and Tailwind for styling.
+Common patterns:
+
+- Context menus, tooltips, dialogs
+- Custom select & dropdowns
+- Animated transitions with `motion`
+
+## 📄 License
+
+ISC License
+
+---
+
+Made with ❤️ and ☕

@@ -54,7 +54,6 @@ const ForgotPassword = () => {
         data.code,
         data.password,
       );
-      console.log({ response });
       if (!response.success) {
         throw new Error(response.error.msg);
       }
