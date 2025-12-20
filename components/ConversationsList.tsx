@@ -34,16 +34,18 @@ const ConversationsList = () => {
     .filter((c) => {
       if (c.lastMessage === null) return false;
       const otherSide = c.participants.find((p) => p._id !== userId);
-      if (!otherSide) return false;
+      if ((!otherSide && c.type !== "group") || !c.lastMessage.text)
+        return false;
       return (
-        otherSide.name.toLowerCase().includes(search.toLowerCase()) ||
-        c.lastMessage.text.includes(search.toLowerCase())
+        otherSide?.name.toLowerCase().includes(search.toLowerCase()) ||
+        c.lastMessage.text.includes(search.toLowerCase()) ||
+        c.groupName.includes(search)
       );
     })
     .sort((a, b) => {
       return (
-        new Date(b.lastMessage.createdAt).getTime() -
-        new Date(a.lastMessage.createdAt).getTime()
+        new Date(b.lastMessage?.createdAt || b.updatedAt).getTime() -
+        new Date(a.lastMessage?.createdAt || b.updatedAt).getTime()
       );
     })
     .map((c) => <ConversationItemMemo conversation={c} key={c.id} />);

@@ -52,8 +52,13 @@ type OnTypingRes = {
 type ConversationType = {
   id: string;
   participants: participant[];
-  lastMessage: Omit<MessageType, "conversationId">;
+  lastMessage: Omit<MessageType, "conversationId"> | null;
   isTyping?: boolean;
+  type: "private" | "group";
+  admin: string;
+  groupName: string;
+  desc: string;
+  groupImage: string;
   createdAt: string;
   updatedAt: string;
 };
@@ -67,7 +72,7 @@ type participant = {
 type MessageType = {
   id: string;
   conversationId: string;
-  from: string;
+  from: participant;
   to: string;
   text: string;
   seen: boolean;
@@ -81,7 +86,7 @@ type MessageType = {
 };
 type ReplyMessage = {
   _id?: string;
-  from: string;
+  from: participant;
   text: string;
   createdAt: string;
   updatedAt: string;

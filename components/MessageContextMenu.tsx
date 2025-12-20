@@ -62,7 +62,7 @@ const MessageContextMenu = ({ children, message }: Props) => {
         <ContextMenuItem onClick={handleForwardMessage}>
           <CgMailForward /> {t("Forward")}
         </ContextMenuItem>
-        {message.from === user?._id && (
+        {message.from._id === user?._id && (
           <ContextMenuItem onClick={handleDeleteMessage}>
             <MdDeleteForever /> {t("Delete")}
           </ContextMenuItem>

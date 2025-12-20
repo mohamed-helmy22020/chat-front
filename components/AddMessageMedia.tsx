@@ -59,7 +59,11 @@ const AddMessageMedia = ({
     const newMessage: MessageType = {
       id,
       conversationId: currentConversation!.id,
-      from: user!._id,
+      from: {
+        _id: user!._id,
+        name: user!.name,
+        userProfileImage: user!.userProfileImage,
+      },
       to: to,
       text: messageText.trim(),
       seen: false,
@@ -75,9 +79,14 @@ const AddMessageMedia = ({
     changeLastMessage(currentConversation!, newMessage);
     changeReplyMessage(null);
     chatSocket.emit(
-      "sendPrivateMessage",
+      currentConversation?.type === "group"
+        ? "sendGroupMessage"
+        : "sendPrivateMessage",
       {
-        to,
+        to:
+          currentConversation?.type === "group" ? currentConversation?.id : to,
+        conversationId:
+          currentConversation?.type === "group" ? currentConversation?.id : to,
         text: messageText.trim(),
         media: {
           buffer: file,

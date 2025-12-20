@@ -76,7 +76,7 @@ const MessageMenu = ({ message }: Props) => {
           <CgMailForward /> {t("Forward")}
         </DropdownMenuItem>
 
-        {message.from === user?._id && (
+        {message.from._id === user?._id && (
           <DropdownMenuItem onClick={handleDeleteMessage}>
             <MdDeleteForever /> {t("Delete")}
           </DropdownMenuItem>

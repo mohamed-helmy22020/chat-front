@@ -17,7 +17,9 @@ const useChatWith = (type: "id" | "email" = "id") => {
   const chatWith = async (user: string) => {
     if (type === "id") {
       const existConversation = conversations.find(
-        (c) => c.participants.findIndex((p) => p._id === user) > -1,
+        (c) =>
+          c.participants.findIndex((p) => p._id === user) > -1 &&
+          c.type === "private",
       );
       if (existConversation) {
         changeCurrentConversation(existConversation);

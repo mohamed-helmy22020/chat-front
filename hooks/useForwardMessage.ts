@@ -1,4 +1,7 @@
-import { forwardMessage as forwardMessageAction } from "@/lib/actions/user.actions";
+import {
+  forwardMessageToGroup,
+  forwardMessageToPrivate,
+} from "@/lib/actions/user.actions";
 import { convertErrors } from "@/lib/utils";
 import { useChatStore } from "@/store/chatStore";
 import { useTranslations } from "next-intl";
@@ -22,21 +25,29 @@ const useForwardMessage = () => {
     })),
   );
 
-  const forwardMessage = async (to: string) => {
+  const forwardMessage = async (
+    to: string,
+    type: "private" | "group" = "private",
+  ) => {
     if (!forwardedMessage || !to) return;
 
     const toastId = toast.loading(t("ForwardingMessage"));
-
-    const forwardMessageRes = await forwardMessageAction(
-      forwardedMessage.id,
-      to,
-    );
+    let forwardMessageRes: any;
+    if (type === "private") {
+      forwardMessageRes = await forwardMessageToPrivate(
+        forwardedMessage.id,
+        to,
+      );
+    } else {
+      forwardMessageRes = await forwardMessageToGroup(forwardedMessage.id, to);
+    }
 
     toast.dismiss(toastId);
 
     if (!forwardMessageRes.success) {
       return toast.error(tError(convertErrors(forwardMessageRes.msg)));
     }
+    console.log(forwardMessageRes);
 
     toast.success(t("MessageForwardedSuccess"));
     addMessage(forwardMessageRes.message, forwardMessageRes.conversation);

@@ -14,51 +14,46 @@ import { useShallow } from "zustand/react/shallow";
 import RequestUserCard from "./RequestUserCard";
 import { Input } from "./ui/input";
 
-const ForwardMenu = () => {
+const InviteMenu = () => {
   const t = useTranslations("Chat.Conversation.ForwardMenu");
-  const userId = useUserStore((state) => state.user?._id);
   const [open, setOpen] = useState(false);
+  console.log({ open });
   const [search, setSearch] = useState("");
   const friendsList = useUserStore((state) => state.friendsList);
 
-  const { isForwardingMessage, changeForwardMessage, conversations } =
-    useChatStore(
-      useShallow((state) => ({
-        isForwardingMessage: state.isForwardingMessage,
-        changeForwardMessage: state.changeForwardMessage,
-        conversations: state.conversations,
-      })),
-    );
+  const { isInviting, changeInviteGroup, inviteGroup } = useChatStore(
+    useShallow((state) => ({
+      isInviting: state.isInviting,
+      changeInviteGroup: state.changeInviteGroup,
+      inviteGroup: state.inviteGroup,
+    })),
+  );
+
   useEffect(() => {
-    setOpen(isForwardingMessage);
-  }, [isForwardingMessage]);
+    setOpen(isInviting);
+  }, [isInviting]);
 
-  const conversationsUsers = conversations
-    .filter((c) => c.type === "private")
-    .map((c) => c.participants.find((p) => p._id !== userId));
-
-  const conversationsElement = conversationsUsers
-    .filter((u) => u?.name.includes(search))
-    .map((friend) => (
-      <RequestUserCard key={friend!._id} user={friend!} type="forward" />
-    ));
   const friendsListElements = friendsList
-    .filter((u) => u?.name.includes(search))
+    .filter(
+      (u) =>
+        u?.name.includes(search) &&
+        !inviteGroup?.participants.find((p) => p._id === u._id),
+    )
     .map((friend) => (
-      <RequestUserCard key={friend._id} user={friend} type="forward" />
+      <RequestUserCard key={friend._id} user={friend} type="inviteGroup" />
     ));
   return (
     <Dialog
       open={open}
       onOpenChange={(open) => {
         if (!open) {
-          changeForwardMessage(null);
+          changeInviteGroup(null);
         }
       }}
     >
       <DialogContent className="max-h-[95svh] overflow-auto">
         <DialogHeader>
-          <DialogTitle>{t("ForwardTo")}</DialogTitle>
+          <DialogTitle>{t("InviteUser")}</DialogTitle>
           <DialogDescription asChild>
             <div className="relative">
               <label htmlFor="forward-search">
@@ -78,17 +73,13 @@ const ForwardMenu = () => {
           </DialogDescription>
         </DialogHeader>
         <div className="flex flex-col gap-1">
-          {conversationsElement.length > 0 && (
-            <>
-              <div className="text-gray-400">Recent Chats</div>
-              {conversationsElement}
-            </>
-          )}
-          {friendsListElements.length > 0 && (
+          {friendsListElements.length > 0 ? (
             <>
               <div className="text-gray-400">Friends List</div>
               {friendsListElements}
             </>
+          ) : (
+            "You don't have any friends."
           )}
         </div>
       </DialogContent>
@@ -96,4 +87,4 @@ const ForwardMenu = () => {
   );
 };
 
-export default ForwardMenu;
+export default InviteMenu;

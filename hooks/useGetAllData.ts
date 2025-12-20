@@ -93,7 +93,6 @@ const useGetAllData = () => {
             return data;
           }),
         ]);
-
         // Update state with the results
         changeConversations(getConversationsRes.conversations);
         setFriendsList(getFriendsListRes.friends);

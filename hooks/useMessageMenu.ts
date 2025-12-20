@@ -51,6 +51,7 @@ const useMessageMenu = (message: MessageType) => {
 
     try {
       const addReactionRes = await addReactionAction(message.id, react.react);
+      console.log({ addReactionRes });
       if (!addReactionRes.success) {
         throw new Error("Failed to add reaction");
       }

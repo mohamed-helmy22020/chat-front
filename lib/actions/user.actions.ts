@@ -446,7 +446,7 @@ export const getAllConversations = async () => {
 };
 
 export const getConversationMessages = async (
-  userId: string,
+  conversationId: string,
   before?: string,
   limit?: number,
 ) => {
@@ -456,7 +456,7 @@ export const getConversationMessages = async (
 
   try {
     const res = await fetchWithErrorHandling(
-      `/chat/conversations/messages/${userId}?${query}`,
+      `/chat/conversations/messages/${conversationId}?${query}`,
       {
         method: "GET",
         headers: {
@@ -592,12 +592,15 @@ export const seeStatus = async (statusId: string) => {
   }
 };
 
-export const forwardMessage = async (messageId: string, to: string) => {
+export const forwardMessageToPrivate = async (
+  messageId: string,
+  to: string,
+) => {
   const cookieStore = await cookies();
   const accessToken = cookieStore.get("accessToken")?.value;
   try {
     const res = await fetchWithErrorHandling(
-      `/chat/message/forward/${messageId}`,
+      `/chat/message/forward/${messageId}/private`,
       {
         method: "POST",
         headers: {
@@ -606,6 +609,143 @@ export const forwardMessage = async (messageId: string, to: string) => {
         },
         body: JSON.stringify({
           to,
+        }),
+      },
+    );
+    return res;
+  } catch (error: any) {
+    return { success: false, ...error };
+  }
+};
+
+export const forwardMessageToGroup = async (
+  messageId: string,
+  conversationId: string,
+) => {
+  const cookieStore = await cookies();
+  const accessToken = cookieStore.get("accessToken")?.value;
+  try {
+    const res = await fetchWithErrorHandling(
+      `/chat/message/forward/${messageId}/group`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${accessToken}`,
+        },
+        body: JSON.stringify({
+          conversationId,
+        }),
+      },
+    );
+    return res;
+  } catch (error: any) {
+    return { success: false, ...error };
+  }
+};
+
+export const createGroup = async ({
+  name,
+  desc,
+}: {
+  name: string;
+  desc: string;
+}) => {
+  const cookieStore = await cookies();
+  const accessToken = cookieStore.get("accessToken")?.value;
+  try {
+    const res = await fetchWithErrorHandling(`/chat/group`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`,
+      },
+      body: JSON.stringify({
+        name,
+        desc,
+      }),
+    });
+    return res;
+  } catch (error: any) {
+    return { success: false, ...error };
+  }
+};
+
+export const deleteGroup = async (groupId: string) => {
+  const cookieStore = await cookies();
+  const accessToken = cookieStore.get("accessToken")?.value;
+  try {
+    const res = await fetchWithErrorHandling(`/chat/group/${groupId}`, {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+    return res;
+  } catch (error: any) {
+    return { success: false, ...error };
+  }
+};
+
+export const leaveGroup = async (groupId: string) => {
+  const cookieStore = await cookies();
+  const accessToken = cookieStore.get("accessToken")?.value;
+  try {
+    const res = await fetchWithErrorHandling(`/chat/group/${groupId}/leave`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+    return res;
+  } catch (error: any) {
+    return { success: false, ...error };
+  }
+};
+
+export const addUserToGroup = async (
+  groupId: string,
+  userIdOrEmail: string,
+) => {
+  const cookieStore = await cookies();
+  const accessToken = cookieStore.get("accessToken")?.value;
+  try {
+    const res = await fetchWithErrorHandling(
+      `/chat/group/${groupId}/user/add`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${accessToken}`,
+        },
+        body: JSON.stringify({
+          userIdOrEmail,
+        }),
+      },
+    );
+    return res;
+  } catch (error: any) {
+    return { success: false, ...error };
+  }
+};
+
+export const removeUserFromGroup = async (
+  groupId: string,
+  deletedUserEmail: string,
+) => {
+  const cookieStore = await cookies();
+  const accessToken = cookieStore.get("accessToken")?.value;
+  try {
+    const res = await fetchWithErrorHandling(
+      `/chat/group/${groupId}/user/remove`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${accessToken}`,
+        },
+        body: JSON.stringify({
+          deletedUserEmail,
         }),
       },
     );

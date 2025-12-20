@@ -17,6 +17,7 @@ import useCancelSentRequest from "@/hooks/useCancelSentRequest";
 import useChatWith from "@/hooks/useChatWith";
 import useForwardMessage from "@/hooks/useForwardMessage";
 import useHandleFriendRequest from "@/hooks/useHandleFriendRequest";
+import useInviteGroup from "@/hooks/useInviteGroup";
 import useUnBlockUser from "@/hooks/useUnBlockUser";
 import useUnFriendUser from "@/hooks/useUnFriendUser";
 import { motion } from "motion/react";
@@ -40,13 +41,15 @@ type Props = {
     | "sent"
     | "addFriend"
     | "newChat"
-    | "forward";
+    | "forward"
+    | "inviteGroup";
 };
 
 const RequestUserCard = ({ user, type = "friends" }: Props) => {
   const { _id, userProfileImage, name, bio } = user;
   const chatWith = useChatWith();
   const { forwardMessage } = useForwardMessage();
+  const { inviteToGroup } = useInviteGroup();
   return (
     <motion.div
       initial={{ opacity: 0, scale: 0.5 }}
@@ -56,6 +59,7 @@ const RequestUserCard = ({ user, type = "friends" }: Props) => {
       onClick={() => {
         if (type === "newChat") chatWith(_id);
         if (type === "forward") forwardMessage(_id);
+        if (type === "inviteGroup") inviteToGroup(_id);
       }}
     >
       <div className="relative flex h-9 w-9 items-center justify-center rounded-full border-2 border-white dark:border-slate-800">

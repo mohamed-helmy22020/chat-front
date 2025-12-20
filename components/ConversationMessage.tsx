@@ -1,5 +1,6 @@
 import { isMobileDevice, REACTS } from "@/lib/utils";
 import { useChatStore } from "@/store/chatStore";
+import { useUserStore } from "@/store/userStore";
 import clsx from "clsx";
 import Linkify from "linkify-react";
 import { motion } from "motion/react";
@@ -28,15 +29,15 @@ type Props = {
   message: MessageType;
   isMine: boolean;
   isFirstMessage: boolean;
-  otherSide: participant;
   isNewDay: boolean;
+  type?: "private" | "group";
 };
 const ConversationMessage = ({
   message,
   isMine,
   isFirstMessage,
-  otherSide,
   isNewDay,
+  type = "private",
 }: Props) => {
   const isMobile = isMobileDevice();
   const reactsElements: React.JSX.Element[] = [];
@@ -104,6 +105,8 @@ const ConversationMessage = ({
                 "peer relative max-w-4/5 ps-1",
                 message.reacts && message.reacts.length > 0 && "mb-[22px]",
                 message.mediaUrl && "max-w-[240px]",
+                isFirstMessage &&
+                  "before:absolute before:-end-3 before:border-8 before:border-mainColor-900 before:border-e-transparent before:border-b-transparent",
               )}
               onDoubleClick={(e) => e.stopPropagation()}
             >
@@ -111,7 +114,7 @@ const ConversationMessage = ({
                 {message.replyMessage && (
                   <MessageReply
                     replyMessage={message.replyMessage}
-                    otherSide={otherSide}
+                    isMine={isMine}
                   />
                 )}
                 {message.mediaType === "image" && message.mediaUrl && (
@@ -161,7 +164,7 @@ const ConversationMessage = ({
       <MessageContextMenu message={message}>
         <div
           className={clsx(
-            "message mb-[1px] flex items-center break-words break-all",
+            "message mb-[1px] flex items-center gap-2 break-words break-all",
             isFirstMessage && "mt-3",
           )}
           onDoubleClick={(e) => {
@@ -178,7 +181,7 @@ const ConversationMessage = ({
               <div className="relative flex h-10 w-10 rounded-full border-2 border-white dark:border-slate-800">
                 <Image
                   className="rounded-full object-cover"
-                  src={otherSide.userProfileImage || "/imgs/user.jpg"}
+                  src={message.from.userProfileImage || "/imgs/user.jpg"}
                   alt="avatar"
                   fill
                 />
@@ -194,14 +197,19 @@ const ConversationMessage = ({
               "peer relative ms-2 max-w-4/5 pe-1",
               message.reacts && message.reacts.length > 0 && "mb-[22px]",
               message.mediaUrl && "max-w-[240px]",
+              isFirstMessage &&
+                "mt-2 before:absolute before:-start-3 before:border-8 before:border-site-foreground before:border-s-transparent before:border-b-transparent",
             )}
             onDoubleClick={(e) => e.stopPropagation()}
           >
-            <div className="rounded-sm bg-site-foreground px-2 py-2 shadow-sm dark:bg-slate-600">
+            <div className="rounded-sm bg-site-foreground px-2 py-2 shadow-sm">
+              {type === "group" && (
+                <p className="text-sm text-amber-500">{message.from.name}</p>
+              )}
               {message.replyMessage && (
                 <MessageReply
                   replyMessage={message.replyMessage}
-                  otherSide={otherSide}
+                  isMine={isMine}
                 />
               )}
               {message.mediaType === "image" && message.mediaUrl && (
@@ -243,17 +251,25 @@ const ConversationMessage = ({
 const MessageReply = memo(
   ({
     replyMessage,
-    otherSide,
+    isMine,
   }: {
     replyMessage: ReplyMessage;
-    otherSide: participant;
+    isMine: boolean;
   }) => {
+    const currentUserId = useUserStore((state) => state.user?._id);
     return (
-      <div className="relative mb-1 flex h-16 min-w-48 items-center gap-1 overflow-hidden rounded-sm ps-3 select-none">
+      <div
+        className={clsx(
+          "relative mb-1 flex h-16 min-w-48 items-center gap-1 overflow-hidden rounded-sm ps-3 select-none",
+          isMine ? "bg-mainColor-800" : "bg-site-background/50",
+        )}
+      >
         <div className="absolute start-0 top-0 h-full w-1 bg-mainColor-600"></div>
         <div className="flex h-full w-2/3 flex-col justify-between py-2">
           <p className="text-md truncate font-bold text-mainColor-500">
-            {otherSide._id === replyMessage.from ? otherSide.name : "You"}
+            {currentUserId !== replyMessage.from._id
+              ? replyMessage.from.name
+              : "You"}
           </p>
           <p className="flex items-center gap-2 truncate text-sm text-slate-500 dark:text-slate-400">
             {replyMessage.mediaType === "image" ? (

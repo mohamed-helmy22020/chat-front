@@ -1,5 +1,6 @@
 import { formatDateToStatus } from "@/lib/utils";
 import { useChatStore } from "@/store/chatStore";
+import { usePageStore } from "@/store/pageStore";
 import { useUserStore } from "@/store/userStore";
 import clsx from "clsx";
 import { motion } from "motion/react";
@@ -24,16 +25,25 @@ const ConversationItem = ({ conversation }: Props) => {
         currentCOnversation: state.currentConversation,
       })),
     );
+  const setPage = usePageStore((state) => state.setPage);
   const chooseChat = () => {
+    console.log("chooseChat");
     changeCurrentConversation(conversation);
-    changeLastMessage(conversation, {
-      ...conversation.lastMessage,
-      conversationId: conversation.id,
-      seen: true,
-    });
+    console.log(conversation);
+    if (lastMessage) {
+      console.log({ lastMessage });
+      changeLastMessage(conversation, {
+        ...lastMessage!,
+        conversationId: conversation.id,
+        seen: true,
+      });
+    }
+    console.log("setpage");
+    setPage("chat");
   };
   const content =
-    lastMessage.mediaType === "image" ? (
+    lastMessage &&
+    (lastMessage.mediaType === "image" ? (
       <>
         <FaImage /> {lastMessage.text || "Image"}
       </>
@@ -45,7 +55,8 @@ const ConversationItem = ({ conversation }: Props) => {
       </>
     ) : (
       lastMessage.text
-    );
+    ));
+  console.log({ lastMessage });
   return (
     <motion.div
       className={clsx(
@@ -64,26 +75,40 @@ const ConversationItem = ({ conversation }: Props) => {
         <div className="relative flex min-h-9 min-w-9 items-center justify-center rounded-full">
           <Image
             className="rounded-full object-cover"
-            src={otherSide?.userProfileImage || "/imgs/user.jpg"}
+            src={
+              conversation.type === "group"
+                ? conversation.groupImage || "/imgs/group.png"
+                : otherSide?.userProfileImage || "/imgs/user.jpg"
+            }
             alt="avatar"
             fill
           />
         </div>
         <div className="flex min-w-0 flex-1 flex-col items-start justify-center">
           <div className="flex w-full items-center justify-between">
-            <h2 className="text-sm capitalize">{otherSide?.name}</h2>
+            <h2 className="text-sm capitalize">
+              {conversation.type === "group"
+                ? conversation.groupName
+                : otherSide?.name}
+            </h2>
             <p className="line-clamp-1 text-xs text-gray-500">
-              {formatDateToStatus(lastMessage.createdAt)}
+              {formatDateToStatus(lastMessage?.createdAt)}
             </p>
           </div>
           <div
             className={clsx(
               "flex max-w-full items-center gap-1 truncate font-light text-slate-400",
-              lastMessage.from !== userId && !lastMessage.seen && "text-white",
+              lastMessage?.from._id !== userId &&
+                !lastMessage?.seen &&
+                "text-white",
               conversation.isTyping && "animate-pulse",
             )}
           >
-            {conversation.isTyping ? t("Typing") : content}
+            {conversation.isTyping
+              ? t("Typing")
+              : conversation.type === "group" && conversation.lastMessage
+                ? `${conversation.lastMessage.from._id === userId ? "You" : conversation.lastMessage.from.name}: ${content}`
+                : content}
           </div>
         </div>
       </Button>

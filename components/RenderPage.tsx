@@ -5,6 +5,7 @@ import { useShallow } from "zustand/react/shallow";
 import BlockedList from "./BlockedList";
 import Chat from "./Chat";
 import FriendsList from "./FriendsList";
+import Groups from "./Groups";
 import Loading from "./Loading";
 import Profile from "./Profile";
 import SettingsComponent from "./Settings";
@@ -35,6 +36,7 @@ const RenderPage = () => {
       {page === "blocks" && <BlockedList />}
       {page === "settings" && <SettingsComponent />}
       {page === "profile" && <Profile />}
+      {page === "groups" && <Groups />}
     </>
   );
 };

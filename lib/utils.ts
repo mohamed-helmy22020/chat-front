@@ -115,7 +115,8 @@ export function formateDateWithLabel(dateString: string) {
   }
   return label;
 }
-export function formatDateToStatus(dateString: string) {
+export function formatDateToStatus(dateString?: string) {
+  if (!dateString) return;
   const inputDate = new Date(dateString);
   const today = new Date();
   const yesterday = new Date();
@@ -145,7 +146,6 @@ export function formatDateToStatus(dateString: string) {
   } else {
     label = inputDate.toLocaleDateString();
   }
-  return label;
 
   // Format time: 6:06 AM (no seconds, with AM/PM)
   const timeStr = inputDate.toLocaleTimeString("en-US", {

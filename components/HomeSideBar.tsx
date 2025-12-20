@@ -17,6 +17,7 @@ import { PageType, usePageStore } from "@/store/pageStore";
 import { useUserStore } from "@/store/userStore";
 import { useTranslations } from "next-intl";
 import { useEffect } from "react";
+import { MdOutlineGroups } from "react-icons/md";
 import { useShallow } from "zustand/react/shallow";
 import { Separator } from "./ui/separator";
 import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
@@ -46,6 +47,7 @@ const HomeSideBar = ({ userProp }: Props) => {
         <SideBarButton Icon={LuCircleDotDashed} page="status" />
         <SideBarButton Icon={LuUsers} page="friends" />
         <SideBarButton Icon={LuUserRoundX} page="blocks" />
+        <SideBarButton Icon={MdOutlineGroups } page="groups" />
       </div>
       <div className="flex-1">
         <Separator />

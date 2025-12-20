@@ -18,6 +18,8 @@ type State = {
   isConnected: boolean;
   isForwardingMessage: boolean;
   forwardMessage: MessageType | null;
+  isInviting: boolean;
+  inviteGroup: ConversationType | null;
   replyMessage: MessageType | null;
 };
 
@@ -31,17 +33,23 @@ const initialState: State = {
   isConnected: false,
   isForwardingMessage: false,
   forwardMessage: null,
+  isInviting: false,
+  inviteGroup: null,
   replyMessage: null,
 };
 
 type Actions = {
   changeSearch: (search: string) => void;
   changeConversations: (conversations: ConversationType[]) => void;
-  deleteConversation: (conversationId: string) => void;
+  deleteConversation: (
+    conversationId: string,
+    type?: "delete" | "exit",
+  ) => void;
   changeCurrentConversation: (conversation: ConversationType | null) => void;
   addConversation: (conversation: ConversationType) => void;
   changeCurrentConversationMessages: (messages: MessageType[]) => void;
   changeForwardMessage: (message: MessageType | null) => void;
+  changeInviteGroup: (group: ConversationType | null) => void;
   addMoreMessages: (messages: MessageType[]) => void;
   addMessage: (message: MessageType, conversation: ConversationType) => void;
   updateMessage: (messageId: string, message: MessageType) => void;
@@ -61,6 +69,7 @@ type Actions = {
     lastMessage: MessageType,
   ) => void;
   changeReplyMessage: (message: MessageType | null) => void;
+  addGroupParticipant: (group: ConversationType, newUser: participant) => void;
   resetChats: () => void;
 };
 
@@ -81,12 +90,24 @@ export const useChatStore = create<State & Actions>()(
             state.conversations = conversations;
           }),
         ),
-      deleteConversation: (conversationId: string) =>
+      deleteConversation: (
+        conversationId: string,
+        type: "delete" | "exit" = "delete",
+      ) =>
         set(
           produce((state: State & Actions) => {
-            state.conversations = state.conversations.filter(
-              (c) => c.id !== conversationId,
-            );
+            if (type === "exit") {
+              state.conversations = state.conversations.filter(
+                (c) => c.id !== conversationId,
+              );
+            } else {
+              state.conversations = state.conversations.map((c) => {
+                if (c.id === conversationId) {
+                  return { ...c, lastMessage: null };
+                }
+                return c;
+              });
+            }
             delete state.allMessages[conversationId];
           }),
         ),
@@ -131,6 +152,14 @@ export const useChatStore = create<State & Actions>()(
             state.isForwardingMessage = !!message;
           }),
         ),
+
+      changeInviteGroup: (group: ConversationType | null) =>
+        set(
+          produce((state: State & Actions) => {
+            state.inviteGroup = group;
+            state.isInviting = !!group;
+          }),
+        ),
       addMoreMessages: (messages: MessageType[]) =>
         set(
           produce((state: State & Actions) => {
@@ -151,6 +180,7 @@ export const useChatStore = create<State & Actions>()(
       addMessage: (message: MessageType, conversation: ConversationType) =>
         set(
           produce((state: State & Actions) => {
+            console.log({ message, conversation });
             const currentConversation = state.currentConversation;
             if (currentConversation?.id === conversation.id) {
               state.currentConversationMessages.push(message);
@@ -158,9 +188,10 @@ export const useChatStore = create<State & Actions>()(
             const conversationIndex = state.conversations.findIndex(
               (c) => c.id === conversation.id,
             );
+            console.log(conversationIndex);
             if (conversationIndex > -1) {
               state.conversations[conversationIndex].lastMessage = {
-                ...conversation.lastMessage,
+                ...conversation.lastMessage!,
                 seen:
                   state.currentConversation?.id === conversation.id
                     ? true
@@ -200,7 +231,7 @@ export const useChatStore = create<State & Actions>()(
               state.currentConversationMessages.splice(messageIndex, 1);
             }
             const conversationIndex = state.conversations.findIndex(
-              (c) => c.lastMessage.id === messageId,
+              (c) => c.lastMessage?.id === messageId,
             );
             if (conversationIndex > -1) {
               if (state.currentConversationMessages.length > 0) {
@@ -208,7 +239,7 @@ export const useChatStore = create<State & Actions>()(
                   state.currentConversationMessages[
                     state.currentConversationMessages.length - 1
                   ];
-              } else {
+              } else if (state.conversations[conversationIndex].lastMessage) {
                 state.conversations[conversationIndex].lastMessage.text = "";
               }
             }
@@ -223,12 +254,12 @@ export const useChatStore = create<State & Actions>()(
         set(
           produce((state: State & Actions) => {
             state.currentConversationMessages
-              .filter((m) => !m.seen && m.from === user?._id)
+              .filter((m) => !m.seen && m.from._id === user?._id)
               .map((m) => {
                 m.seen = true;
               });
             state.allMessages[state.currentConversation?.id || ""]
-              ?.filter((m) => !m.seen && m.from === user?._id)
+              ?.filter((m) => !m.seen && m.from._id === user?._id)
               .map((m) => {
                 m.seen = true;
               });
@@ -353,7 +384,7 @@ export const useChatStore = create<State & Actions>()(
               return;
             }
             const user = state.currentConversation?.participants.find(
-              (u) => u._id === message.from,
+              (u) => u._id === message.from._id,
             );
             if (!user) return;
             state.currentSelectedMediaMessage = { message, user };
@@ -363,6 +394,24 @@ export const useChatStore = create<State & Actions>()(
         set(
           produce((state: State & Actions) => {
             state.replyMessage = message;
+          }),
+        ),
+      addGroupParticipant: (group: ConversationType, newUser: participant) =>
+        set(
+          produce((state: State & Actions) => {
+            console.log("added to group2");
+            const groupIndex = state.conversations.findIndex(
+              (g) => g.id === group.id,
+            );
+            if (groupIndex < 0) {
+              console.log("no group");
+              state.conversations.push({
+                ...group,
+                participants: [...group.participants, newUser],
+              });
+              return;
+            }
+            state.conversations[groupIndex].participants.push(newUser);
           }),
         ),
 

@@ -26,6 +26,7 @@ const useSocketConnection = () => {
     seeAllMessages,
     addReaction,
     deleteMessage,
+    addGroupParticipant,
   } = useChatStore(
     useShallow((state) => ({
       changeIsConnected: state.changeIsConnected,
@@ -34,6 +35,7 @@ const useSocketConnection = () => {
       seeAllMessages: state.seeAllMessages,
       addReaction: state.addReaction,
       deleteMessage: state.deleteMessage,
+      addGroupParticipant: state.addGroupParticipant,
     })),
   );
   const {
@@ -103,8 +105,9 @@ const useSocketConnection = () => {
     };
 
     const onReceiveMessage = (res: ReceiveMessageType) => {
+      console.log({ res });
       if (res.success) {
-        if (res.message.from !== user?._id) {
+        if (res.message.from._id !== user?._id) {
           addMessage(res.message, res.conversation);
           const audioElement =
             document.querySelector<HTMLAudioElement>(".message-sound");
@@ -147,13 +150,16 @@ const useSocketConnection = () => {
       conversationId: string;
       react: ReactType;
     }) => {
-      addReaction(
-        data.messageId,
-        data.conversationId,
-        data.react.user._id,
-        data.react,
-      );
       const otherSide = data.react.user;
+      if (otherSide._id !== user?._id) {
+        addReaction(
+          data.messageId,
+          data.conversationId,
+          data.react.user._id,
+          data.react,
+        );
+      }
+
       if (notifcationsSettings.messages === "Enable") {
         showNotification(
           notifcationsSettings.previews === "Enable"
@@ -233,8 +239,16 @@ const useSocketConnection = () => {
     const onFriendIsOnline = (res: { userId: string; isOnline: boolean }) => {
       changeFriendsOnlineStatus(res.userId, res.isOnline);
     };
+    const onAddedToGroup = (res: {
+      newUser: participant;
+      group: ConversationType;
+    }) => {
+      console.log("added to group");
+      addGroupParticipant(res.group, res.newUser);
+    };
 
     chatSocket.on("receiveMessage", onReceiveMessage);
+    chatSocket.on("addedToGroup", onAddedToGroup);
     chatSocket.on("messageReaction", onMessageReaction);
     chatSocket.on("messagesSeen", onMessagesSeen);
     chatSocket.on("messageDeleted", onMessageDeleted);
@@ -253,6 +267,7 @@ const useSocketConnection = () => {
     chatSocket.on("disconnect", onDisconnect);
     return () => {
       chatSocket.off("receiveMessage", onReceiveMessage);
+      chatSocket.off("addedToGroup", onAddedToGroup);
       chatSocket.off("messageReaction", onMessageReaction);
       chatSocket.off("messagesSeen", onMessagesSeen);
       chatSocket.off("messageDeleted", onMessageDeleted);
@@ -291,6 +306,7 @@ const useSocketConnection = () => {
     notifcationsSettings,
     t,
     deleteMessage,
+    addGroupParticipant,
     tError,
   ]);
 };
