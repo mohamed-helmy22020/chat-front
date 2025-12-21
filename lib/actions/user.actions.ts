@@ -731,7 +731,7 @@ export const addUserToGroup = async (
 
 export const removeUserFromGroup = async (
   groupId: string,
-  deletedUserEmail: string,
+  userIdOrEmail: string,
 ) => {
   const cookieStore = await cookies();
   const accessToken = cookieStore.get("accessToken")?.value;
@@ -745,7 +745,7 @@ export const removeUserFromGroup = async (
           Authorization: `Bearer ${accessToken}`,
         },
         body: JSON.stringify({
-          deletedUserEmail,
+          userIdOrEmail,
         }),
       },
     );

@@ -27,6 +27,7 @@ const useSocketConnection = () => {
     addReaction,
     deleteMessage,
     addGroupParticipant,
+    removeGroupParticipant,
   } = useChatStore(
     useShallow((state) => ({
       changeIsConnected: state.changeIsConnected,
@@ -36,6 +37,7 @@ const useSocketConnection = () => {
       addReaction: state.addReaction,
       deleteMessage: state.deleteMessage,
       addGroupParticipant: state.addGroupParticipant,
+      removeGroupParticipant: state.removeGroupParticipant,
     })),
   );
   const {
@@ -105,7 +107,6 @@ const useSocketConnection = () => {
     };
 
     const onReceiveMessage = (res: ReceiveMessageType) => {
-      console.log({ res });
       if (res.success) {
         if (res.message.from._id !== user?._id) {
           addMessage(res.message, res.conversation);
@@ -243,12 +244,16 @@ const useSocketConnection = () => {
       newUser: participant;
       group: ConversationType;
     }) => {
-      console.log("added to group");
       addGroupParticipant(res.group, res.newUser);
+    };
+
+    const onDeletedFromGroup = (res: { groupId: string; userId: string }) => {
+      removeGroupParticipant(res.groupId, res.userId);
     };
 
     chatSocket.on("receiveMessage", onReceiveMessage);
     chatSocket.on("addedToGroup", onAddedToGroup);
+    chatSocket.on("deletedFromGroup", onDeletedFromGroup);
     chatSocket.on("messageReaction", onMessageReaction);
     chatSocket.on("messagesSeen", onMessagesSeen);
     chatSocket.on("messageDeleted", onMessageDeleted);
@@ -268,6 +273,7 @@ const useSocketConnection = () => {
     return () => {
       chatSocket.off("receiveMessage", onReceiveMessage);
       chatSocket.off("addedToGroup", onAddedToGroup);
+      chatSocket.off("deletedFromGroup", onDeletedFromGroup);
       chatSocket.off("messageReaction", onMessageReaction);
       chatSocket.off("messagesSeen", onMessagesSeen);
       chatSocket.off("messageDeleted", onMessageDeleted);
@@ -308,6 +314,7 @@ const useSocketConnection = () => {
     deleteMessage,
     addGroupParticipant,
     tError,
+    removeGroupParticipant,
   ]);
 };
 

@@ -37,7 +37,7 @@
       "AllowCameraAndMicrophoneError": "Please allow camera and microphone access in your browser settings.",
       "Typing": "Typing...",
       "Menu": {
-        "DeleteChat": "Delete Chat",
+        "DeleteChat": "Clear Chat",
         "DeletingConversation": "Deleting Conversation...",
         "BlockUser": "Block User",
         "UnblockUser": "Unblock User",
@@ -62,7 +62,8 @@
         "Error": "Error",
         "ExitGroup": "Exit Group",
         "InviteFriend": "Invite Friend",
-        "ExitingGroup": "Exiting group..."
+        "ExitingGroup": "Exiting group...",
+        "GroupInfo": "Group Info"
       },
       "MessageMenu": {
         "Copy": "Copy",
@@ -70,7 +71,8 @@
         "Delete": "Delete",
         "FailedCopyMessage": "Failed to copy message text",
         "Forward": "Forward",
-        "Reply": "Reply"
+        "Reply": "Reply",
+        "MessageInfo": "Message Info"
       },
       "Call": {
         "CallEnded": "Call Ended",
@@ -241,7 +243,10 @@
     },
     "InviteGroup": {
       "InvitingUser": "Inviting User...",
-      "UserAddedSuccess": "User Added Successfully"
+      "UserAddedSuccess": "User Added Successfully",
+      "Remove": "Remove",
+      "RemovingUser": "Removing User...",
+      "UserRemovedSuccess": "User Removed Successfully"
     }
   },
   "SocketConnection": {

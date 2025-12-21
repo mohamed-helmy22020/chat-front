@@ -18,12 +18,17 @@ import useChatWith from "@/hooks/useChatWith";
 import useForwardMessage from "@/hooks/useForwardMessage";
 import useHandleFriendRequest from "@/hooks/useHandleFriendRequest";
 import useInviteGroup from "@/hooks/useInviteGroup";
+import useRemoveFromGroup from "@/hooks/useRemoveFromGroup";
 import useUnBlockUser from "@/hooks/useUnBlockUser";
 import useUnFriendUser from "@/hooks/useUnFriendUser";
+import { useChatStore } from "@/store/chatStore";
+import { useUserStore } from "@/store/userStore";
 import { motion } from "motion/react";
 import { useTranslations } from "next-intl";
 import Image from "next/image";
 import { useState } from "react";
+import { IoIosRemoveCircleOutline } from "react-icons/io";
+import { MdAdminPanelSettings } from "react-icons/md";
 import { Button } from "./ui/button";
 import {
   DropdownMenu,
@@ -42,10 +47,14 @@ type Props = {
     | "addFriend"
     | "newChat"
     | "forward"
-    | "inviteGroup";
+    | "inviteGroup"
+    | "groupMember";
+  extra?: {
+    isGroupAdmin: boolean;
+  };
 };
 
-const RequestUserCard = ({ user, type = "friends" }: Props) => {
+const RequestUserCard = ({ user, type = "friends", extra }: Props) => {
   const { _id, userProfileImage, name, bio } = user;
   const chatWith = useChatWith();
   const { forwardMessage } = useForwardMessage();
@@ -69,10 +78,16 @@ const RequestUserCard = ({ user, type = "friends" }: Props) => {
           alt="avatar"
           fill
         />
-        {user.isOnline === undefined ? null : user.isOnline ? (
+        {user.isOnline === undefined ||
+        extra?.isGroupAdmin ? null : user.isOnline ? (
           <div className="absolute -end-0.5 -bottom-0.5 h-3 w-3 rounded-full bg-green-500"></div>
         ) : (
           <div className="absolute -end-0.5 -bottom-0.5 h-3 w-3 rounded-full bg-red-500"></div>
+        )}
+        {extra?.isGroupAdmin && (
+          <div className="absolute -end-1 -bottom-1">
+            <MdAdminPanelSettings />
+          </div>
         )}
       </div>
       <div className="flex flex-1 flex-col items-start justify-center">
@@ -85,7 +100,7 @@ const RequestUserCard = ({ user, type = "friends" }: Props) => {
           (type === "request" && <RequestsMenu userId={_id} />) ||
           (type === "sent" && <SentMenu userId={_id} />) ||
           (type === "addFriend" && <AddFriendMenu userId={_id} />) ||
-          (type === "newChat" && null)}
+          (type === "groupMember" && <GroupMemberMenu userId={_id} />)}
       </div>
     </motion.div>
   );
@@ -288,6 +303,38 @@ const AddFriendMenu = ({ userId }: { userId: string }) => {
         <p>{isSending ? t("Sending") : isSent ? t("Sent") : t("AddFriend")}</p>
       </TooltipContent>
     </Tooltip>
+  );
+};
+
+const GroupMemberMenu = ({ userId }: { userId: string }) => {
+  const t = useTranslations("RequestUserCard.InviteGroup");
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const currentUserId = useUserStore((state) => state.user?._id);
+  const group = useChatStore((state) => state.currentConversation);
+  const { removeFromGroup } = useRemoveFromGroup();
+  if (
+    !group ||
+    !group.participants.find((p) => p._id === currentUserId) ||
+    userId === currentUserId
+  )
+    return;
+  return (
+    <DropdownMenu open={isDropdownOpen} onOpenChange={setIsDropdownOpen}>
+      <DropdownMenuTrigger>
+        <LuEllipsisVertical />
+      </DropdownMenuTrigger>
+      <DropdownMenuContent>
+        <DropdownMenuItem asChild>
+          <Button
+            className="w-full justify-start"
+            variant="ghostFull"
+            onClick={() => removeFromGroup(group.id, userId)}
+          >
+            <IoIosRemoveCircleOutline /> {t("Remove")}
+          </Button>
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 };
 

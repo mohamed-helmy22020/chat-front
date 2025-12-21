@@ -47,7 +47,6 @@ const useForwardMessage = () => {
     if (!forwardMessageRes.success) {
       return toast.error(tError(convertErrors(forwardMessageRes.msg)));
     }
-    console.log(forwardMessageRes);
 
     toast.success(t("MessageForwardedSuccess"));
     addMessage(forwardMessageRes.message, forwardMessageRes.conversation);

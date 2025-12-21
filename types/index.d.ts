@@ -55,8 +55,8 @@ type ConversationType = {
   lastMessage: Omit<MessageType, "conversationId"> | null;
   isTyping?: boolean;
   type: "private" | "group";
-  admin: string;
-  groupName: string;
+  admin: string | null;
+  groupName: string | null;
   desc: string;
   groupImage: string;
   createdAt: string;

@@ -4,7 +4,7 @@ import {
 } from "@/lib/actions/user.actions";
 import { useChatStore } from "@/store/chatStore";
 import { useTranslations } from "next-intl";
-import { IoMdClose } from "react-icons/io";
+import { IoMdClose, IoMdInformationCircleOutline } from "react-icons/io";
 import { LuEllipsisVertical } from "react-icons/lu";
 import { MdDelete, MdLogout, MdPersonAddAlt } from "react-icons/md";
 import { toast } from "sonner";
@@ -14,6 +14,7 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
 const ConversationGroupMenu = () => {
@@ -23,12 +24,14 @@ const ConversationGroupMenu = () => {
     changeCurrentConversation,
     deleteConversationFromState,
     changeInviteGroup,
+    changeInfoItem,
   } = useChatStore(
     useShallow((state) => ({
       currentConversation: state.currentConversation,
       changeCurrentConversation: state.changeCurrentConversation,
       deleteConversationFromState: state.deleteConversation,
       changeInviteGroup: state.changeInviteGroup,
+      changeInfoItem: state.changeInfoItem,
     })),
   );
   const deleteConversation = async () => {
@@ -89,14 +92,24 @@ const ConversationGroupMenu = () => {
           {t("ExitGroup")}
         </DropdownMenuItem>
 
-        <DropdownMenuItem onClick={deleteConversation}>
-          <MdDelete />
-          {t("DeleteChat")}
-        </DropdownMenuItem>
-
         <DropdownMenuItem onClick={closeChat}>
           <IoMdClose />
           {t("CloseChat")}
+        </DropdownMenuItem>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem
+          onClick={deleteConversation}
+          className="hover:bg-red-800!"
+        >
+          <MdDelete />
+          {t("DeleteChat")}
+        </DropdownMenuItem>
+        <DropdownMenuItem
+          onClick={() => {
+            changeInfoItem(currentConversation);
+          }}
+        >
+          <IoMdInformationCircleOutline /> {t("GroupInfo")}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

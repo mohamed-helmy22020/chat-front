@@ -17,7 +17,6 @@ import { Input } from "./ui/input";
 const InviteMenu = () => {
   const t = useTranslations("Chat.Conversation.ForwardMenu");
   const [open, setOpen] = useState(false);
-  console.log({ open });
   const [search, setSearch] = useState("");
   const friendsList = useUserStore((state) => state.friendsList);
 

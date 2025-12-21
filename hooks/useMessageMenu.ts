@@ -18,6 +18,7 @@ const useMessageMenu = (message: MessageType) => {
     (state) => state.changeForwardMessage,
   );
   const changeReplyMessage = useChatStore((state) => state.changeReplyMessage);
+  const changeInfoItem = useChatStore((state) => state.changeInfoItem);
 
   const handleReact = async (e: React.MouseEvent<HTMLDivElement>) => {
     const selectedReact = parseInt(
@@ -51,7 +52,6 @@ const useMessageMenu = (message: MessageType) => {
 
     try {
       const addReactionRes = await addReactionAction(message.id, react.react);
-      console.log({ addReactionRes });
       if (!addReactionRes.success) {
         throw new Error("Failed to add reaction");
       }
@@ -89,12 +89,17 @@ const useMessageMenu = (message: MessageType) => {
   const handleReplyMessage = () => {
     changeReplyMessage(message);
   };
+
+  const handleShowInfo = () => {
+    changeInfoItem(message);
+  };
   return {
     handleReact,
     handleDeleteMessage,
     handleCopyMessage,
     handleForwardMessage,
     handleReplyMessage,
+    handleShowInfo,
   };
 };
 

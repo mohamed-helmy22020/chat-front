@@ -37,7 +37,6 @@ const NewGroupMenu = ({ setShowCreateGroup }: Props) => {
     setIsCreating(true);
     try {
       const createGroupRes = await createGroupAction(groupData);
-      console.log(createGroupRes);
       if (!createGroupRes.success) {
         throw new Error(createGroupRes.msg);
       }

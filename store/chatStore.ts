@@ -21,6 +21,7 @@ type State = {
   isInviting: boolean;
   inviteGroup: ConversationType | null;
   replyMessage: MessageType | null;
+  infoItem: MessageType | ConversationType | null;
 };
 
 const initialState: State = {
@@ -36,6 +37,7 @@ const initialState: State = {
   isInviting: false,
   inviteGroup: null,
   replyMessage: null,
+  infoItem: null,
 };
 
 type Actions = {
@@ -70,6 +72,8 @@ type Actions = {
   ) => void;
   changeReplyMessage: (message: MessageType | null) => void;
   addGroupParticipant: (group: ConversationType, newUser: participant) => void;
+  removeGroupParticipant: (groupId: string, userId: string) => void;
+  changeInfoItem: (infoItem: ConversationType | MessageType | null) => void;
   resetChats: () => void;
 };
 
@@ -115,7 +119,11 @@ export const useChatStore = create<State & Actions>()(
       changeCurrentConversation: (conversation: ConversationType | null) =>
         set(
           produce((state: State & Actions) => {
+            if (state.currentConversation?.id === conversation?.id) {
+              return;
+            }
             state.replyMessage = null;
+            state.infoItem = null;
             if (conversation) {
               state.currentConversationMessages =
                 state.allMessages[conversation.id] || [];
@@ -180,7 +188,6 @@ export const useChatStore = create<State & Actions>()(
       addMessage: (message: MessageType, conversation: ConversationType) =>
         set(
           produce((state: State & Actions) => {
-            console.log({ message, conversation });
             const currentConversation = state.currentConversation;
             if (currentConversation?.id === conversation.id) {
               state.currentConversationMessages.push(message);
@@ -188,7 +195,6 @@ export const useChatStore = create<State & Actions>()(
             const conversationIndex = state.conversations.findIndex(
               (c) => c.id === conversation.id,
             );
-            console.log(conversationIndex);
             if (conversationIndex > -1) {
               state.conversations[conversationIndex].lastMessage = {
                 ...conversation.lastMessage!,
@@ -399,12 +405,13 @@ export const useChatStore = create<State & Actions>()(
       addGroupParticipant: (group: ConversationType, newUser: participant) =>
         set(
           produce((state: State & Actions) => {
-            console.log("added to group2");
+            if (state.currentConversation?.id === group.id) {
+              state.currentConversation.participants.push(newUser);
+            }
             const groupIndex = state.conversations.findIndex(
               (g) => g.id === group.id,
             );
             if (groupIndex < 0) {
-              console.log("no group");
               state.conversations.push({
                 ...group,
                 participants: [...group.participants, newUser],
@@ -412,6 +419,41 @@ export const useChatStore = create<State & Actions>()(
               return;
             }
             state.conversations[groupIndex].participants.push(newUser);
+          }),
+        ),
+      removeGroupParticipant: (groupId: string, userId: string) =>
+        set(
+          produce((state: State & Actions) => {
+            if (state.currentConversation?.id === groupId) {
+              state.currentConversation.participants =
+                state.currentConversation.participants.filter(
+                  (p) => p._id !== userId,
+                );
+              if (userId === user?._id) {
+                state.currentConversation = null;
+              }
+            }
+            const groupIndex = state.conversations.findIndex(
+              (g) => g.id === groupId,
+            );
+            if (groupIndex < 0) {
+              return;
+            }
+            if (userId === user?._id) {
+              state.conversations = state.conversations.filter(
+                (c) => c.id !== groupId,
+              );
+              return;
+            }
+            state.conversations[groupIndex].participants = state.conversations[
+              groupIndex
+            ].participants.filter((p) => p._id !== userId);
+          }),
+        ),
+      changeInfoItem: (infoItem: MessageType | ConversationType | null) =>
+        set(
+          produce((state: State & Actions) => {
+            state.infoItem = infoItem;
           }),
         ),
 

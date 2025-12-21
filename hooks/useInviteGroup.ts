@@ -26,7 +26,6 @@ const useInviteGroup = () => {
     if (!inviteUserRes.success) {
       return toast.error(tError(convertErrors(inviteUserRes.msg)));
     }
-    console.log({ inviteUserRes });
 
     toast.success(t("UserAddedSuccess"));
     changeInviteGroup(null);

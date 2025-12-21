@@ -37,7 +37,7 @@
       "AllowCameraAndMicrophoneError": "الرجاء السماح بالوصول إلى الكاميرا والميكروفون في إعدادات المتصفح.",
       "Typing": "يكتب...",
       "Menu": {
-        "DeleteChat": "حذف المحادثة",
+        "DeleteChat": "مسح الدردشة",
         "DeletingConversation": "جارٍ حذف المحادثة...",
         "BlockUser": "حظر المستخدم",
         "UnblockUser": "إلغاء حظر المستخدم",

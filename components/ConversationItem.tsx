@@ -27,18 +27,14 @@ const ConversationItem = ({ conversation }: Props) => {
     );
   const setPage = usePageStore((state) => state.setPage);
   const chooseChat = () => {
-    console.log("chooseChat");
     changeCurrentConversation(conversation);
-    console.log(conversation);
     if (lastMessage) {
-      console.log({ lastMessage });
       changeLastMessage(conversation, {
         ...lastMessage!,
         conversationId: conversation.id,
         seen: true,
       });
     }
-    console.log("setpage");
     setPage("chat");
   };
   const content =
@@ -56,7 +52,6 @@ const ConversationItem = ({ conversation }: Props) => {
     ) : (
       lastMessage.text
     ));
-  console.log({ lastMessage });
   return (
     <motion.div
       className={clsx(

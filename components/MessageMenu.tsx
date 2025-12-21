@@ -18,6 +18,7 @@ import {
   FaFaceSadTear as SadEmoji,
 } from "react-icons/fa6";
 import { FcLike as LoveEmoji } from "react-icons/fc";
+import { IoMdInformationCircleOutline } from "react-icons/io";
 import { IoCopy } from "react-icons/io5";
 import { MdDeleteForever, MdKeyboardArrowDown } from "react-icons/md";
 import { Button } from "./ui/button";
@@ -45,6 +46,7 @@ const MessageMenu = ({ message }: Props) => {
     handleReact,
     handleForwardMessage,
     handleReplyMessage,
+    handleShowInfo,
   } = useMessageMenu(message);
   return (
     <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
@@ -81,6 +83,10 @@ const MessageMenu = ({ message }: Props) => {
             <MdDeleteForever /> {t("Delete")}
           </DropdownMenuItem>
         )}
+        <DropdownMenuSeparator />
+        <DropdownMenuItem onClick={handleShowInfo}>
+          <IoMdInformationCircleOutline /> {t("MessageInfo")}
+        </DropdownMenuItem>
         <DropdownMenuSeparator />
         <div className="flex" onClick={handleReact}>
           <DropdownMenuItem
