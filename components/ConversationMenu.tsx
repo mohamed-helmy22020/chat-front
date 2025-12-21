@@ -226,7 +226,7 @@ const ConversationMenu = () => {
             changeInfoItem(conversation);
           }}
         >
-          <IoMdInformationCircleOutline /> {t("GroupInfo")}
+          <IoMdInformationCircleOutline /> {t("ChatInfo")}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

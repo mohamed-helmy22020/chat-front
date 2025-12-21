@@ -63,7 +63,8 @@
         "ExitGroup": "Exit Group",
         "InviteFriend": "Invite Friend",
         "ExitingGroup": "Exiting group...",
-        "GroupInfo": "Group Info"
+        "GroupInfo": "Group Info",
+        "ChatInfo": "Chat Info"
       },
       "MessageMenu": {
         "Copy": "Copy",

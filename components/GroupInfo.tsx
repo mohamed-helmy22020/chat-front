@@ -8,7 +8,7 @@ import { Separator } from "./ui/separator";
 const GroupInfo = () => {
   const group = useChatStore((state) => state.currentConversation);
 
-  const changeItemInfo = useChatStore((state) => state.changeInfoItem);
+  const changeInfoItem = useChatStore((state) => state.changeInfoItem);
   const changeInviteGroup = useChatStore((state) => state.changeInviteGroup);
   if (!group) return null;
   return (
@@ -17,7 +17,7 @@ const GroupInfo = () => {
         <Button
           variant="ghostFull"
           className="me-3 scale-125 cursor-pointer p-2!"
-          onClick={() => changeItemInfo(null)}
+          onClick={() => changeInfoItem(null)}
         >
           <MdClose />
         </Button>

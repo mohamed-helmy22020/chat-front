@@ -23,7 +23,7 @@ type UserType = {
   accessToken?: string;
   settings: UserSettingsType;
 };
-type MiniUserType = Pick<UserType, "_id" | "name" | "userProfileImage">;
+type MiniUserType = participant;
 
 type RequestUserType = {
   _id: string;
@@ -67,6 +67,8 @@ type participant = {
   userProfileImage: string;
   _id: string;
   name: string;
+  email?: string;
+  bio?: string;
 };
 
 type MessageType = {
