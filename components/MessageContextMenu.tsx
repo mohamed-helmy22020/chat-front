@@ -24,6 +24,7 @@ import {
   FaFaceSadTear as SadEmoji,
 } from "react-icons/fa6";
 import { FcLike as LoveEmoji } from "react-icons/fc";
+import { IoMdInformationCircleOutline } from "react-icons/io";
 import { IoCopy } from "react-icons/io5";
 import { MdDeleteForever } from "react-icons/md";
 import { DropdownMenuSeparator } from "./ui/dropdown-menu";
@@ -44,6 +45,7 @@ const MessageContextMenu = ({ children, message }: Props) => {
     handleReact,
     handleForwardMessage,
     handleReplyMessage,
+    handleShowInfo,
   } = useMessageMenu(message);
   return (
     <ContextMenu>
@@ -62,11 +64,15 @@ const MessageContextMenu = ({ children, message }: Props) => {
         <ContextMenuItem onClick={handleForwardMessage}>
           <CgMailForward /> {t("Forward")}
         </ContextMenuItem>
-        {message.from === user?._id && (
+        {message.from._id === user?._id && (
           <ContextMenuItem onClick={handleDeleteMessage}>
             <MdDeleteForever /> {t("Delete")}
           </ContextMenuItem>
         )}
+        <DropdownMenuSeparator />
+        <ContextMenuItem onClick={handleShowInfo}>
+          <IoMdInformationCircleOutline /> {t("MessageInfo")}
+        </ContextMenuItem>
         <DropdownMenuSeparator />
         <div className="flex" onClick={handleReact}>
           <ContextMenuItem

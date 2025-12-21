@@ -128,12 +128,16 @@ const ConversationFooter = () => {
     const newMessage: MessageType = {
       id,
       conversationId: currentConversation!.id,
-      from: user!._id,
+      from: {
+        _id: user!._id,
+        name: user!.name,
+        userProfileImage: user!.userProfileImage,
+      },
       to: to,
       text: messageText.trim(),
       seen: false,
       reacts: [],
-      replyMessage: replyMessage!,
+      replyMessage: replyMessage || undefined,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
       type: "pending",
@@ -145,8 +149,17 @@ const ConversationFooter = () => {
     changeLastMessage(currentConversation!, newMessage);
     changeReplyMessage(null);
     chatSocket.emit(
-      "sendPrivateMessage",
-      { to, text: messageText.trim(), replyMessage: replyMessage?.id },
+      currentConversation?.type === "group"
+        ? "sendGroupMessage"
+        : "sendPrivateMessage",
+      {
+        to:
+          currentConversation?.type === "group" ? currentConversation?.id : to,
+        conversationId:
+          currentConversation?.type === "group" ? currentConversation?.id : to,
+        text: messageText.trim(),
+        replyMessage: replyMessage?.id,
+      },
       (res: ReceiveMessageType) => {
         if (res.success) {
           updateMessage(id, res.message);
@@ -189,9 +202,7 @@ const ConversationFooter = () => {
         />
       )}
       <div className="border-t border-slate-200 bg-site-foreground p-3 dark:border-slate-700">
-        {replyMessage && (
-          <MessageReply replyMessage={replyMessage} otherSide={otherSide!} />
-        )}
+        {replyMessage && <MessageReply replyMessage={replyMessage} />}
         <div className="flex items-center">
           <input
             type="file"
@@ -237,10 +248,12 @@ const ConversationFooter = () => {
             onChange={(e) => {
               setMessageText(e.target.value);
               if (e.target.value.trim() === "") {
-                chatSocket.emit("typing", to, false);
+                if (currentConversation?.type === "private")
+                  chatSocket.emit("typing", to, false);
                 setIsTyping(false);
               } else if (!isTyping) {
-                chatSocket.emit("typing", to, true);
+                if (currentConversation?.type === "private")
+                  chatSocket.emit("typing", to, true);
                 setIsTyping(true);
               }
             }}
@@ -261,70 +274,60 @@ const ConversationFooter = () => {
   );
 };
 
-const MessageReply = memo(
-  ({
-    replyMessage,
-    otherSide,
-  }: {
-    replyMessage: MessageType;
-    otherSide: participant;
-  }) => {
-    const { changeReplyMessage } = useChatStore(
-      useShallow((state) => ({
-        changeReplyMessage: state.changeReplyMessage,
-      })),
-    );
-    return (
-      <div className="relative z-40 mb-1 flex h-16 w-full items-center gap-1 overflow-hidden rounded-sm bg-site-background ps-3 select-none">
-        <div className="absolute start-0 top-0 h-full w-1 bg-mainColor-600"></div>
-        <div className="flex h-full flex-1 flex-col justify-between py-2">
-          <p className="text-md truncate font-bold text-mainColor-500">
-            {otherSide._id === replyMessage.from ? otherSide.name : "You"}
-          </p>
-          <p className="flex items-center gap-2 truncate text-sm text-slate-500 dark:text-slate-400">
-            {replyMessage.mediaType === "image" ? (
-              <FaImage size={15} />
-            ) : replyMessage.mediaType === "video" ? (
-              <FaVideo size={15} />
-            ) : null}
-            {replyMessage.text ? replyMessage.text : replyMessage.mediaType}
-          </p>
-        </div>
-        {replyMessage.mediaType === "image" && replyMessage.mediaUrl && (
-          <div className="relative flex h-16 w-1/3 max-w-16 items-center justify-center">
-            <Image
-              src={replyMessage.mediaUrl}
-              fill
-              objectFit="cover"
-              alt="fs"
-            />
-          </div>
-        )}
-        {replyMessage.mediaType === "video" && replyMessage.mediaUrl && (
-          <div className="relative flex h-16 w-1/3 max-w-16 items-center justify-center">
-            <video
-              src={replyMessage.mediaUrl}
-              className="absolute object-cover"
-              muted
-              autoPlay={false}
-              controlsList="nodownload"
-              preload="metadata"
-            />
-          </div>
-        )}
-        <div className="flex h-full items-start justify-center">
-          <Button
-            variant="ghostFull"
-            className="cursor-pointer !p-1"
-            onClick={() => changeReplyMessage(null)}
-          >
-            <CgClose />
-          </Button>
-        </div>
+const MessageReply = memo(({ replyMessage }: { replyMessage: MessageType }) => {
+  const { changeReplyMessage } = useChatStore(
+    useShallow((state) => ({
+      changeReplyMessage: state.changeReplyMessage,
+    })),
+  );
+  const currentUserId = useUserStore((state) => state.user?._id);
+  return (
+    <div className="relative z-40 mb-1 flex h-16 w-full items-center gap-1 overflow-hidden rounded-sm bg-site-background ps-3 select-none">
+      <div className="absolute start-0 top-0 h-full w-1 bg-mainColor-600"></div>
+      <div className="flex h-full flex-1 flex-col justify-between py-2">
+        <p className="text-md truncate font-bold text-mainColor-500">
+          {currentUserId === replyMessage.from._id
+            ? replyMessage.from.name
+            : "You"}
+        </p>
+        <p className="flex items-center gap-2 truncate text-sm text-slate-500 dark:text-slate-400">
+          {replyMessage.mediaType === "image" ? (
+            <FaImage size={15} />
+          ) : replyMessage.mediaType === "video" ? (
+            <FaVideo size={15} />
+          ) : null}
+          {replyMessage.text ? replyMessage.text : replyMessage.mediaType}
+        </p>
       </div>
-    );
-  },
-);
+      {replyMessage.mediaType === "image" && replyMessage.mediaUrl && (
+        <div className="relative flex h-16 w-1/3 max-w-16 items-center justify-center">
+          <Image src={replyMessage.mediaUrl} fill objectFit="cover" alt="fs" />
+        </div>
+      )}
+      {replyMessage.mediaType === "video" && replyMessage.mediaUrl && (
+        <div className="relative flex h-16 w-1/3 max-w-16 items-center justify-center">
+          <video
+            src={replyMessage.mediaUrl}
+            className="absolute object-cover"
+            muted
+            autoPlay={false}
+            controlsList="nodownload"
+            preload="metadata"
+          />
+        </div>
+      )}
+      <div className="flex h-full items-start justify-center">
+        <Button
+          variant="ghostFull"
+          className="cursor-pointer !p-1"
+          onClick={() => changeReplyMessage(null)}
+        >
+          <CgClose />
+        </Button>
+      </div>
+    </div>
+  );
+});
 MessageReply.displayName = "MessageReply";
 
 export default ConversationFooter;

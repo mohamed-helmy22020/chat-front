@@ -5,7 +5,8 @@
     "friends": "Friends",
     "blocks": "Blocks",
     "settings": "Settings",
-    "profile": "Profile"
+    "profile": "Profile",
+    "groups": "Groups"
   },
   "Chat": {
     "Name": "Chat App",
@@ -36,7 +37,7 @@
       "AllowCameraAndMicrophoneError": "Please allow camera and microphone access in your browser settings.",
       "Typing": "Typing...",
       "Menu": {
-        "DeleteChat": "Delete Chat",
+        "DeleteChat": "Clear Chat",
         "DeletingConversation": "Deleting Conversation...",
         "BlockUser": "Block User",
         "UnblockUser": "Unblock User",
@@ -58,7 +59,12 @@
         "RejectingFriendRequest": "Rejecting friend request...",
         "UserIsCancelled": "User is cancelled",
         "CloseChat": "Close Chat",
-        "Error": "Error"
+        "Error": "Error",
+        "ExitGroup": "Exit Group",
+        "InviteFriend": "Invite Friend",
+        "ExitingGroup": "Exiting group...",
+        "GroupInfo": "Group Info",
+        "ChatInfo": "Chat Info"
       },
       "MessageMenu": {
         "Copy": "Copy",
@@ -66,7 +72,8 @@
         "Delete": "Delete",
         "FailedCopyMessage": "Failed to copy message text",
         "Forward": "Forward",
-        "Reply": "Reply"
+        "Reply": "Reply",
+        "MessageInfo": "Message Info"
       },
       "Call": {
         "CallEnded": "Call Ended",
@@ -82,7 +89,8 @@
       "MaxVideoSizeError": "Video must be under 100 MB.",
       "ForwardMenu": {
         "ForwardTo": "Forward message to",
-        "Search": "Search by name"
+        "Search": "Search by name",
+        "InviteUser": "Invite User"
       }
     }
   },
@@ -233,6 +241,13 @@
       "ForwardingMessage": "Forwarding message...",
       "MessageForwardedSuccess": "Message forwarded successfully",
       "Error": "Error"
+    },
+    "InviteGroup": {
+      "InvitingUser": "Inviting User...",
+      "UserAddedSuccess": "User Added Successfully",
+      "Remove": "Remove",
+      "RemovingUser": "Removing User...",
+      "UserRemovedSuccess": "User Removed Successfully"
     }
   },
   "SocketConnection": {
@@ -316,6 +331,19 @@
     "CantForwardMessage": "You can't forward this message",
     "CantForwardMessageToUser": "You can't forward this message to this user",
     "ShortCode": "The code is too short",
-    "PleaseProvideEmail": "Please provide email"
+    "PleaseProvideEmail": "Please provide email",
+    "PhoneIsUsed": "This phone is already used"
+  },
+  "Groups": {
+    "About1": "Bring members together in topic-based groups and easily send them admin announcements.",
+    "CreateGroup": "Create Group",
+    "Groups": "Groups",
+    "NewGroupMenu": {
+      "NewGroup": "New Group",
+      "GroupName": "Group Name",
+      "GroupDesc": "Group Description",
+      "CreateGroup": "Create Group",
+      "Loading": "Loading..."
+    }
   }
 }

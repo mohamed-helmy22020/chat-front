@@ -5,7 +5,8 @@
     "friends": "الأصدقاء",
     "blocks": "المحظورون",
     "settings": "الإعدادات",
-    "profile": "الملف الشخصي"
+    "profile": "الملف الشخصي",
+    "groups": "المجموعات"
   },
   "Chat": {
     "Name": "تطبيق الدردشة",
@@ -36,7 +37,7 @@
       "AllowCameraAndMicrophoneError": "الرجاء السماح بالوصول إلى الكاميرا والميكروفون في إعدادات المتصفح.",
       "Typing": "يكتب...",
       "Menu": {
-        "DeleteChat": "حذف المحادثة",
+        "DeleteChat": "مسح الدردشة",
         "DeletingConversation": "جارٍ حذف المحادثة...",
         "BlockUser": "حظر المستخدم",
         "UnblockUser": "إلغاء حظر المستخدم",
@@ -58,7 +59,10 @@
         "RejectingFriendRequest": "جارٍ رفض طلب الصداقة...",
         "UserIsCancelled": "تم إلغاء المستخدم",
         "CloseChat": "إغلاق الدردشة",
-        "Error": "خطأ"
+        "Error": "خطأ",
+        "ExitGroup": "الخروج من المجموعة",
+        "ExitingGroup": "جارٍ الخروج من المجموعة...",
+        "InviteFriend": "دعوة صديق"
       },
       "MessageMenu": {
         "Copy": "نسخ",
@@ -82,7 +86,8 @@
       "MaxVideoSizeError": "يجب أن يكون حجم الفيديو أقل من 100 ميجابايت.",
       "ForwardMenu": {
         "Search": "البحث بالاسم",
-        "ForwardTo": "إعادة توجيه الرسالة إلى"
+        "ForwardTo": "إعادة توجيه الرسالة إلى",
+        "InviteUser": "دعوة المستخدم"
       }
     }
   },
@@ -261,6 +266,10 @@
       "Error": "خطأ",
       "ForwardingMessage": "إعادة توجيه الرسالة...",
       "MessageForwardedSuccess": "تم إعادة توجيه الرسالة بنجاح"
+    },
+    "InviteGroup": {
+      "InvitingUser": "دعوة المستخدم...",
+      "UserAddedSuccess": "تمت إضافة المستخدم بنجاح"
     }
   },
   "SocketConnection": {
@@ -316,6 +325,19 @@
     "ProvideMessageIdAndPerson": "يرجى تقديم معرف الرسالة والشخص",
     "NoMessageWithId": "لا توجد رسالة بهذا المعرف",
     "PleaseProvideEmail": "يرجى تقديم البريد الإلكتروني",
-    "ShortCode": "الرمز قصير جدًا"
+    "ShortCode": "الرمز قصير جدًا",
+    "PhoneIsUsed": "هذا الهاتف مستخدم بالفعل"
+  },
+  "Groups": {
+    "About1": "اجمع الأعضاء معًا في مجموعات تعتمد على المواضيع وأرسل إليهم إعلانات الإدارة بسهولة.",
+    "CreateGroup": "إنشاء مجموعة",
+    "Groups": "المجموعات",
+    "NewGroupMenu": {
+      "NewGroup": "مجموعة جديدة",
+      "CreateGroup": "إنشاء مجموعة",
+      "GroupDesc": "وصف المجموعة",
+      "GroupName": "اسم المجموعة",
+      "Loading": "تحميل..."
+    }
   }
 }

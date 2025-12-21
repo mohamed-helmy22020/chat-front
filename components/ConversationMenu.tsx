@@ -10,7 +10,7 @@ import { useUserStore } from "@/store/userStore";
 import { useTranslations } from "next-intl";
 import { CgUnblock } from "react-icons/cg";
 import { FaUserMinus, FaUserPlus } from "react-icons/fa6";
-import { IoMdClose } from "react-icons/io";
+import { IoMdClose, IoMdInformationCircleOutline } from "react-icons/io";
 import { LuCheck, LuEllipsisVertical, LuUserX, LuX } from "react-icons/lu";
 import { MdBlockFlipped, MdDelete } from "react-icons/md";
 import { toast } from "sonner";
@@ -20,6 +20,7 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
 
@@ -44,11 +45,13 @@ const ConversationMenu = () => {
     changeCurrentConversation,
     conversation,
     deleteConversationFromState,
+    changeInfoItem,
   } = useChatStore(
     useShallow((state) => ({
       changeCurrentConversation: state.changeCurrentConversation,
       conversation: state.currentConversation,
       deleteConversationFromState: state.deleteConversation,
+      changeInfoItem: state.changeInfoItem,
     })),
   );
   const otherSide = conversation?.participants.find(
@@ -98,11 +101,6 @@ const ConversationMenu = () => {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent>
-        <DropdownMenuItem onClick={deleteConversation}>
-          <MdDelete />
-          {t("DeleteChat")}
-        </DropdownMenuItem>
-
         <DropdownMenuItem
           onClick={async () => {
             if (isBlocked) {
@@ -217,6 +215,18 @@ const ConversationMenu = () => {
         <DropdownMenuItem onClick={closeChat}>
           <IoMdClose />
           {t("CloseChat")}
+        </DropdownMenuItem>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem onClick={deleteConversation}>
+          <MdDelete />
+          {t("DeleteChat")}
+        </DropdownMenuItem>
+        <DropdownMenuItem
+          onClick={() => {
+            changeInfoItem(conversation);
+          }}
+        >
+          <IoMdInformationCircleOutline /> {t("ChatInfo")}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

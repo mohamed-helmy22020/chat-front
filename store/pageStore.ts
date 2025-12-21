@@ -7,7 +7,8 @@ export type PageType =
   | "friends"
   | "blocks"
   | "settings"
-  | "profile";
+  | "profile"
+  | "groups";
 export interface pageStateType {
   page: PageType;
   setPage: (page: PageType) => void;

@@ -68,10 +68,11 @@ const ConversationMessages = () => {
           currentConversationMessages[currentConversationMessages.length - 1];
         setNewMessagesCount(0);
         if (
-          currentConversationLastMessage?.from !== user?._id &&
+          currentConversationLastMessage?.from._id !== user?._id &&
           !currentConversationLastMessage?.seen &&
           isFocus &&
-          user?.settings.privacy.readReceipts === "Enable"
+          user?.settings.privacy.readReceipts === "Enable" &&
+          currentConversation?.type === "private"
         ) {
           chatSocket.emit("seeAllMessages", otherSide?._id);
         }
@@ -81,7 +82,13 @@ const ConversationMessages = () => {
 
     container.addEventListener("scroll", handleScroll);
     return () => container.removeEventListener("scroll", handleScroll);
-  }, [otherSide, isFocus, user, currentConversationMessages]);
+  }, [
+    otherSide,
+    isFocus,
+    user,
+    currentConversationMessages,
+    currentConversation,
+  ]);
 
   useLayoutEffect(() => {
     const currentConversationLastMessage =
@@ -95,21 +102,29 @@ const ConversationMessages = () => {
     ) {
       scrollableDiv.current?.scrollTo(0, scrollableDiv.current?.scrollHeight);
       if (
-        currentConversationLastMessage?.from !== user?._id &&
+        currentConversationLastMessage?.from._id !== user?._id &&
         !currentConversationLastMessage?.seen &&
         isFocus &&
-        user?.settings.privacy.readReceipts === "Enable"
+        user?.settings.privacy.readReceipts === "Enable" &&
+        currentConversation?.type === "private"
       ) {
         chatSocket.emit("seeAllMessages", otherSide?._id);
       }
     } else if (
-      currentConversationLastMessage?.from !== user?._id &&
+      currentConversationLastMessage?.from._id !== user?._id &&
       lastMessage?.id !== currentConversationLastMessage?.id
     ) {
       setLastMessage(currentConversationLastMessage);
       setNewMessagesCount((count) => count + 1);
     }
-  }, [currentConversationMessages, user, lastMessage, otherSide, isFocus]);
+  }, [
+    currentConversationMessages,
+    user,
+    lastMessage,
+    otherSide,
+    isFocus,
+    currentConversation,
+  ]);
 
   const getMessages = useCallback(
     async (before?: string, limit?: number) => {
@@ -117,7 +132,7 @@ const ConversationMessages = () => {
 
       try {
         const getMessagesRes = await getConversationMessages(
-          otherSide!._id,
+          currentConversation!.id,
           before,
           limit,
         );
@@ -133,7 +148,7 @@ const ConversationMessages = () => {
       }
       return [];
     },
-    [otherSide],
+    [currentConversation],
   );
 
   useEffect(() => {
@@ -150,7 +165,10 @@ const ConversationMessages = () => {
       const messages: MessageType[] = await getMessages(
         currentConversationMessages[0]?.createdAt,
       );
-      if (user?.settings.privacy.readReceipts === "Enable") {
+      if (
+        user?.settings.privacy.readReceipts === "Enable" &&
+        currentConversation?.type === "private"
+      ) {
         chatSocket.emit("seeAllMessages", otherSide?._id);
       }
       addMoreMessages(messages);
@@ -163,6 +181,7 @@ const ConversationMessages = () => {
     currentConversationMessages,
     isGettingMessages,
     hasMore,
+    currentConversation,
   ]);
 
   useEffect(() => {
@@ -218,17 +237,17 @@ const ConversationMessages = () => {
       key={message.id}
       isFirstMessage={
         index === 0 ||
-        currentConversationMessages[index - 1].from !== message.from
+        currentConversationMessages[index - 1].from._id !== message.from._id
       }
-      isMine={message.from === user?._id}
+      isMine={message.from._id === user?._id}
       message={message}
-      otherSide={otherSide!}
       isNewDay={
         index === 0 ||
         new Date(message.createdAt).getDay() -
           new Date(currentConversationMessages[index - 1].createdAt).getDay() >
           0
       }
+      type={currentConversation?.type}
     />
   ));
 
