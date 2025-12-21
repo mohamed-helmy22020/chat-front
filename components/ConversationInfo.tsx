@@ -97,7 +97,7 @@ const ConversationInfo = () => {
       </div>
       <div className="w-full">
         <SettingsCard
-          animationDelay={0.2}
+          animationDelay={0.1}
           title={`Block ${otherSide?.name}`}
           color="#cf3a3a"
           onClick={async () => {

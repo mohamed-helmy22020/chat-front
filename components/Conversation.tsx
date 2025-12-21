@@ -40,7 +40,7 @@ const Conversation = () => {
           animate={{ opacity: 1, x: 0 }}
           transition={{ type: "tween", duration: 0.1, ease: "easeOut" }}
           className={clsx(
-            "relative flex max-h-svh w-full flex-col overflow-hidden",
+            "relative flex max-h-svh w-full flex-col overflow-hidden transition-all",
             infoItem && "hidden lg:flex lg:w-2/4 xl:w-7/12",
           )}
         >
