@@ -37,7 +37,6 @@ const Conversation = () => {
   const canSendMessages =
     currentConversation?.type === "private" || (isMember && !onlyAdminsCanSend);
 
-  console.log(isMember, onlyAdminsCanSend, canSendMessages);
   return (
     <>
       {currentSelectedMediaMessage && <ShowMessageMedia />}

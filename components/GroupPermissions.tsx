@@ -49,6 +49,10 @@ const GroupPermissions = ({ closeMenu }: Props) => {
         setSettings(settings);
         throw new Error("Failed to update group settings");
       }
+      setSettings((prev) => ({
+        ...prev,
+        ...updateSettingsRes.groupSettings,
+      }));
     } catch (error: any) {
       toast.error(error.msg || error.message);
     }
@@ -92,14 +96,16 @@ const GroupPermissions = ({ closeMenu }: Props) => {
         >
           <HiOutlineUserAdd />
         </Item>
-        <Item
-          title="Invite via link"
-          checked={settings.members.inviteViaLink}
-          name="members.inviteViaLink"
-          onChange={updateSettings}
-        >
-          <IoLink />
-        </Item>
+        {settings.members.addOtherMembers && (
+          <Item
+            title="Invite via link"
+            checked={settings.members.inviteViaLink}
+            name="members.inviteViaLink"
+            onChange={updateSettings}
+          >
+            <IoLink />
+          </Item>
+        )}
       </div>
       <div className="flex w-full flex-col px-3 py-2">
         <p className="px-2 text-gray-500">Admins can:</p>

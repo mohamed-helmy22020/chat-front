@@ -3,6 +3,7 @@ import {
   resetGroupLinkToken,
 } from "@/lib/actions/user.actions";
 import { useChatStore } from "@/store/chatStore";
+import { useUserStore } from "@/store/userStore";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -18,10 +19,10 @@ type Props = {
 };
 
 const InviteLinkMenu = ({ closeMenu }: Props) => {
+  const currentUserId = useUserStore((state) => state.user?._id);
   const [isLoading, setIsLoading] = useState(true);
   const [linkToken, setLinkToken] = useState("");
   const group = useChatStore((state) => state.currentConversation);
-
   useEffect(() => {
     const getLinkToken = async () => {
       if (!group || group.type !== "group") return;
@@ -30,7 +31,6 @@ const InviteLinkMenu = ({ closeMenu }: Props) => {
         if (!getLinkTokenRes.success) {
           throw new Error("Error getting link token");
         }
-        console.log(getLinkTokenRes.linkToken);
         setLinkToken(getLinkTokenRes.linkToken);
       } catch (error: any) {
         toast.error(error.meesage);
@@ -42,6 +42,7 @@ const InviteLinkMenu = ({ closeMenu }: Props) => {
   }, [group, closeMenu]);
 
   if (!group || group.type !== "group") return null;
+  const isAdmin = group.admin === currentUserId;
   const copyLink = () => {
     navigator.clipboard.writeText(link);
     toast.success("Link copied to clipboard");
@@ -53,7 +54,6 @@ const InviteLinkMenu = ({ closeMenu }: Props) => {
       if (!getLinkTokenRes.success) {
         throw new Error("Error resetting link token");
       }
-      console.log(getLinkTokenRes.linkToken);
       setLinkToken(getLinkTokenRes.linkToken);
     } catch (error: any) {
       toast.error(error.meesage);
@@ -125,13 +125,15 @@ const InviteLinkMenu = ({ closeMenu }: Props) => {
           <MdOutlineContentCopy />
           <p>Copy Link</p>
         </div>
-        <div
-          className="flex cursor-pointer items-center gap-5 p-5 hover:bg-site-foreground"
-          onClick={resetLink}
-        >
-          <GrPowerReset />
-          <p>Reset Link</p>
-        </div>
+        {isAdmin && (
+          <div
+            className="flex cursor-pointer items-center gap-5 p-5 hover:bg-site-foreground"
+            onClick={resetLink}
+          >
+            <GrPowerReset />
+            <p>Reset Link</p>
+          </div>
+        )}
       </div>
     </div>
   );

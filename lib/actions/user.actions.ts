@@ -761,10 +761,9 @@ export const updateGroupSettings = async (
 ) => {
   const cookieStore = await cookies();
   const accessToken = cookieStore.get("accessToken")?.value;
-  console.log({ groupSettings });
   try {
     const res = await fetchWithErrorHandling(
-      `/chat/group/settings/${groupId}`,
+      `/chat/group/${groupId}/settings/`,
       {
         method: "POST",
         headers: {
@@ -778,6 +777,7 @@ export const updateGroupSettings = async (
     );
     return res;
   } catch (error: any) {
+    console.log({ error });
     return { success: false, ...error };
   }
 };

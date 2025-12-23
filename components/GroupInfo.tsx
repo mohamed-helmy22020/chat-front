@@ -6,6 +6,7 @@ import { HiOutlineUserAdd } from "react-icons/hi";
 import { IoIosSettings } from "react-icons/io";
 import { IoLink } from "react-icons/io5";
 import { MdClose, MdPersonAddAlt } from "react-icons/md";
+import { useShallow } from "zustand/react/shallow";
 import GroupPermissions from "./GroupPermissions";
 import InviteLinkMenu from "./InviteLinkMenu";
 import RequestUserCard from "./RequestUserCard";
@@ -14,24 +15,32 @@ import { Button } from "./ui/button";
 import { Separator } from "./ui/separator";
 
 const GroupInfo = () => {
-  const userId = useUserStore((state) => state.user?._id);
-  const group = useChatStore((state) => state.currentConversation);
-  const isAdmin = group?.type === "group" && group.admin === userId;
   const [subMenu, setSubMenu] = useState("");
+  const userId = useUserStore((state) => state.user?._id);
+  const { group, changeInfoItem, changeInviteGroup } = useChatStore(
+    useShallow((state) => ({
+      group: state.currentConversation,
+      changeInfoItem: state.changeInfoItem,
+      changeInviteGroup: state.changeInviteGroup,
+    })),
+  );
 
-  const changeInfoItem = useChatStore((state) => state.changeInfoItem);
-  const changeInviteGroup = useChatStore((state) => state.changeInviteGroup);
   if (!group || group.type !== "group") return null;
+
+  const isAdmin = group?.type === "group" && group.admin === userId;
+
+  const canAddOtherUsers =
+    isAdmin || group.groupSettings.members.addOtherMembers;
+
+  const canInviteViaLink = isAdmin || group.groupSettings.members.inviteViaLink;
 
   if (subMenu === "permission" && isAdmin) {
     return <GroupPermissions closeMenu={() => setSubMenu("")} />;
   }
-  if (subMenu === "inviteLink" && isAdmin) {
+  if (subMenu === "inviteLink" && canInviteViaLink) {
     return <InviteLinkMenu closeMenu={() => setSubMenu("")} />;
   }
-  const canAddOtherUsers =
-    isAdmin || group.groupSettings.members.addOtherMembers;
-  const canInviteViaLink = isAdmin || group.groupSettings.members.inviteViaLink;
+
   return (
     <div className="flex max-h-svh w-full flex-col items-center gap-3 overflow-hidden overflow-y-auto">
       <div className="flex w-full items-center border-b px-3 py-3 select-none">
@@ -68,23 +77,25 @@ const GroupInfo = () => {
         )}
       </div>
       <div className="w-full p-2">{group.desc}</div>
-      <div className="w-full p-3 md:w-2/3 lg:w-1/2">
-        <Separator />
-      </div>
-      <div className="w-full">
-        {isAdmin && (
-          <SettingsCard
-            animationDelay={0}
-            title={`Group Permissions`}
-            onClick={() => setSubMenu("permission")}
-          >
-            <IoIosSettings size={25} color="#6a7282" />
-          </SettingsCard>
-        )}
-      </div>
-      <div className="w-full p-3 pt-0 md:w-2/3 lg:w-1/2">
-        <Separator />
-      </div>
+      {isAdmin && (
+        <>
+          <div className="w-full p-3 md:w-2/3 lg:w-1/2">
+            <Separator />
+          </div>
+          <div className="w-full">
+            <SettingsCard
+              animationDelay={0}
+              title={`Group Permissions`}
+              onClick={() => setSubMenu("permission")}
+            >
+              <IoIosSettings size={25} color="#6a7282" />
+            </SettingsCard>
+          </div>
+          <div className="w-full p-3 pt-0 md:w-2/3 lg:w-1/2">
+            <Separator />
+          </div>
+        </>
+      )}
       <div className="flex w-full flex-col gap-2 p-2">
         <div className="flex cursor-pointer items-center justify-between gap-2 text-gray-400">
           <h2>{group.participants.length} members</h2>

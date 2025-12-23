@@ -258,6 +258,7 @@ const useSocketConnection = () => {
       groupSettings: GroupSettingsType;
     }) => {
       console.log("group settings updated");
+      console.log({ res });
       updateGroupSettings(res.groupId, res.groupSettings);
     };
 

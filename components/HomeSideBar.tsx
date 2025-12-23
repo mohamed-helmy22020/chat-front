@@ -21,6 +21,7 @@ import { useTranslations } from "next-intl";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { MdOutlineGroups } from "react-icons/md";
+import { toast } from "sonner";
 import { useShallow } from "zustand/react/shallow";
 import JoinGroupDialog from "./JoinGroupDialog";
 import { Separator } from "./ui/separator";
@@ -58,14 +59,11 @@ const HomeSideBar = ({ userProp }: Props) => {
     const getGroupData = async () => {
       try {
         const res = await getGroupDataAction(groupId, token);
-        console.log({ res });
         if (!res.success) {
           throw new Error(res.msg);
         }
-        window.history.replaceState(null, "", "/");
-        const existConversation = conversations.find(
-          (c) => c.id === res.group.id,
-        );
+
+        const existConversation = conversations.find((c) => c.id === groupId);
         if (existConversation) {
           changeCurrentConversation(existConversation);
           return;
@@ -76,9 +74,10 @@ const HomeSideBar = ({ userProp }: Props) => {
             linkToken: token,
           },
         });
-      } catch (error) {
-        console.error(error);
+      } catch (error: any) {
+        toast.error(error.message);
       }
+      window.history.replaceState(null, "", "/");
     };
     getGroupData();
   }, [groupId, token, isLoadingData, conversations, changeCurrentConversation]);

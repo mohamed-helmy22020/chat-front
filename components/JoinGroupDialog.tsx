@@ -32,11 +32,9 @@ const JoinGroupDialog = ({ group, setJoinGroup }: Props) => {
   if (!group || group.type !== "group") return null;
   const handleJoin = async () => {
     setIsJoining(true);
-    console.log(group.groupSettings.linkToken);
     if (!group.groupSettings.linkToken) return;
     try {
       const res = await joinGroup(group.id, group.groupSettings.linkToken);
-      console.log({ res });
       if (!res.success) {
         throw new Error(res.msg);
       }
