@@ -49,19 +49,30 @@ type OnTypingRes = {
   isTyping: boolean;
 };
 
-type ConversationType = {
-  id: string;
-  participants: participant[];
-  lastMessage: Omit<MessageType, "conversationId"> | null;
-  isTyping?: boolean;
-  type: "private" | "group";
-  admin: string | null;
-  groupName: string | null;
-  desc: string;
-  groupImage: string;
-  createdAt: string;
-  updatedAt: string;
-};
+type ConversationType =
+  | {
+      id: string;
+      participants: participant[];
+      lastMessage: Omit<MessageType, "conversationId"> | null;
+      isTyping?: boolean;
+      type: "private";
+      createdAt: string;
+      updatedAt: string;
+    }
+  | {
+      id: string;
+      participants: participant[];
+      lastMessage: Omit<MessageType, "conversationId"> | null;
+      isTyping?: boolean;
+      type: "group";
+      admin: string | null;
+      groupName: string;
+      desc: string;
+      groupImage: string;
+      groupSettings: GroupSettingsType;
+      createdAt: string;
+      updatedAt: string;
+    };
 
 type participant = {
   userProfileImage: string;
@@ -156,4 +167,16 @@ type NotificationsSettingsType = {
   incomingCalls: "Enable" | "Disable";
   incomingMessagesSound: "Enable" | "Disable";
   incomingCallsSound: "Enable" | "Disable";
+};
+type GroupSettingsType = {
+  linkToken: string | null;
+  members: {
+    editGroupData: boolean;
+    sendNewMessages: boolean;
+    addOtherMembers: boolean;
+    inviteViaLink: boolean;
+  };
+  admin: {
+    approveNewMembers: boolean;
+  };
 };

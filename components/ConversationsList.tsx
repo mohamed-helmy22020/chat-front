@@ -34,12 +34,12 @@ const ConversationsList = () => {
     .filter((c) => {
       if (c.lastMessage === null) return false;
       const otherSide = c.participants.find((p) => p._id !== userId);
-      if ((!otherSide && c.type !== "group") || !c.lastMessage.text)
+      if ((!otherSide && c.type === "private") || !c.lastMessage.text)
         return false;
       return (
         otherSide?.name.toLowerCase().includes(search.toLowerCase()) ||
         c.lastMessage.text.includes(search.toLowerCase()) ||
-        c.groupName.includes(search)
+        (c.type === "group" && c.groupName.includes(search))
       );
     })
     .sort((a, b) => {

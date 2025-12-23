@@ -18,13 +18,13 @@ const ConversationGroupHeader = () => {
         <div className="relative flex min-h-9 min-w-9 items-center justify-center rounded-full border-2 border-white dark:border-slate-800">
           <Image
             className="rounded-full object-cover"
-            src={group?.groupImage || "/imgs/group.png"}
+            src={group.groupImage || "/imgs/group.png"}
             alt="avatar"
             fill
           />
         </div>
         <div className="ml-3">
-          <p className="font-medium">{group?.groupName}</p>
+          <p className="font-medium">{group.groupName}</p>
         </div>
       </div>
       <div className="flex items-center space-x-2">

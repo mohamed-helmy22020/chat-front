@@ -754,3 +754,107 @@ export const removeUserFromGroup = async (
     return { success: false, ...error };
   }
 };
+
+export const updateGroupSettings = async (
+  groupId: string,
+  groupSettings: Partial<GroupSettingsType>,
+) => {
+  const cookieStore = await cookies();
+  const accessToken = cookieStore.get("accessToken")?.value;
+  console.log({ groupSettings });
+  try {
+    const res = await fetchWithErrorHandling(
+      `/chat/group/settings/${groupId}`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${accessToken}`,
+        },
+        body: JSON.stringify({
+          groupSettings,
+        }),
+      },
+    );
+    return res;
+  } catch (error: any) {
+    return { success: false, ...error };
+  }
+};
+
+export const getGroupLinkToken = async (groupId: string) => {
+  const cookieStore = await cookies();
+  const accessToken = cookieStore.get("accessToken")?.value;
+  try {
+    const res = await fetchWithErrorHandling(
+      `/chat/group/${groupId}/settings/link-token/`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      },
+    );
+    return res;
+  } catch (error: any) {
+    return { success: false, ...error };
+  }
+};
+
+export const getGroupData = async (groupId: string, token: string) => {
+  const cookieStore = await cookies();
+  const accessToken = cookieStore.get("accessToken")?.value;
+  try {
+    const res = await fetchWithErrorHandling(
+      `/chat/group/${groupId}/${token}`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      },
+    );
+    return res;
+  } catch (error: any) {
+    return { success: false, ...error };
+  }
+};
+export const resetGroupLinkToken = async (groupId: string) => {
+  const cookieStore = await cookies();
+  const accessToken = cookieStore.get("accessToken")?.value;
+  try {
+    const res = await fetchWithErrorHandling(
+      `/chat/group/${groupId}/settings/link-token/`,
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      },
+    );
+    return res;
+  } catch (error: any) {
+    return { success: false, ...error };
+  }
+};
+
+export const joinGroup = async (groupId: string, groupLinkToken: string) => {
+  const cookieStore = await cookies();
+  const accessToken = cookieStore.get("accessToken")?.value;
+  try {
+    const res = await fetchWithErrorHandling(`/chat/group/${groupId}/join`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`,
+      },
+      body: JSON.stringify({
+        groupLinkToken,
+      }),
+    });
+    return res;
+  } catch (error: any) {
+    console.log({ error });
+    return { success: false, ...error };
+  }
+};

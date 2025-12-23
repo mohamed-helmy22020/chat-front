@@ -50,7 +50,7 @@ type Props = {
     | "inviteGroup"
     | "groupMember";
   extra?: {
-    isGroupAdmin: boolean;
+    isGroupAdmin?: boolean;
   };
 };
 

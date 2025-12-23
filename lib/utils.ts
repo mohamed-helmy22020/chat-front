@@ -364,3 +364,22 @@ export const getNotificationsPermission = async () => {
   }
   return false;
 };
+
+export function setNestedValue(obj: any, path: string[], value: any): any {
+  if (path.length === 0) return value;
+  if (path.length === 1) {
+    return { ...obj, [path[0]]: value };
+  }
+
+  const [first, ...rest] = path;
+  return {
+    ...obj,
+    [first]: setNestedValue(obj[first] || {}, rest, value),
+  };
+}
+
+export function kFormatter(num: number) {
+  return Math.abs(num) > 999
+    ? Math.sign(num) * parseInt((Math.abs(num) / 1000).toFixed(1)) + "k"
+    : Math.sign(num) * Math.abs(num);
+}

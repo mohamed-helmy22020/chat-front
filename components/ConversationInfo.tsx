@@ -45,7 +45,7 @@ const ConversationInfo = () => {
       console.log(error);
     }
   };
-  if (infoItem.groupName) {
+  if (infoItem.type === "group") {
     return <GroupInfo />;
   }
   const otherSide = currentConversation?.participants.find(

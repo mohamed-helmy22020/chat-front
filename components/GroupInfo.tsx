@@ -1,19 +1,40 @@
 import { useChatStore } from "@/store/chatStore";
+import { useUserStore } from "@/store/userStore";
 import Image from "next/image";
+import { useState } from "react";
+import { HiOutlineUserAdd } from "react-icons/hi";
+import { IoIosSettings } from "react-icons/io";
+import { IoLink } from "react-icons/io5";
 import { MdClose, MdPersonAddAlt } from "react-icons/md";
+import GroupPermissions from "./GroupPermissions";
+import InviteLinkMenu from "./InviteLinkMenu";
 import RequestUserCard from "./RequestUserCard";
+import SettingsCard from "./SettingsCard";
 import { Button } from "./ui/button";
 import { Separator } from "./ui/separator";
 
 const GroupInfo = () => {
+  const userId = useUserStore((state) => state.user?._id);
   const group = useChatStore((state) => state.currentConversation);
+  const isAdmin = group?.type === "group" && group.admin === userId;
+  const [subMenu, setSubMenu] = useState("");
 
   const changeInfoItem = useChatStore((state) => state.changeInfoItem);
   const changeInviteGroup = useChatStore((state) => state.changeInviteGroup);
-  if (!group) return null;
+  if (!group || group.type !== "group") return null;
+
+  if (subMenu === "permission" && isAdmin) {
+    return <GroupPermissions closeMenu={() => setSubMenu("")} />;
+  }
+  if (subMenu === "inviteLink" && isAdmin) {
+    return <InviteLinkMenu closeMenu={() => setSubMenu("")} />;
+  }
+  const canAddOtherUsers =
+    isAdmin || group.groupSettings.members.addOtherMembers;
+  const canInviteViaLink = isAdmin || group.groupSettings.members.inviteViaLink;
   return (
-    <div className="flex max-h-svh w-full flex-col items-center gap-3 overflow-y-auto">
-      <div className="flex w-full items-center px-3 py-1 select-none">
+    <div className="flex max-h-svh w-full flex-col items-center gap-3 overflow-hidden overflow-y-auto">
+      <div className="flex w-full items-center border-b px-3 py-3 select-none">
         <Button
           variant="ghostFull"
           className="me-3 scale-125 cursor-pointer p-2!"
@@ -36,16 +57,32 @@ const GroupInfo = () => {
         Group . {group.participants.length} members
       </div>
       <div>
-        <Button
-          variant="ghostFull"
-          className="flex cursor-pointer flex-col border-2 px-12 py-2 hover:bg-site-foreground"
-          onClick={() => changeInviteGroup(group)}
-        >
-          <MdPersonAddAlt /> Add
-        </Button>
+        {canAddOtherUsers && (
+          <Button
+            variant="ghostFull"
+            className="flex cursor-pointer flex-col border-2 px-12 py-2 hover:bg-site-foreground"
+            onClick={() => changeInviteGroup(group)}
+          >
+            <MdPersonAddAlt /> Add
+          </Button>
+        )}
       </div>
       <div className="w-full p-2">{group.desc}</div>
       <div className="w-full p-3 md:w-2/3 lg:w-1/2">
+        <Separator />
+      </div>
+      <div className="w-full">
+        {isAdmin && (
+          <SettingsCard
+            animationDelay={0}
+            title={`Group Permissions`}
+            onClick={() => setSubMenu("permission")}
+          >
+            <IoIosSettings size={25} color="#6a7282" />
+          </SettingsCard>
+        )}
+      </div>
+      <div className="w-full p-3 pt-0 md:w-2/3 lg:w-1/2">
         <Separator />
       </div>
       <div className="flex w-full flex-col gap-2 p-2">
@@ -53,6 +90,26 @@ const GroupInfo = () => {
           <h2>{group.participants.length} members</h2>
         </div>
         <div>
+          {canAddOtherUsers && (
+            <SettingsCard
+              animationDelay={0}
+              title={`Add Member`}
+              onClick={() => changeInviteGroup(group)}
+            >
+              <HiOutlineUserAdd size={25} color="#6a7282" />
+            </SettingsCard>
+          )}
+          {canInviteViaLink && (
+            <SettingsCard
+              animationDelay={0}
+              title={`Invite to group via link`}
+              onClick={() => {
+                setSubMenu("inviteLink");
+              }}
+            >
+              <IoLink size={25} color="#6a7282" />
+            </SettingsCard>
+          )}
           {group.participants.map((p) => (
             <RequestUserCard
               key={p._id}

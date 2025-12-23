@@ -74,6 +74,10 @@ type Actions = {
   addGroupParticipant: (group: ConversationType, newUser: participant) => void;
   removeGroupParticipant: (groupId: string, userId: string) => void;
   changeInfoItem: (infoItem: ConversationType | MessageType | null) => void;
+  updateGroupSettings: (
+    groupId: string,
+    groupSettings: GroupSettingsType,
+  ) => void;
   resetChats: () => void;
 };
 
@@ -454,6 +458,36 @@ export const useChatStore = create<State & Actions>()(
         set(
           produce((state: State & Actions) => {
             state.infoItem = infoItem;
+          }),
+        ),
+      updateGroupSettings: (
+        groupId: string,
+        settings: Partial<GroupSettingsType>,
+      ) =>
+        set(
+          produce((state: State & Actions) => {
+            const groupIndex = state.conversations.findIndex(
+              (g) => g.id === groupId,
+            );
+            if (
+              groupIndex < 0 ||
+              state.conversations[groupIndex].type !== "group"
+            ) {
+              return;
+            }
+            state.conversations[groupIndex].groupSettings = {
+              ...state.conversations[groupIndex].groupSettings,
+              ...settings,
+            };
+            if (
+              state.currentConversation?.id === groupId &&
+              state.currentConversation.type === "group"
+            ) {
+              state.currentConversation.groupSettings = {
+                ...state.currentConversation.groupSettings,
+                ...settings,
+              };
+            }
           }),
         ),
 

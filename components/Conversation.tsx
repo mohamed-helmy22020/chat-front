@@ -27,6 +27,17 @@ const Conversation = () => {
       })),
     );
 
+  const isMember = !!currentConversation?.participants.find(
+    (p) => p._id === userId,
+  );
+  const onlyAdminsCanSend =
+    currentConversation?.type === "group" &&
+    !currentConversation.groupSettings.members.sendNewMessages &&
+    currentConversation.admin !== userId;
+  const canSendMessages =
+    currentConversation?.type === "private" || (isMember && !onlyAdminsCanSend);
+
+  console.log(isMember, onlyAdminsCanSend, canSendMessages);
   return (
     <>
       {currentSelectedMediaMessage && <ShowMessageMedia />}
@@ -50,8 +61,18 @@ const Conversation = () => {
             <ConversationGroupHeader />
           )}
           <ConversationMessages />
-          {currentConversation?.participants.find((p) => p._id === userId) && (
-            <ConversationFooter />
+          {canSendMessages && <ConversationFooter />}
+          {!isMember && (
+            <div className="flex h-15 w-full items-center justify-center bg-site-foreground text-gray-400">
+              You can{"'"}t send messages to this group because you{"'"}re no
+              longer a member.
+            </div>
+          )}
+          {onlyAdminsCanSend && (
+            <div className="flex min-h-15 w-full bg-site-foreground p-3 text-center text-gray-400">
+              You can{"'"}t send messages to this group because only admins can
+              send messages.
+            </div>
           )}
         </motion.div>
         {infoItem && <InfoMenu />}
