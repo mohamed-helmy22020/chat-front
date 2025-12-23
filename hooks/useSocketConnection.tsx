@@ -29,6 +29,7 @@ const useSocketConnection = () => {
     addGroupParticipant,
     removeGroupParticipant,
     updateGroupSettings,
+    updateGroupData,
   } = useChatStore(
     useShallow((state) => ({
       changeIsConnected: state.changeIsConnected,
@@ -40,6 +41,7 @@ const useSocketConnection = () => {
       addGroupParticipant: state.addGroupParticipant,
       removeGroupParticipant: state.removeGroupParticipant,
       updateGroupSettings: state.updateGroupSettings,
+      updateGroupData: state.updateGroupData,
     })),
   );
   const {
@@ -257,13 +259,19 @@ const useSocketConnection = () => {
       groupId: string;
       groupSettings: GroupSettingsType;
     }) => {
-      console.log("group settings updated");
-      console.log({ res });
       updateGroupSettings(res.groupId, res.groupSettings);
+    };
+
+    const onGroupDataUpdated = (res: {
+      groupId: string;
+      groupData: Partial<Extract<ConversationType, { type: "group" }>>;
+    }) => {
+      updateGroupData(res.groupId, res.groupData);
     };
 
     chatSocket.on("receiveMessage", onReceiveMessage);
     chatSocket.on("groupSettingsUpdated", onGroupSettingsUpdated);
+    chatSocket.on("groupDataUpdated", onGroupDataUpdated);
     chatSocket.on("addedToGroup", onAddedToGroup);
     chatSocket.on("deletedFromGroup", onDeletedFromGroup);
     chatSocket.on("messageReaction", onMessageReaction);
@@ -285,6 +293,7 @@ const useSocketConnection = () => {
     return () => {
       chatSocket.off("receiveMessage", onReceiveMessage);
       chatSocket.off("groupSettingsUpdated", onGroupSettingsUpdated);
+      chatSocket.off("groupDataUpdated", onGroupDataUpdated);
       chatSocket.off("addedToGroup", onAddedToGroup);
       chatSocket.off("deletedFromGroup", onDeletedFromGroup);
       chatSocket.off("messageReaction", onMessageReaction);
@@ -329,6 +338,7 @@ const useSocketConnection = () => {
     tError,
     removeGroupParticipant,
     updateGroupSettings,
+    updateGroupData,
   ]);
 };
 

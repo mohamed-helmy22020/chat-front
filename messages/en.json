@@ -345,5 +345,12 @@
       "CreateGroup": "Create Group",
       "Loading": "Loading..."
     }
+  },
+  "Group": {
+    "OnlyImageError": "Please select an image file (JPEG, PNG, GIF, etc.)",
+    "FileSizeError": "File size should be less than 5MB",
+    "UploadingImageError": "Failed to upload image. Please try again.",
+    "Uploading": "Uploading...",
+    "ChangePicture": "Change Picture"
   }
 }

@@ -78,6 +78,10 @@ type Actions = {
     groupId: string,
     groupSettings: GroupSettingsType,
   ) => void;
+  updateGroupData: (
+    groupId: string,
+    groupData: Partial<Extract<ConversationType, { type: "group" }>>,
+  ) => void;
   resetChats: () => void;
 };
 
@@ -486,6 +490,36 @@ export const useChatStore = create<State & Actions>()(
               state.currentConversation.groupSettings = {
                 ...state.currentConversation.groupSettings,
                 ...settings,
+              };
+            }
+          }),
+        ),
+      updateGroupData: (
+        groupId: string,
+        groupData: Partial<Extract<ConversationType, { type: "group" }>>,
+      ) =>
+        set(
+          produce((state: State & Actions) => {
+            const groupIndex = state.conversations.findIndex(
+              (g) => g.id === groupId,
+            );
+            if (
+              groupIndex < 0 ||
+              state.conversations[groupIndex].type !== "group"
+            ) {
+              return;
+            }
+            state.conversations[groupIndex] = {
+              ...state.conversations[groupIndex],
+              ...groupData,
+            };
+            if (
+              state.currentConversation?.id === groupId &&
+              state.currentConversation.type === "group"
+            ) {
+              state.currentConversation = {
+                ...state.currentConversation,
+                ...groupData,
               };
             }
           }),

@@ -7,7 +7,10 @@ import { IoIosSettings } from "react-icons/io";
 import { IoLink } from "react-icons/io5";
 import { MdClose, MdPersonAddAlt } from "react-icons/md";
 import { useShallow } from "zustand/react/shallow";
+import GroupDescUpdate from "./GroupDescUpdate";
+import GroupNameUpdate from "./GroupNameUpdate";
 import GroupPermissions from "./GroupPermissions";
+import GroupPictureUpdate from "./GroupPictureUpdate";
 import InviteLinkMenu from "./InviteLinkMenu";
 import RequestUserCard from "./RequestUserCard";
 import SettingsCard from "./SettingsCard";
@@ -34,6 +37,8 @@ const GroupInfo = () => {
 
   const canInviteViaLink = isAdmin || group.groupSettings.members.inviteViaLink;
 
+  const canUpdateGroupData =
+    isAdmin || group.groupSettings.members.editGroupData;
   if (subMenu === "permission" && isAdmin) {
     return <GroupPermissions closeMenu={() => setSubMenu("")} />;
   }
@@ -53,15 +58,22 @@ const GroupInfo = () => {
         </Button>
         Group Info
       </div>
-      <div className="relative flex min-h-20 min-w-20 items-center justify-center rounded-full">
-        <Image
-          className="rounded-full object-cover"
-          src={group.groupImage || "/imgs/group.png"}
-          alt="avatar"
-          fill
-        />
+      {canUpdateGroupData ? (
+        <GroupPictureUpdate />
+      ) : (
+        <div className="relative flex min-h-32 min-w-32 items-center justify-center rounded-full">
+          <Image
+            className="rounded-full object-cover"
+            src={group.groupImage || "/imgs/group.png"}
+            alt="avatar"
+            fill
+          />
+        </div>
+      )}
+
+      <div className="w-full px-3">
+        <GroupNameUpdate />
       </div>
-      <div className="text-xl">{group.groupName}</div>
       <div className="text-gray-400">
         Group . {group.participants.length} members
       </div>
@@ -76,7 +88,9 @@ const GroupInfo = () => {
           </Button>
         )}
       </div>
-      <div className="w-full p-2">{group.desc}</div>
+      <div className="w-full p-2">
+        <GroupDescUpdate />
+      </div>
       {isAdmin && (
         <>
           <div className="w-full p-3 md:w-2/3 lg:w-1/2">

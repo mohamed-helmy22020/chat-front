@@ -50,7 +50,7 @@ const JoinGroupDialog = ({ group, setJoinGroup }: Props) => {
         <DialogHeader>
           <DialogTitle>Join Group</DialogTitle>
         </DialogHeader>
-        <div className="flex flex-col items-center justify-center">
+        <div className="flex flex-col items-center justify-center overflow-hidden">
           <div className="relative flex h-25 min-w-25 items-center justify-center rounded-full">
             <Image
               className="rounded-full object-cover"
@@ -84,7 +84,9 @@ const JoinGroupDialog = ({ group, setJoinGroup }: Props) => {
               </div>
             )}
           </div>
-          <div className="truncate text-lg text-gray-400">{group.desc}</div>
+          <div className="line-clamp-2 truncate text-lg text-wrap text-gray-400">
+            {group.desc}
+          </div>
           <div className="mt-2 flex w-full gap-1 px-10">
             <Button
               variant="ghostFull"

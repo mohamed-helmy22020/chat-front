@@ -310,12 +310,16 @@ const GroupMemberMenu = ({ userId }: { userId: string }) => {
   const t = useTranslations("RequestUserCard.InviteGroup");
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const currentUserId = useUserStore((state) => state.user?._id);
-  const group = useChatStore((state) => state.currentConversation);
+  const group = useChatStore((state) => state.currentConversation) as Extract<
+    ConversationType,
+    { type: "group" }
+  >;
   const { removeFromGroup } = useRemoveFromGroup();
   if (
     !group ||
     !group.participants.find((p) => p._id === currentUserId) ||
-    userId === currentUserId
+    userId === currentUserId ||
+    group.admin !== currentUserId
   )
     return;
   return (

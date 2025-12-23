@@ -62,13 +62,13 @@ const Conversation = () => {
           <ConversationMessages />
           {canSendMessages && <ConversationFooter />}
           {!isMember && (
-            <div className="flex h-15 w-full items-center justify-center bg-site-foreground text-gray-400">
+            <div className="flex min-h-15 w-full items-center justify-center bg-site-foreground p-3 text-center text-gray-400">
               You can{"'"}t send messages to this group because you{"'"}re no
               longer a member.
             </div>
           )}
           {onlyAdminsCanSend && (
-            <div className="flex min-h-15 w-full bg-site-foreground p-3 text-center text-gray-400">
+            <div className="flex min-h-15 w-full items-center justify-center bg-site-foreground p-3 text-center text-gray-400">
               You can{"'"}t send messages to this group because only admins can
               send messages.
             </div>
