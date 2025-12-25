@@ -19,6 +19,7 @@ const SentRequestsList = () => {
   const t = useTranslations("Friends.SentRequests");
   const [isOpen, setIsOpen] = useState(false);
   const sentRequestsList = useUserStore((state) => state.sentRequestsList);
+  console.log({ sentRequestsList });
   const fetchedUsersElements = sentRequestsList.map((user) => (
     <RequestUserCard user={user} type="sent" key={user._id} />
   ));
@@ -29,7 +30,17 @@ const SentRequestsList = () => {
         <div>
           <Tooltip>
             <TooltipTrigger asChild>
-              <Button className="cursor-pointer" variant="ghostFull">
+              <Button
+                className="relative cursor-pointer gap-1"
+                variant="ghostFull"
+              >
+                {sentRequestsList.length > 0 && (
+                  <p className="text-xs text-mainColor-600">
+                    {sentRequestsList.length > 99
+                      ? "99+"
+                      : sentRequestsList.length}
+                  </p>
+                )}
                 <RiUserShared2Line />
               </Button>
             </TooltipTrigger>

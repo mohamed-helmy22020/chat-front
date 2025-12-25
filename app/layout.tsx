@@ -47,7 +47,7 @@ export default async function RootLayout({
       className="h-fit"
     >
       <body
-        className={`${interFont.variable} ${loraFont.variable} h-full overflow-hidden bg-site-background font-inter antialiased transition-all`}
+        className={`${interFont.variable} ${loraFont.variable} h-full bg-site-background font-inter antialiased transition-all`}
         suppressHydrationWarning
       >
         <NextIntlClientProvider messages={messages}>

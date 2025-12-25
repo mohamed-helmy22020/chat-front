@@ -6,7 +6,6 @@ import { useUserStore } from "./userStore";
 const user = useUserStore.getState().user;
 
 type State = {
-  search: string;
   conversations: ConversationType[];
   currentConversation: ConversationType | null;
   currentSelectedMediaMessage: {
@@ -25,7 +24,6 @@ type State = {
 };
 
 const initialState: State = {
-  search: "",
   conversations: [],
   currentConversation: null,
   currentSelectedMediaMessage: null,
@@ -41,7 +39,6 @@ const initialState: State = {
 };
 
 type Actions = {
-  changeSearch: (search: string) => void;
   changeConversations: (conversations: ConversationType[]) => void;
   deleteConversation: (
     conversationId: string,
@@ -89,16 +86,11 @@ export const useChatStore = create<State & Actions>()(
   devtools(
     (set) => ({
       ...initialState,
-      changeSearch: (search: string) =>
-        set(
-          produce((state: State & Actions) => {
-            state.search = search;
-          }),
-        ),
 
       changeConversations: (conversations: ConversationType[]) =>
         set(
           produce((state: State & Actions) => {
+            console.log("1");
             state.conversations = conversations;
           }),
         ),
@@ -127,6 +119,7 @@ export const useChatStore = create<State & Actions>()(
       changeCurrentConversation: (conversation: ConversationType | null) =>
         set(
           produce((state: State & Actions) => {
+            console.log("2");
             if (state.currentConversation?.id === conversation?.id) {
               return;
             }
@@ -144,12 +137,14 @@ export const useChatStore = create<State & Actions>()(
       addConversation: (conversation: ConversationType) =>
         set(
           produce((state: State & Actions) => {
+            console.log("3");
             state.conversations.push(conversation);
           }),
         ),
       changeCurrentConversationMessages: (messages: MessageType[]) =>
         set(
           produce((state: State & Actions) => {
+            console.log("4");
             if (!state.currentConversation) return;
             const sortedMessages = messages.sort((a, b) => {
               return (
@@ -179,6 +174,7 @@ export const useChatStore = create<State & Actions>()(
       addMoreMessages: (messages: MessageType[]) =>
         set(
           produce((state: State & Actions) => {
+            console.log("5");
             if (!state.currentConversation) return;
             const sortedMessages = [
               ...messages,
@@ -196,6 +192,7 @@ export const useChatStore = create<State & Actions>()(
       addMessage: (message: MessageType, conversation: ConversationType) =>
         set(
           produce((state: State & Actions) => {
+            console.log("6");
             const currentConversation = state.currentConversation;
             if (currentConversation?.id === conversation.id) {
               state.currentConversationMessages.push(message);
@@ -224,6 +221,7 @@ export const useChatStore = create<State & Actions>()(
       updateMessage: (messageId: string, message: MessageType) =>
         set(
           produce((state: State & Actions) => {
+            console.log("7");
             if (!state.currentConversation) return;
             const messageIndex = state.currentConversationMessages.findIndex(
               (m) => m.id === messageId,

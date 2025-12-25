@@ -90,7 +90,17 @@ const HomeSideBar = ({ userProp }: Props) => {
       <JoinGroupDialog group={joinGroup} setJoinGroup={setJoinGroup} />
       <div className="flex flex-col overflow-hidden border-e border-slate-300 bg-site-foreground px-2 py-3.5 dark:border-slate-800">
         <div className="flex flex-col items-center justify-center">
-          <SideBarButton Icon={LuMessageSquareText} page="chat" />
+          <SideBarButton
+            Icon={LuMessageSquareText}
+            page="chat"
+            count={
+              conversations.filter(
+                (c) =>
+                  !c.lastMessage?.seen &&
+                  c.lastMessage?.from._id !== userProp?._id,
+              ).length
+            }
+          />
           <SideBarButton Icon={LuCircleDotDashed} page="status" />
           <SideBarButton Icon={LuUsers} page="friends" />
           <SideBarButton Icon={LuUserRoundX} page="blocks" />
@@ -111,9 +121,11 @@ const HomeSideBar = ({ userProp }: Props) => {
 const SideBarButton = ({
   Icon,
   page,
+  count,
 }: {
   Icon: React.ComponentType<{ size?: number }>;
   page: PageType;
+  count?: number;
 }) => {
   const t = useTranslations("SideBar");
   const { currentPage, setPage } = usePageStore(
@@ -128,7 +140,7 @@ const SideBarButton = ({
       <TooltipTrigger asChild>
         <button
           className={cn(
-            "mb-2 cursor-pointer rounded-full p-2 text-gray-700 dark:text-gray-400 dark:hover:bg-site-background",
+            "relative mb-2 cursor-pointer rounded-full p-2 text-gray-700 dark:text-gray-400 dark:hover:bg-site-background",
             {
               "text-black dark:text-white": isActive,
               "bg-site-background": isActive,
@@ -137,6 +149,11 @@ const SideBarButton = ({
           onClick={() => setPage(page)}
         >
           <Icon size={24} />
+          {count && count > 0 ? (
+            <p className="absolute -end-1 -top-1 flex aspect-square w-5 items-center justify-center rounded-full bg-mainColor-600 text-xs text-white">
+              {count > 9 ? "9+" : count}
+            </p>
+          ) : null}
         </button>
       </TooltipTrigger>
       <TooltipContent className="rounded-full" side="left" sideOffset={5}>

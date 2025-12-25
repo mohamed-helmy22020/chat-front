@@ -31,7 +31,14 @@ const ReceivedRequestsList = () => {
         <div>
           <Tooltip>
             <TooltipTrigger asChild>
-              <Button className="cursor-pointer" variant="ghostFull">
+              <Button className="cursor-pointer gap-1" variant="ghostFull">
+                {receivedRequestsList.length > 0 && (
+                  <p className="text-xs text-mainColor-600">
+                    {receivedRequestsList.length > 99
+                      ? "99+"
+                      : receivedRequestsList.length}
+                  </p>
+                )}
                 <RiUserReceived2Line />
               </Button>
             </TooltipTrigger>
